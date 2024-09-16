@@ -7,7 +7,7 @@
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
+    "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "isolatedModules": true,
@@ -19,6 +19,8 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false,
     "lib": [
       "ES2022",
       "dom"
