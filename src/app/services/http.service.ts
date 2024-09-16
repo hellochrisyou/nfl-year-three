@@ -118,15 +118,15 @@ export class HttpService {
       });
     });
     this.allTeams.forEach(team => {
-      team.thirdDownPctAvg = this.returnSum(team.thirdDownPctTotal);
-      team.redzoneScoringPctAvg = this.returnSum(team.redzoneScoringPctTotal);
-      team.thirdDownConvPctGivenAvg = this.returnSum(team.thirdDownConvPctGivenTotal);
-      team.redzoneScoringPctGivenAvg = this.returnSum(team.redzoneScoringPctGivenTotal);
+      team.thirdDownPctAvg = this.returnSumAvg(team.thirdDownPctTotal);
+      team.redzoneScoringPctAvg = this.returnSumAvg(team.redzoneScoringPctTotal);
+      team.thirdDownConvPctGivenAvg = this.returnSumAvg(team.thirdDownConvPctGivenTotal);
+      team.redzoneScoringPctGivenAvg = this.returnSumAvg(team.redzoneScoringPctGivenTotal);
     });
     this.updateTotalData.emit(true);
   }
 
-  returnSum(val: number[]): number {
+  returnSumAvg(val: number[]): number {
     let tmpTotal = 0;
     val.forEach(element => {
       tmpTotal += element;

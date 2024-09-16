@@ -27,7 +27,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   crunchStatus = 'Initial';
   currentWeek: number = 0;
   totalAvgToggle = 'Total';
-  displayedColumns = ['teamName', 'games', 'passingAttempts', 'passingYards', 'passingTds', 'rushingAttempts', 'rushingYards', 'rushingTDs', 'sacks', 'interceptions', 'firstDowns', 'thirdDownPct', 'redzoneScoringPct', 'points'];
+  displayedColumns = ['teamName', 'games', 'passingAttempts', 'passingYards', 'passingTds', 'rushingAttempts', 'rushingYards',
+    'rushingTds',
+    'sacks', 'interceptions', 'firstDowns', 'thirdDownPct', 'redzoneScoringPct', 'points'];
   dataSource: MatTableDataSource<Team>;
   // @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -61,6 +63,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+    this.dataSource.sort = this.sort;
   }
 
   checkTabStatus(): boolean {
@@ -73,9 +77,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
 
   checkTabStatus2(): boolean {
     if (this.crunchStatus === 'Processed' || this.currentDownloadCounterPostMsg === ' - DOWNLOAD REQUIRED') {
-      return false;
-    } else {
       return true;
+    } else {
+      return false;
     }
   }
 
@@ -87,15 +91,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  calculateAverage(numVal: number, teamId: string): number {
-    this.httpService.allTeams.find(team => {
-      if (team.teamId === teamId) {
-        return numVal / team.games.length;
-      }
-    });
-    return -1;
+  checkAvgTotalToggle() {
+    if (this.totalAvgToggle === 'Total') {
+      return true;
+    } else {
+      return false;
+    }
   }
-
 
   crunchNumbers() {
     this.crunchStatus = 'Pending';

@@ -1,4 +1,5 @@
 export interface Team {
+  teamIndex: number;
   teamId: string;
   teamName: string;
   games: Game[]
