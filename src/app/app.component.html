@@ -1,13 +1,13 @@
-<mat-tab-group class="demo-tab-group">
+<mat-tab-group class="main-tab-group">
   <mat-tab label="Set Up">
     <section>
-      <div class="margin-left-5rem-top-1rem" >
+      <div class="margin-left-5rem-top-1rem">
         <b class="color-red">1. Click Button #1 and wait for the number of games to stop increasing.</b>
       </div>
-      <div class="margin-left-5rem-top-1rem" >
+      <div class="margin-left-5rem-top-1rem">
         <b class="color-red">2. Once you have downloaded all the games, click Button #2.</b>
       </div>
-      <div class="margin-left-5rem-top-1rem" >
+      <div class="margin-left-5rem-top-1rem">
         <b class="color-red">3. You can now access the other sections at the top of the page.</b>
       </div>
       <button class="margin-left-5rem-top-1rem" [disabled]="!checkTabStatus()" mat-button
@@ -28,148 +28,296 @@
     </section>
   </mat-tab>
   <mat-tab label="Basic Stats">
-    <mat-slide-toggle class="margin-left-5rem-top-1rem"
-      (change)="toggleAvgTotalStatus($event)">{{totalAvgToggle}}</mat-slide-toggle>
-    <div class="basic-stats-header">
-      <!-- <mat-form-field> -->
-      <small>Search Filter</small>
-      <div><input (keyup)="applyFilter($any($event.target).value)"></div>
-      <!-- </mat-form-field> -->
-    </div>
-    <div class="basic-stats-container mat-elevation-z8">
-      <mat-table [dataSource]="dataSource" matSort>
-        <ng-container matColumnDef="teamName">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.teamName}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="games">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> Games </mat-header-cell>
-          <mat-cell *matCellDef="let row"> </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="passingAttempts">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> PassAttempts </mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="checkAvgTotalToggle()">
-             {{row.passingAttemptsTotal}}
-             </ng-container>
-             <ng-container *ngIf="!checkAvgTotalToggle()">
-              {{row.passingAttemptsTotal/row.games.length | number : '1.1-1'}}
+    <mat-tab-group class="basic-tab-group">
+      <mat-tab label="Team Stats">
+        <mat-slide-toggle class="margin-left-5rem-top-1rem"
+          (change)="toggleAvgTotalStatus($event)">{{totalAvgToggle}}</mat-slide-toggle>
+        <div class="basic-stats-header">
+          <!-- <mat-form-field> -->
+          <small>Search Filter</small>
+          <div><input (keyup)="applyFilter($any($event.target).value)"></div>
+          <!-- </mat-form-field> -->
+        </div>
+        <div class="basic-stats-container mat-elevation-z8">
+          <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortColumn($event)" matSortDisableClear>
+            <ng-container matColumnDef="teamName">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.teamName}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="games">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Games </mat-header-cell>
+              <mat-cell *matCellDef="let row"> </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="passingAttempts">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> PassAttempts </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <ng-container *ngIf="checkAvgTotalToggle()">
+                  <span [ngClass]="returnCellColor(row.passingAttemptsTotal, 'passingAttemptsTotal')">{{row.passingAttemptsTotal}}</span>
+                </ng-container>
+                <ng-container *ngIf="!checkAvgTotalToggle()">
+                  {{row.passingAttemptsTotal/row.games.length | number : '1.1-1'}}
+                </ng-container>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="passingYards">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> PassYards </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <ng-container *ngIf="checkAvgTotalToggle()">
+                  {{row.passingYardsTotal}}
+                </ng-container>
+                <ng-container *ngIf="!checkAvgTotalToggle()">
+                  {{row.passingYardsTotal/row.games.length | number : '1.1-1'}}
+                </ng-container>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="passingTds">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> PassTDs </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <ng-container *ngIf="checkAvgTotalToggle()">
+                  {{row.passingTdsTotal}}
+                </ng-container>
+                <ng-container *ngIf="!checkAvgTotalToggle()">
+                  {{row.passingTdsTotal/row.games.length | number : '1.1-1'}}
+                </ng-container>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="rushingAttempts">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> RushAttempts </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <ng-container *ngIf="checkAvgTotalToggle()">
+                  {{row.rushingAttemptsTotal}}
+                </ng-container>
+                <ng-container *ngIf="!checkAvgTotalToggle()">
+                  {{row.rushingAttemptsTotal/row.games.length | number : '1.1-1'}}
+                </ng-container>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="rushingYards">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> RushYards </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <ng-container *ngIf="checkAvgTotalToggle()">
+                  {{row.rushingYardsTotal}}
+                </ng-container>
+                <ng-container *ngIf="!checkAvgTotalToggle()">
+                  {{row.rushingYardsTotal/row.games.length | number : '1.1-1'}}
+                </ng-container>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="rushingTds">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> RushTDs </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <ng-container *ngIf="checkAvgTotalToggle()">
+                  {{row.rushingTdsTotal}}
+                </ng-container>
+                <ng-container *ngIf="!checkAvgTotalToggle()">
+                  {{row.rushingTdsTotal/row.games.length | number : '1.1-1'}}
+                </ng-container>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="sacks">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Sacks </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <ng-container *ngIf="checkAvgTotalToggle()">
+                  {{row.sacksTotal}}
+                </ng-container>
+                <ng-container *ngIf="!checkAvgTotalToggle()">
+                  {{row.sacksTotal/row.games.length | number : '1.1-1'}}
+                </ng-container>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="interceptions">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Interceptions </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <ng-container *ngIf="checkAvgTotalToggle()">
+                  {{row.interceptionsTotal}}
+                </ng-container>
+                <ng-container *ngIf="!checkAvgTotalToggle()">
+                  {{row.interceptionsTotal/row.games.length | number : '1.1-1'}}
+                </ng-container>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="firstDowns">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> FirstDowns </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <ng-container *ngIf="checkAvgTotalToggle()">
+                  {{row.firstDownsTotal}}
+                </ng-container>
+                <ng-container *ngIf="!checkAvgTotalToggle()">
+                  {{row.firstDownsTotal/row.games.length | number : '1.1-1'}}
+                </ng-container>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="thirdDownPct">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> thirdDown% </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.thirdDownPctAvg | number : '1.2-2'}} %</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="redzoneScoringPct">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> redzoneScoring% </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.redzoneScoringPctAvg | number : '1.2-2'}} %</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="points">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Points </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <ng-container *ngIf="checkAvgTotalToggle()">
+                  {{row.pointsTotal}}
+                </ng-container>
+                <ng-container *ngIf="!checkAvgTotalToggle()">
+                  {{row.pointsTotal/row.games.length | number : '1.1-1'}}
+                </ng-container>
+              </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;">
+            </mat-row>
+          </mat-table>
+          <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 32]"></mat-paginator>
+        </div>
+      </mat-tab>
+      <mat-tab label="Opponent's Stats">
+        <mat-slide-toggle class="margin-left-5rem-top-1rem"
+        (change)="toggleAvgTotalStatus($event)">{{totalAvgToggle}}</mat-slide-toggle>
+      <div class="basic-stats-header">
+        <!-- <mat-form-field> -->
+        <small>Search Filter</small>
+        <div><input (keyup)="applyFilter($any($event.target).value)"></div>
+        <!-- </mat-form-field> -->
+      </div>
+      <div class="basic-stats-container mat-elevation-z8">
+        <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortOpponentColumn($event)" matSortDisableClear>
+          <ng-container matColumnDef="teamName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.teamName}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="games">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Games </mat-header-cell>
+            <mat-cell *matCellDef="let row"> </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="passingAttempts">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Opponent's PassAttempts </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <ng-container *ngIf="checkAvgTotalToggle()">
+                {{row.passingAttemptsGivenTotal}}
+              </ng-container>
+              <ng-container *ngIf="!checkAvgTotalToggle()">
+                {{row.passingAttemptsGivenTotal/row.games.length | number : '1.1-1'}}
               </ng-container>
             </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="passingYards">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> PassYards </mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="checkAvgTotalToggle()">
-             {{row.passingYardsTotal}}
-             </ng-container>
-             <ng-container *ngIf="!checkAvgTotalToggle()">
-              {{row.passingYardsTotal/row.games.length | number : '1.1-1'}}
+          </ng-container>
+          <ng-container matColumnDef="passingYards">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Opponent's PassYards </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <ng-container *ngIf="checkAvgTotalToggle()">
+                {{row.passingYardsGivenTotal}}
+              </ng-container>
+              <ng-container *ngIf="!checkAvgTotalToggle()">
+                {{row.passingYardsGivenTotal/row.games.length | number : '1.1-1'}}
               </ng-container>
             </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="passingTds">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> PassTDs </mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="checkAvgTotalToggle()">
-             {{row.passingTdsTotal}}
-             </ng-container>
-             <ng-container *ngIf="!checkAvgTotalToggle()">
-              {{row.passingTdsTotal/row.games.length | number : '1.1-1'}}
+          </ng-container>
+          <ng-container matColumnDef="passingTds">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Opponent's PassTDs </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <ng-container *ngIf="checkAvgTotalToggle()">
+                {{row.passingTdsGivenTotal}}
+              </ng-container>
+              <ng-container *ngIf="!checkAvgTotalToggle()">
+                {{row.passingTdsGivenTotal/row.games.length | number : '1.1-1'}}
               </ng-container>
             </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="rushingAttempts">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> RushAttempts </mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="checkAvgTotalToggle()">
-             {{row.rushingAttemptsTotal}}
-             </ng-container>
-             <ng-container *ngIf="!checkAvgTotalToggle()">
-              {{row.rushingAttemptsTotal/row.games.length | number : '1.1-1'}}
+          </ng-container>
+          <ng-container matColumnDef="rushingAttempts">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Opponent's RushAttempts </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <ng-container *ngIf="checkAvgTotalToggle()">
+                {{row.rushingAttemptsGivenTotal}}
+              </ng-container>
+              <ng-container *ngIf="!checkAvgTotalToggle()">
+                {{row.rushingAttemptsGivenTotal/row.games.length | number : '1.1-1'}}
               </ng-container>
             </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="rushingYards">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> RushYards </mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="checkAvgTotalToggle()">
-             {{row.rushingYardsTotal}}
-             </ng-container>
-             <ng-container *ngIf="!checkAvgTotalToggle()">
-              {{row.rushingYardsTotal/row.games.length | number : '1.1-1'}}
+          </ng-container>
+          <ng-container matColumnDef="rushingYards">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Opponent's RushYards </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <ng-container *ngIf="checkAvgTotalToggle()">
+                {{row.rushingYardsGivenTotal}}
+              </ng-container>
+              <ng-container *ngIf="!checkAvgTotalToggle()">
+                {{row.rushingYardsGivenTotal/row.games.length | number : '1.1-1'}}
               </ng-container>
             </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="rushingTds">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> RushTDs </mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="checkAvgTotalToggle()">
-             {{row.rushingTdsTotal}}
-             </ng-container>
-             <ng-container *ngIf="!checkAvgTotalToggle()">
-              {{row.rushingTdsTotal/row.games.length | number : '1.1-1'}}
+          </ng-container>
+          <ng-container matColumnDef="rushingTds">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Opponent's RushTDs </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <ng-container *ngIf="checkAvgTotalToggle()">
+                {{row.rushingTdsGivenTotal}}
+              </ng-container>
+              <ng-container *ngIf="!checkAvgTotalToggle()">
+                {{row.rushingTdsGivenTotal/row.games.length | number : '1.1-1'}}
               </ng-container>
             </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="sacks">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> Sacks </mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="checkAvgTotalToggle()">
-             {{row.sacksTotal}}
-             </ng-container>
-             <ng-container *ngIf="!checkAvgTotalToggle()">
-              {{row.sacksTotal/row.games.length | number : '1.1-1'}}
+          </ng-container>
+          <ng-container matColumnDef="sacks">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Opponent's Sacks </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <ng-container *ngIf="checkAvgTotalToggle()">
+                {{row.sacksGivenTotal}}
+              </ng-container>
+              <ng-container *ngIf="!checkAvgTotalToggle()">
+                {{row.sacksGivenTotal/row.games.length | number : '1.1-1'}}
               </ng-container>
             </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="interceptions">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> Interceptions </mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="checkAvgTotalToggle()">
-             {{row.interceptionsTotal}}
-             </ng-container>
-             <ng-container *ngIf="!checkAvgTotalToggle()">
-              {{row.interceptionsTotal/row.games.length | number : '1.1-1'}}
+          </ng-container>
+          <ng-container matColumnDef="interceptions">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Opponent's Interceptions </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <ng-container *ngIf="checkAvgTotalToggle()">
+                {{row.interceptionsGivenTotal}}
+              </ng-container>
+              <ng-container *ngIf="!checkAvgTotalToggle()">
+                {{row.interceptionsGivenTotal/row.games.length | number : '1.1-1'}}
               </ng-container>
             </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="firstDowns">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> FirstDowns </mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="checkAvgTotalToggle()">
-             {{row.firstDownsTotal}}
-             </ng-container>
-             <ng-container *ngIf="!checkAvgTotalToggle()">
-              {{row.firstDownsTotal/row.games.length | number : '1.1-1'}}
+          </ng-container>
+          <ng-container matColumnDef="firstDowns">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Opponent's FirstDowns </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <ng-container *ngIf="checkAvgTotalToggle()">
+                {{row.firstDownsGivenTotal}}
+              </ng-container>
+              <ng-container *ngIf="!checkAvgTotalToggle()">
+                {{row.firstDownsGivenTotal/row.games.length | number : '1.1-1'}}
               </ng-container>
             </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="thirdDownPct">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> thirdDown% </mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.thirdDownPctAvg | number : '1.2-2'}} %</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="redzoneScoringPct">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> redzoneScoring% </mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.redzoneScoringPctAvg | number : '1.2-2'}} %</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="points">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> Points </mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="checkAvgTotalToggle()">
-             {{row.pointsTotal}}
-             </ng-container>
-             <ng-container *ngIf="!checkAvgTotalToggle()">
-              {{row.pointsTotal/row.games.length | number : '1.1-1'}}
+          </ng-container>
+          <ng-container matColumnDef="thirdDownPct">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Opponent's thirdDown% </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.thirdDownConvPctGivenAvg | number : '1.2-2'}} %</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="redzoneScoringPct">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Opponent's redzoneScoring% </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.redzoneScoringPctGivenAvg | number : '1.2-2'}} %</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="points">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Opponent's Points</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <ng-container *ngIf="checkAvgTotalToggle()">
+                {{row.pointsGivenTotal}}
+              </ng-container>
+              <ng-container *ngIf="!checkAvgTotalToggle()">
+                {{row.pointsGivenTotal/row.games.length | number : '1.1-1'}}
               </ng-container>
             </mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;">
-        </mat-row>
-      </mat-table>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;">
+          </mat-row>
+        </mat-table>
+        <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 32]"></mat-paginator>
+      </div>
+      </mat-tab>
 
-      <!-- <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator> -->
-    </div>
+    </mat-tab-group>
   </mat-tab>
 </mat-tab-group>

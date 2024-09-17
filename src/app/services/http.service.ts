@@ -29,6 +29,7 @@ export class HttpService {
           let tmpGame = this.initializeTmpGame();
           const tmpEventAddy = element.$ref;
           this.apiService.httpGet(tmpEventAddy).subscribe((payload2: any) => {
+            console.log("🚀 ~ payload2:", payload2)
             tmpGame.gameId = payload2.id;
             tmpGame.date = payload2.date;
             let tmpCompetitorIndex = 0;
