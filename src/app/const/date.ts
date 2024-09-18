@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class DateService {
   week1 = new Date('2024-09-5');
   week2 = new Date('2024-09-11');
-  week3 = new Date('2024-09-18');
+  week3 = new Date('2024-09-16');
   week4 = new Date('2024-09-25');
   week5 = new Date('2024-10-02');
   week6 = new Date('2024-10-09');
@@ -21,10 +21,10 @@ export class DateService {
   week15 = new Date('2024-12-11');
   week16 = new Date('2024-12-18');
   week17 = new Date('2024-12-25');
-  week18 = new Date('2024-01-01');
-  endOfSeason = new Date('2024-01-08');
+  week18 = new Date('2025-01-01');
+  endOfSeason = new Date('2025-01-08');
 
-  private _currentWeek = 1;
+  private _currentWeek = 2;
 
   public get currentWeek() {
     return this._currentWeek;

@@ -27,7 +27,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   crunchStatus = 'Initial';
   currentWeek: number = 0;
   totalAvgToggle = 'Total';
-  displayedColumns = ['teamName', 'games', 'passingAttempts', 'passingYards', 'passingTds', 'rushingAttempts', 'rushingYards',
+  displayedColumns = ['teamName', 'ats', 'nextOpponent', 'nextOpponentAts', 'passingAttempts', 'passingYards', 'passingTds', 'rushingAttempts', 'rushingYards',
     'rushingTds',
     'sacks', 'interceptions', 'firstDowns', 'thirdDownPct', 'redzoneScoringPct', 'points'];
   dataSource: MatTableDataSource<Team>;
@@ -44,7 +44,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.dateService.initializeStaticDates();
-    this.currentWeek = this.dateService.currentWeek;
+    // this.currentWeek = this.dateService.currentWeek;
+    this.currentWeek = 3;
     console.log("🚀 ~ this.currentWeek:", this.currentWeek);
     this.httpService.updateDownloadStatus.subscribe(payload => {
       this.currentDownloadCounter = payload;
@@ -99,13 +100,38 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
   }
+
   sortColumn(event: any) {
     switch (event.active) {
       case 'teamName': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.teamName < b.teamName ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.wins < b.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.teamName > b.teamName ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.wins > b.wins ? -1 : 1)));
+        }
+        break;
+      }
+      case 'ats': {
+        if (event.direction === "asc") {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.atsWins < b.atsWins ? -1 : 1)));
+        } else if (event.direction === 'desc') {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.atsWins > b.atsWins ? -1 : 1)));
+        }
+        break;
+      }
+      case 'nextOpponent': {
+        if (event.direction === "asc") {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.nextOpponentWins < b.nextOpponentWins ? -1 : 1)));
+        } else if (event.direction === 'desc') {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.nextOpponentWins > b.nextOpponentWins ? -1 : 1)));
+        }
+        break;
+      }
+      case 'nextOpponentAts': {
+        if (event.direction === "asc") {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.nextOpponentAtsWins < b.nextOpponentAtsWins ? -1 : 1)));
+        } else if (event.direction === 'desc') {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.nextOpponentAtsWins > b.nextOpponentAtsWins ? -1 : 1)));
         }
         break;
       }
@@ -292,9 +318,33 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     switch (event.active) {
       case 'teamName': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.teamName < b.teamName ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.wins < b.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.teamName > b.teamName ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.wins > b.wins ? -1 : 1)));
+        }
+        break;
+      }
+      case 'ats': {
+        if (event.direction === "asc") {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.atsWins < b.atsWins ? -1 : 1)));
+        } else if (event.direction === 'desc') {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.atsWins > b.atsWins ? -1 : 1)));
+        }
+        break;
+      }
+      case 'nextOpponent': {
+        if (event.direction === "asc") {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.nextOpponentWins < b.nextOpponentWins ? -1 : 1)));
+        } else if (event.direction === 'desc') {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.nextOpponentWins > b.nextOpponentWins ? -1 : 1)));
+        }
+        break;
+      }
+      case 'nextOpponentAts': {
+        if (event.direction === "asc") {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.nextOpponentAtsWins < b.nextOpponentAtsWins ? -1 : 1)));
+        } else if (event.direction === 'desc') {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.nextOpponentAtsWins > b.nextOpponentAtsWins ? -1 : 1)));
         }
         break;
       }
@@ -500,8 +550,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
 
   crunchNumbers() {
     this.crunchStatus = 'Pending';
-    this.httpService.crunchGivenStats();
+    this.httpService.getNextOpponentInfo();
     this.httpService.crunchTotals();
+    this.httpService.calculateWinLossRecord();
+    this.httpService.setOpponentStats();
+    console.log('final product', this.httpService.allTeams[0])
   }
 
   downloadLastYear() {
@@ -519,9 +572,44 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     let tmpTotalArr: number[] = [];
     let tmpQuartiles;
     switch(inputType) {
+      case 'score': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.wins);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'ats': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.atsWins);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'nextOpponent': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.nextOpponentWins);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'nextOpponentAts': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.nextOpponentAtsWins);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
       case 'passingAttemptsTotal': {
         this.httpService.allTeams.forEach( team => {
           tmpTotalArr.push(team.passingAttemptsTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'passingAttemptsAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push((team.passingAttemptsTotal/team.games.length));
         })
         tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
         break;
@@ -533,9 +621,23 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
         break;
       }
+      case 'passingYardsAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.passingAttemptsTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
       case 'passingTdsTotal': {
         this.httpService.allTeams.forEach( team => {
           tmpTotalArr.push(team.passingTdsTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'passingTdsAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.passingTdsTotal/team.games.length);
         })
         tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
         break;
@@ -547,6 +649,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
         break;
       }
+      case 'rushingAttemptsAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.rushingAttemptsTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
       case 'rushingYardsTotal': {
         this.httpService.allTeams.forEach( team => {
           tmpTotalArr.push(team.rushingYardsTotal);
@@ -554,9 +663,93 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
         break;
       }
+      case 'rushingYardsAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.rushingYardsTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
       case 'rushingTdsTotal': {
         this.httpService.allTeams.forEach( team => {
           tmpTotalArr.push(team.rushingTdsTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'rushingTdsAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.rushingTdsTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'sacksTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.sacksTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'sacksAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.sacksTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'interceptionsTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.interceptionsTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'interceptionsAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.interceptionsTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'firstDownsTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.firstDownsTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'firstDownsAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.firstDownsTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'thirdDownPct': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.thirdDownPctAvg);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'redzoneScoringPct': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.redzoneScoringPctAvg);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'pointsTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.pointsTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'pointsAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.pointsTotal/team.games.length);
         })
         tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
         break;
@@ -570,4 +763,172 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       return 'green';
     }
   }
+  returnCellColorGiven(inputVal: number, inputType: string) {
+    let tmpTotalArr: number[] = [];
+    let tmpQuartiles;
+    switch(inputType) {
+      case 'passingAttemptsGivenTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.passingAttemptsGivenTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'passingAttemptsGivenAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push((team.passingAttemptsGivenTotal/team.games.length));
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'passingYardsGivenTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.passingYardsGivenTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'passingYardsAvgGiven': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.passingYardsGivenTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'passingTdsGivenTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.passingTdsGivenTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'passingTdsGivenAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.passingTdsGivenTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'rushingAttemptsGivenTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.rushingAttemptsGivenTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'rushingAttemptsGivenAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.rushingAttemptsGivenTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'rushingYardsGivenTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.rushingYardsGivenTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'rushingYardsGivenAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.rushingYardsGivenTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'rushingTdsGivenTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.rushingTdsGivenTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'rushingTdsGivenAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.rushingTdsGivenTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'sacksGivenTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.sacksGivenTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'sacksGivenAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.sacksGivenTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'interceptionsGivenTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.interceptionsGivenTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'interceptionsGivenAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.interceptionsGivenTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'firstDownsGivenTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.firstDownsGivenTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'firstDownsGivenAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.firstDownsGivenTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'thirdDownPctGiven': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.thirdDownConvPctGivenAvg);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'redzoneScoringPctGiven': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.redzoneScoringPctGivenAvg);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'pointsGivenTotal': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.pointsTotal);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+      case 'pointsGivenAvg': {
+        this.httpService.allTeams.forEach( team => {
+          tmpTotalArr.push(team.pointsTotal/team.games.length);
+        })
+        tmpQuartiles = this.calculateQuartiles(tmpTotalArr);
+        break;
+      }
+    }
+    if (inputVal < tmpQuartiles[1]) {
+      return 'green';
+    } else if (inputVal > tmpQuartiles[1] && inputVal <= tmpQuartiles[2]) {
+      return 'orange';
+    } else {
+      return 'crimson';
+    }
+  }
+
 }

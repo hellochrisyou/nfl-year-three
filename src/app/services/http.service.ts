@@ -4,6 +4,7 @@ import * as XLSX from 'xlsx';
 import { INITIALIZE_TEAMS } from '../const/global_var';
 import { Game, Team } from '../model/interface';
 import { ApiService } from './api.service';
+import { DateService } from '../const/date';
 
 const EXCEL_EXTENSION = '.xlsx';
 
@@ -17,7 +18,7 @@ export class HttpService {
   @Output() updateAggregatingData = new EventEmitter<boolean>()
   @Output() updateTotalData = new EventEmitter<boolean>()
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private dateService: DateService) {
     this.allTeams = INITIALIZE_TEAMS(this.allTeams);
   }
 
@@ -49,6 +50,7 @@ export class HttpService {
                 tmpGame.homeOrAway = 'away';
               }
             }
+
             const tmpStatsAddy = payload2.competitions[0].competitors[tmpCompetitorIndex].statistics.$ref;
             const tmpOddsAddy = payload2.competitions[0].odds.$ref;
             this.apiService.httpGet(tmpOddsAddy).subscribe((payload3: any) => {
@@ -72,6 +74,24 @@ export class HttpService {
                 tmpGame.firstDowns = payload4.splits.categories[10].stats[0].value;
                 tmpGame.thirdDownConvPct = payload4.splits.categories[10].stats[30].value;
                 tmpGame.redzoneScoringPct = payload4.splits.categories[10].stats[22].value;
+
+                this.allTeams.forEach(team => {
+                  if (team.teamId === tmpGame.opponentId) {
+                    team.pointsGivenTotal += tmpGame.points;
+                    team.passingAttemptsGivenTotal += tmpGame.passingAttempts;
+                    team.passingYardsGivenTotal += tmpGame.passingYards;
+                    team.passingTdsGivenTotal += tmpGame.passingTds;
+                    team.rushingAttemptsGivenTotal += tmpGame.rushingAttempts;
+                    team.rushingYardsGivenTotal += tmpGame.rushingYards;
+                    team.rushingTdsGivenTotal += tmpGame.rushingTds;
+                    team.sacksGivenTotal += tmpGame.sacks;
+                    team.interceptionsGivenTotal += tmpGame.interceptions;
+                    team.firstDownsGivenTotal += tmpGame.firstDowns;
+                    team.thirdDownConvPctGivenTotal.push(tmpGame.thirdDownConvPct);
+                    team.redzoneScoringPctGivenTotal.push(tmpGame.redzoneScoringPct);
+                  }
+                })
+
                 team.games.push(tmpGame);
                 this.downloadedGamesNum++;
                 this.updateDownloadStatus.emit(this.downloadedGamesNum);
@@ -103,28 +123,10 @@ export class HttpService {
         team.firstDownsTotal += game.firstDowns;
         team.thirdDownPctTotal.push(game.thirdDownConvPct);
         team.redzoneScoringPctTotal.push(game.redzoneScoringPct);
-        team.pointsTotal += game.points;
-        team.pointsGivenTotal += game.pointsGiven;
-        team.passingAttemptsGivenTotal += game.passingAttemptsGiven;
-        team.passingYardsGivenTotal += game.passingYardsGiven;
-        team.passingTdsGivenTotal += game.passingTdsGiven;
-        team.rushingAttemptsGivenTotal += game.rushingAttemptsGiven;
-        team.rushingYardsGivenTotal += game.rushingYardsGiven;
-        team.rushingTdsGivenTotal += game.rushingTdsGiven;
-        team.sacksGivenTotal += game.sacksGiven;
-        team.interceptionsGivenTotal += game.interceptionsGiven;
-        team.firstDownsGivenTotal += game.firstDownsGiven;
-        team.thirdDownConvPctGivenTotal.push(game.thirdDownConvPctGiven);
-        team.redzoneScoringPctGivenTotal.push(game.redzoneScoringPctGiven);
       });
     });
-    this.allTeams.forEach(team => {
-      team.thirdDownPctAvg = this.returnSumAvg(team.thirdDownPctTotal);
-      team.redzoneScoringPctAvg = this.returnSumAvg(team.redzoneScoringPctTotal);
-      team.thirdDownConvPctGivenAvg = this.returnSumAvg(team.thirdDownConvPctGivenTotal);
-      team.redzoneScoringPctGivenAvg = this.returnSumAvg(team.redzoneScoringPctGivenTotal);
-    });
     this.updateTotalData.emit(true);
+    this.updateAggregatingData.emit(true);
   }
 
   returnSumAvg(val: number[]): number {
@@ -135,31 +137,6 @@ export class HttpService {
     tmpTotal /= val.length;
     return tmpTotal;
   }
-
-  public crunchGivenStats() {
-    this.allTeams.forEach(team => {
-      team.games.forEach(game => {
-        let tmpOppTeamIndex = this.allTeams.findIndex(team2 => team2.teamId === game.opponentId);
-        let tmpGameIndex = this.allTeams[tmpOppTeamIndex].games.findIndex(game2 => game2.gameId === game.gameId);
-        if (tmpGameIndex === -1) {
-          console.log('here');
-        }
-        this.allTeams[tmpOppTeamIndex].games[tmpGameIndex].passingAttemptsGiven = game.passingAttempts;
-        this.allTeams[tmpOppTeamIndex].games[tmpGameIndex].passingYardsGiven = game.passingYards;
-        this.allTeams[tmpOppTeamIndex].games[tmpGameIndex].passingTdsGiven = game.passingTds;
-        this.allTeams[tmpOppTeamIndex].games[tmpGameIndex].rushingAttemptsGiven = game.rushingAttempts;
-        this.allTeams[tmpOppTeamIndex].games[tmpGameIndex].rushingYardsGiven = game.rushingYards;
-        this.allTeams[tmpOppTeamIndex].games[tmpGameIndex].rushingTdsGiven = game.rushingTds;
-        this.allTeams[tmpOppTeamIndex].games[tmpGameIndex].sacksGiven = game.sacks;
-        this.allTeams[tmpOppTeamIndex].games[tmpGameIndex].interceptionsGiven = game.interceptions;
-        this.allTeams[tmpOppTeamIndex].games[tmpGameIndex].firstDownsGiven = game.firstDowns;
-        this.allTeams[tmpOppTeamIndex].games[tmpGameIndex].thirdDownConvPctGiven = game.thirdDownConvPct;
-        this.allTeams[tmpOppTeamIndex].games[tmpGameIndex].redzoneScoringPctGiven = game.redzoneScoringPct;
-      });
-    });
-    this.updateAggregatingData.emit(true);
-  }
-
 
   public exportToExcel(element: any, fileName?: string): void {
     // generate workbook and add the worksheet
@@ -204,5 +181,77 @@ export class HttpService {
       redzoneScoringPctGiven: 0,
     };
     return tmpGame;
+  }
+
+  calculateWinLossRecord() {
+    this.allTeams.forEach(team => {
+      team.games.forEach(game => {
+
+        if ((game.points - game.pointsGiven) > 0) {
+          team.wins++;
+        } else {
+          team.losses++;
+        }
+        if (game.isFavorite) {
+          if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+            team.atsWins++;
+          } else {
+            team.atsLosses++;
+          }
+        } else {
+          if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+            team.atsWins++;
+          } else {
+            team.atsLosses++;
+          }
+        }
+      })
+    });
+  }
+
+  setOpponentStats() {
+    this.allTeams.forEach(team => {
+      team.thirdDownPctAvg = this.returnSumAvg(team.thirdDownPctTotal);
+      team.redzoneScoringPctAvg = this.returnSumAvg(team.redzoneScoringPctTotal);
+      team.thirdDownConvPctGivenAvg = this.returnSumAvg(team.thirdDownConvPctGivenTotal);
+      team.redzoneScoringPctGivenAvg = this.returnSumAvg(team.redzoneScoringPctGivenTotal);
+    });
+  }
+
+  getNextOpponentInfo() {
+    const tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2024/types/2/weeks/' + (this.dateService.currentWeek ) + '/events?lang=en&region=us';
+    this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => {
+      payload.items.forEach(element => {
+        const tmpHttpAddy2 = element.$ref;
+        this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
+          console.log("🚀 ~ payload2:", payload2)
+          this.allTeams.forEach(team => {
+            if (team.teamId === payload2.competitions[0].competitors[0].id) {
+              this.allTeams.forEach(team2 => {
+                if (team2.teamId === payload2.competitions[0].competitors[1].id) {
+                  team.nextOpponent = team2.teamName;
+                  team.nextOpponentWins = team2.wins;
+                  team.nextOpponentLosses = team2.losses;
+                  team.nextOpponentAtsWins = team2.atsWins;
+                  team.nextOpponentAtsLosses = team2.atsLosses;
+
+                }
+              })
+            }
+            if (team.teamId === payload2.competitions[0].competitors[1].id) {
+              this.allTeams.forEach(team2 => {
+                if (team2.teamId === payload2.competitions[0].competitors[0].id) {
+                  team.nextOpponent = team2.teamName;
+                  team.nextOpponentWins = team2.wins;
+                  team.nextOpponentLosses = team2.losses;
+                  team.nextOpponentAtsWins = team2.atsWins;
+                  team.nextOpponentAtsLosses = team2.atsLosses;
+                }
+              })
+            }
+          });
+        });
+      });
+    })
   }
 }

@@ -1,4 +1,11 @@
+
+
 export interface Team {
+  nextOpponent: string;
+  nextOpponentWins: number;
+  nextOpponentLosses: number;
+  nextOpponentAtsWins: number;
+  nextOpponentAtsLosses: number;
   teamIndex: number;
   teamId: string;
   teamName: string;
@@ -31,6 +38,12 @@ export interface Team {
   thirdDownConvPctGivenAvg: number;
   redzoneScoringPctGivenTotal: number[];
   redzoneScoringPctGivenAvg: number;
+  wins: number;
+  losses: number;
+  atsWins: number;
+  atsLosses: number;
+  customAtsWins: number;
+  customAtsLosses: number;
 }
 
 export interface Game {
@@ -53,6 +66,7 @@ export interface Game {
   redzoneScoringPct: number;
   //
   spread: number;
+
   //
   pointsGiven: number;
   passingAttemptsGiven: number;
