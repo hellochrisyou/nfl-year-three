@@ -7,3 +7,39 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 mat-cell {
   display: block !important;
 }
+
+.mat-mdc-cell {
+  font-size: 12px;
+}
+
+.header-row2 {
+  font-size: 12px;
+}
+
+.mat-mdc-header-cell {
+  font-size: 12px;
+}
+
+.color-red {
+  color: crimson;
+}
+
+.green {
+  color: green;
+}
+
+.crimson {
+  color: crimson;
+}
+
+.orange {
+  color: orangered;
+}
+
+.blueviolet {
+  color: blueviolet;
+}
+
+.mat-mdc-dialog-surface {
+  overflow-y: hidden !important;
+}

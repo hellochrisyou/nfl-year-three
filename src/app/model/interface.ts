@@ -1,6 +1,30 @@
+export interface FilterStats {
+  passAttempts: WinLoss;
+  passYards: WinLoss;
+  passTds: WinLoss;
+  rushAttempts: WinLoss;
+  rushYards: WinLoss;
+  rushTds: WinLoss;
+  firstDowns: WinLoss;
+  interceptions: WinLoss;
+  sacks: WinLoss;
+  thirdDown: WinLoss;
+  redzone: WinLoss;
+  points: WinLoss;
+}
+
+export interface WinLoss {
+  wins: number;
+  losses: number;
+}
 
 
 export interface Team {
+  filterStats: FilterStats;
+  filterAtsStats: FilterStats;
+  filterAtsFavoritesStats: FilterStats;
+  filterAtsUnderdogStats: FilterStats;
+  nextGameSpread: string;
   nextOpponent: string;
   nextOpponentWins: number;
   nextOpponentLosses: number;
