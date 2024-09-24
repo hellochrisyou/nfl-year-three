@@ -80,7 +80,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.dateService.initializeStaticDates();
     // this.currentWeek = this.dateService.currentWeek;
-    this.currentWeek = 3;
+    this.currentWeek = 4;
     console.log("🚀 ~ this.currentWeek:", this.currentWeek);
     this.httpService.updateDownloadStatus.subscribe(payload => {
       this.currentDownloadCounter = payload;
@@ -785,6 +785,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.filterAtsStats.passAttempts.losses = 0;
       team.filterAtsFavoritesStats.passAttempts.wins = 0;
       team.filterAtsFavoritesStats.passAttempts.losses = 0;
+      team.filterAtsUnderdogStats.passAttempts.wins = 0;
+      team.filterAtsUnderdogStats.passAttempts.losses = 0;
     });
     switch (event.value) {
       case 'quart1': {
@@ -923,6 +925,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.filterAtsStats.passYards.losses = 0;
       team.filterAtsFavoritesStats.passYards.wins = 0;
       team.filterAtsFavoritesStats.passYards.losses = 0;
+      team.filterAtsUnderdogStats.passYards.wins = 0;
+      team.filterAtsUnderdogStats.passYards.losses = 0;
     });
     switch (event.value) {
       case 'quart1': {
@@ -1061,6 +1065,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.filterAtsStats.passTds.losses = 0;
       team.filterAtsFavoritesStats.passTds.wins = 0;
       team.filterAtsFavoritesStats.passTds.losses = 0;
+      team.filterAtsUnderdogStats.passTds.wins = 0;
+      team.filterAtsUnderdogStats.passTds.losses = 0;
     });
     switch (event.value) {
       case 'quart1': {
@@ -1199,6 +1205,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.filterAtsStats.rushAttempts.losses = 0;
       team.filterAtsFavoritesStats.rushAttempts.wins = 0;
       team.filterAtsFavoritesStats.rushAttempts.losses = 0;
+      team.filterAtsUnderdogStats.rushAttempts.wins = 0;
+      team.filterAtsUnderdogStats.rushAttempts.losses = 0;
     });
     switch (event.value) {
       case 'quart1': {
@@ -1337,6 +1345,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.filterAtsStats.rushYards.losses = 0;
       team.filterAtsFavoritesStats.rushYards.wins = 0;
       team.filterAtsFavoritesStats.rushYards.losses = 0;
+      team.filterAtsUnderdogStats.rushYards.wins = 0;
+      team.filterAtsUnderdogStats.rushYards.losses = 0;
     });
     switch (event.value) {
       case 'quart1': {
@@ -1475,6 +1485,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.filterAtsStats.rushTds.losses = 0;
       team.filterAtsFavoritesStats.rushTds.wins = 0;
       team.filterAtsFavoritesStats.rushTds.losses = 0;
+      team.filterAtsUnderdogStats.rushTds.wins = 0;
+      team.filterAtsUnderdogStats.rushTds.losses = 0;
     });
     switch (event.value) {
       case 'quart1': {
@@ -1613,6 +1625,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.filterAtsStats.sacks.losses = 0;
       team.filterAtsFavoritesStats.sacks.wins = 0;
       team.filterAtsFavoritesStats.sacks.losses = 0;
+      team.filterAtsUnderdogStats.sacks.wins = 0;
+      team.filterAtsUnderdogStats.sacks.losses = 0;
     });
     switch (event.value) {
       case 'quart1': {
@@ -1751,6 +1765,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.filterAtsStats.interceptions.losses = 0;
       team.filterAtsFavoritesStats.interceptions.wins = 0;
       team.filterAtsFavoritesStats.interceptions.losses = 0;
+      team.filterAtsUnderdogStats.interceptions.wins = 0;
+      team.filterAtsUnderdogStats.interceptions.losses = 0;
     });
     switch (event.value) {
       case 'quart1': {
@@ -1889,6 +1905,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.filterAtsStats.firstDowns.losses = 0;
       team.filterAtsFavoritesStats.firstDowns.wins = 0;
       team.filterAtsFavoritesStats.firstDowns.losses = 0;
+      team.filterAtsUnderdogStats.firstDowns.wins = 0;
+      team.filterAtsUnderdogStats.firstDowns.losses = 0;
     });
     switch (event.value) {
       case 'quart1': {
@@ -2028,6 +2046,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.filterAtsStats.thirdDown.losses = 0;
       team.filterAtsFavoritesStats.thirdDown.wins = 0;
       team.filterAtsFavoritesStats.thirdDown.losses = 0;
+      team.filterAtsUnderdogStats.thirdDown.wins = 0;
+      team.filterAtsUnderdogStats.thirdDown.losses = 0;
     });
     switch (event.value) {
       case 'quart1': {
@@ -2166,6 +2186,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.filterAtsStats.redzone.losses = 0;
       team.filterAtsFavoritesStats.redzone.wins = 0;
       team.filterAtsFavoritesStats.redzone.losses = 0;
+      team.filterAtsUnderdogStats.redzone.wins = 0;
+      team.filterAtsUnderdogStats.redzone.losses = 0;
     });
     switch (event.value) {
       case 'quart1': {
@@ -2304,6 +2326,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.filterAtsStats.points.losses = 0;
       team.filterAtsFavoritesStats.points.wins = 0;
       team.filterAtsFavoritesStats.points.losses = 0;
+      team.filterAtsUnderdogStats.points.wins = 0;
+      team.filterAtsUnderdogStats.points.losses = 0;
     });
     switch (event.value) {
       case 'quart1': {
