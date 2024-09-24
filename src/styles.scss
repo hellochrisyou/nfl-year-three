@@ -1,7 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 
 mat-cell {
@@ -42,4 +49,8 @@ mat-cell {
 
 .mat-mdc-dialog-surface {
   overflow-y: hidden !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  height: 0px;
 }

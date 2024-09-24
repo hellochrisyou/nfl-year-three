@@ -1,3 +1,12 @@
+hr {
+  border: none;
+  border-top: 1px dotted grey;
+  color: #fff;
+  /* background-color: lightgrey; */
+  /* height: 0px; */
+  width: 100%;
+}
+
 .cell {
   width: 25%;
 }
@@ -250,3 +259,53 @@ form {
     background-position: 200% center;
   }
 }
+
+.filter-border {
+  border: 5px solid green;
+}
+
+// border colors
+.border-red {
+  border: 5px solid crimson;
+}
+.border-orange {
+  border: 5px solid orangered;
+}
+.border-blueViolet {
+  border: 5px solid blueviolet;
+}
+.border-green {
+  border: 5px solid green;
+}
+
+.bg-red {
+  background-color: rgba(240, 5, 5, 0.5);
+}
+.bg-orange {
+  background-color: rgba(255, 68, 0, 0.5);
+}
+.bg-blueViolet {
+  background-color: rgba(138, 43, 226, 0.5);;
+}
+.bg-green {
+  background-color: rgba(0, 255, 0, 0.5);
+}
+
+.bold-font {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.italic-font {
+  font-weight: bold;
+  font-style: italic;
+  text-decoration: underline;
+  color: orangered;
+}
+
+.filter-container {
+  height: 100%;
+  overflow: auto;
+}
+
+

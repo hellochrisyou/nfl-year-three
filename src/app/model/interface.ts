@@ -25,6 +25,9 @@ export interface Team {
   filterAtsFavoritesStats: FilterStats;
   filterAtsUnderdogStats: FilterStats;
   nextGameSpread: string;
+  nextGameDetails: string;
+  teamInitials: string;
+  isNextGameFavorite: boolean;
   nextOpponent: string;
   nextOpponentWins: number;
   nextOpponentLosses: number;

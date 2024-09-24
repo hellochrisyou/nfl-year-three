@@ -23,6 +23,9 @@ export const BYE_WEEKS = [{
 
 export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   let tmpTeam: Team = {
+    teamInitials: 'ATL',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -125,6 +128,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'BUF',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -228,6 +234,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'CHI',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -330,6 +339,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'CIN',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -432,6 +444,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'CLE',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -534,6 +549,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'DAL',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -636,6 +654,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'DEN',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -738,6 +759,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'DET',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -840,6 +864,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'GB',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -942,6 +969,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'TEN',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -1044,6 +1074,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'IND',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -1146,6 +1179,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'KC',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -1248,6 +1284,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'LV',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -1350,6 +1389,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'LAR',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -1452,6 +1494,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'MIA',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -1554,6 +1599,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'MIN',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -1656,6 +1704,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'NE',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -1758,6 +1809,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'NO',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -1860,6 +1914,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'NYG',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -1962,6 +2019,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'NYJ',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -2064,6 +2124,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'PHI',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -2166,6 +2229,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'ARI',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -2268,6 +2334,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'PIT',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -2370,6 +2439,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'LAC',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -2472,6 +2544,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'SF',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -2574,6 +2649,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'SEA',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -2676,6 +2754,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'TB',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -2778,6 +2859,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'WAS',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -2880,6 +2964,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'CAR',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -2982,6 +3069,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'JAX',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -3084,6 +3174,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'BAL',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },
@@ -3186,6 +3279,9 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
+    teamInitials: 'HOU',
+    nextGameDetails: '',
+    isNextGameFavorite: false,
     nextGameSpread: '',
     filterStats: {
       passAttempts: { wins: 0, losses: 0 },

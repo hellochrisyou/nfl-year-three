@@ -1,6 +1,6 @@
 import { CommonModule, NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { AfterViewInit, ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, inject, input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -23,7 +23,9 @@ import { KeyModalComponent } from './modal/key-modal/key-modal.component';
 })
 export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
-
+  currentFilter = '';
+  isActiveTab = 0;
+  isActiveTab2 = 2;
   title = 'nfl-year-three';
   displayedColumns = ['teamName', 'ats', 'nextOpponent', 'nextOpponentAts', 'passingAttempts', 'passingYards', 'passingTds', 'rushingAttempts', 'rushingYards',
     'rushingTds',
@@ -41,6 +43,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   dataSource: MatTableDataSource<Team>;
   firstDownsQuartile: number[] = [];
   interceptionsQuartile: number[] = [];
+  isSetupFinished = false;
   passAttemptsQuartile: number[] = [];
   passTdsQuartile: number[] = [];
   passYardsQuartile: number[] = [];
@@ -50,6 +53,16 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   rushYardsQuartile: number[] = [];
   sacksQuartile: number[] = [];
   scoreQuartile: number[] = [];
+  currentOpponentPassAttempts = '';
+  currentOpponentPassYards = '';
+  currentOpponentPassTds = '';
+  currentOpponentRushAttempts = '';
+  currentOpponentRushYards = '';
+  currentOpponentRushTds = '';
+  currentOpponentFirstDowns = '';
+  currentOpponentThirdDown = '';
+  currentOpponentRedzone = '';
+  currentOpponentPoints = '';
   selectedTeam = '';
   thirdDownQuartile: number[] = [];
   totalAvgToggle = 'Total';
@@ -102,6 +115,177 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
+  returnFilterColorPassAttempts(): string {
+    switch (this.currentOpponentPassAttempts) {
+      case 'quart1': {
+        return 'border-red';
+      }
+      case 'quart2': {
+        return 'border-orange';
+      }
+      case 'quart3': {
+        return 'border-blueViolet';
+      }
+      case 'quart4': {
+        return 'border-green';
+      }
+    }
+    return '';
+  }
+  returnFilterColorPassYards(): string {
+    switch (this.currentOpponentPassYards) {
+      case 'quart1': {
+        return 'border-red';
+      }
+      case 'quart2': {
+        return 'border-orange';
+      }
+      case 'quart3': {
+        return 'border-blueViolet';
+      }
+      case 'quart4': {
+        return 'border-green';
+      }
+    }
+    return '';
+  }
+  returnFilterColorPassTds(): string {
+    switch (this.currentOpponentPassTds) {
+      case 'quart1': {
+        return 'border-red';
+      }
+      case 'quart2': {
+        return 'border-orange';
+      }
+      case 'quart3': {
+        return 'border-blueViolet';
+      }
+      case 'quart4': {
+        return 'border-green';
+      }
+    }
+    return '';
+  }
+  returnFilterColorRushAttempts(): string {
+    switch (this.currentOpponentRushAttempts) {
+      case 'quart1': {
+        return 'border-red';
+      }
+      case 'quart2': {
+        return 'border-orange';
+      }
+      case 'quart3': {
+        return 'border-blueViolet';
+      }
+      case 'quart4': {
+        return 'border-green';
+      }
+    }
+    return '';
+  }
+  returnFilterColorRushYards(): string {
+    switch (this.currentOpponentRushYards) {
+      case 'quart1': {
+        return 'border-red';
+      }
+      case 'quart2': {
+        return 'border-orange';
+      }
+      case 'quart3': {
+        return 'border-blueViolet';
+      }
+      case 'quart4': {
+        return 'border-green';
+      }
+    }
+    return '';
+  }
+  returnFilterColorRushTds(): string {
+    switch (this.currentOpponentRushTds) {
+      case 'quart1': {
+        return 'border-red';
+      }
+      case 'quart2': {
+        return 'border-orange';
+      }
+      case 'quart3': {
+        return 'border-blueViolet';
+      }
+      case 'quart4': {
+        return 'border-green';
+      }
+    }
+    return '';
+  }
+  returnFilterColorFirstDowns(): string {
+    switch (this.currentOpponentFirstDowns) {
+      case 'quart1': {
+        return 'border-red';
+      }
+      case 'quart2': {
+        return 'border-orange';
+      }
+      case 'quart3': {
+        return 'border-blueViolet';
+      }
+      case 'quart4': {
+        return 'border-green';
+      }
+    }
+    return '';
+  }
+  returnFilterColorThirdDown(): string {
+    switch (this.currentOpponentThirdDown) {
+      case 'quart1': {
+        return 'border-red';
+      }
+      case 'quart2': {
+        return 'border-orange';
+      }
+      case 'quart3': {
+        return 'border-blueViolet';
+      }
+      case 'quart4': {
+        return 'border-green';
+      }
+    }
+    return '';
+  }
+  returnFilterColorRedzone(): string {
+    switch (this.currentOpponentRedzone) {
+      case 'quart1': {
+        return 'border-red';
+      }
+      case 'quart2': {
+        return 'border-orange';
+      }
+      case 'quart3': {
+        return 'border-blueViolet';
+      }
+      case 'quart4': {
+        return 'border-green';
+      }
+    }
+    return '';
+  }
+  returnFilterColorPoints(): string {
+    switch (this.currentOpponentPoints) {
+      case 'quart1': {
+        return 'border-red';
+      }
+      case 'quart2': {
+        return 'border-orange';
+      }
+      case 'quart3': {
+        return 'border-blueViolet';
+      }
+      case 'quart4': {
+        return 'border-green';
+      }
+    }
+    return '';
+  }
+
   defaultFormControls(row: Team) {
     this.selectedTeam = row.teamName;
     let tmpVal = '';
@@ -121,6 +305,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           tmpVal = 'quart4'; tmpEvent.value = 'quart4';
         }
         this.basicStatsForm.get('passAttemptsCtrl')?.patchValue(tmpVal);
+        this.currentOpponentPassAttempts = tmpVal;
         this.passAttemptChange(tmpEvent);
 
         if ((team.passingYardsTotal / team.games.length) < this.passYardsQuartile[0]) {
@@ -133,6 +318,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           tmpVal = 'quart4'; tmpEvent.value = 'quart4';
         }
         this.basicStatsForm.get('passYardsCtrl')?.patchValue(tmpVal);
+        this.currentOpponentPassYards = tmpVal;
         this.passYardsChange(tmpEvent);
 
         if ((team.passingTdsTotal / team.games.length) < this.passTdsQuartile[0]) {
@@ -145,6 +331,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           tmpVal = 'quart4'; tmpEvent.value = 'quart4';
         }
         this.basicStatsForm.get('passTdsCtrl')?.patchValue(tmpVal);
+        this.currentOpponentPassTds = tmpVal;
         this.passTdsChange(tmpEvent);
 
         if ((team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[0]) {
@@ -157,6 +344,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           tmpVal = 'quart4'; tmpEvent.value = 'quart4';
         }
         this.basicStatsForm.get('rushAttemptsCtrl')?.patchValue(tmpVal);
+        this.currentOpponentRushAttempts = tmpVal;
         this.rushAttemptsChange(tmpEvent);
 
         if ((team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[0]) {
@@ -169,6 +357,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           tmpVal = 'quart4'; tmpEvent.value = 'quart4';
         }
         this.basicStatsForm.get('rushYardsCtrl')?.patchValue(tmpVal);
+        this.currentOpponentRushYards = tmpVal;
         this.rushYardsChange(tmpEvent);
 
         if ((team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[0]) {
@@ -181,6 +370,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           tmpVal = 'quart4'; tmpEvent.value = 'quart4';
         }
         this.basicStatsForm.get('rushTdCtrl')?.patchValue(tmpVal);
+        this.currentOpponentRushTds = tmpVal;
         this.rushTdsChange(tmpEvent);
 
         if ((team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[0]) {
@@ -193,6 +383,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           tmpVal = 'quart4'; tmpEvent.value = 'quart4';
         }
         this.basicStatsForm.get('firstDownsCtrl')?.patchValue(tmpVal);
+        this.currentOpponentFirstDowns = tmpVal;
         this.firstDownsChange(tmpEvent);
 
         if (team.thirdDownPctAvg < this.thirdDownQuartile[0]) {
@@ -205,6 +396,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           tmpVal = 'quart4'; tmpEvent.value = 'quart4';
         }
         this.basicStatsForm.get('thirdDownPctCtrl')?.patchValue(tmpVal);
+        this.currentOpponentThirdDown = tmpVal;
         this.thirdDownChange(tmpEvent);
 
         if (team.redzoneScoringPctAvg < this.redzoneQuartile[0]) {
@@ -217,6 +409,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           tmpVal = 'quart4'; tmpEvent.value = 'quart4';
         }
         this.basicStatsForm.get('redzoneScoringCtrl')?.patchValue(tmpVal);
+        this.currentOpponentRedzone = tmpVal;
         this.redzoneChange(tmpEvent);
 
         if ((team.pointsTotal / team.games.length) < this.scoreQuartile[0]) {
@@ -229,10 +422,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           tmpVal = 'quart4'; tmpEvent.value = 'quart4';
         }
         this.basicStatsForm.get('pointsCtrl')?.patchValue(tmpVal);
+        this.currentOpponentPoints = tmpVal;
         this.pointsChange(tmpEvent);
       }
     })
+    this.applyFilter(this.currentFilter);
   }
+
 
   openKeyDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
     this.dialog.open(KeyModalComponent, {
@@ -2838,6 +3034,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.runQuartiles();
     this.dataSource = new MatTableDataSource(this.httpService.allTeams);
     this.dataSource.sort = this.sort;
+    this.isSetupFinished = true;
+    this.isActiveTab = 1;
   }
 
   downloadLastYear() {
@@ -2853,6 +3051,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   applyFilter(filterValue: string) {
+    this.currentFilter = filterValue;
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
     this.dataSource.filter = filterValue;
@@ -3281,6 +3480,28 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       return 'orange';
     } else {
       return 'crimson';
+    }
+  }
+
+  processMatCellColor(value1: number, value2: number) {
+    if ((value1 / (value1 + value2)) >= 0.75) {
+      return 'bg-green';
+    } else if ((value1 / (value1 + value2)) >= 0.5) {
+      return 'bg-blueViolet';
+    } else if ((value1 / (value1 + value2)) >= 0.25) {
+      return 'bg-orange';
+    } else if ((value1 / (value1 + value2)) < 0.25) {
+      return 'bg-red';
+    } else {
+      return '';
+    }
+  }
+
+  returnIfFavorite(inputVal: boolean): string {
+    if (inputVal) {
+      return 'Favorite';
+    } else {
+      return 'Underdog';
     }
   }
 }

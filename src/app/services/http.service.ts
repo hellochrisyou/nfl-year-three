@@ -276,7 +276,6 @@ export class HttpService {
         this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
           const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
           this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
-          console.log("🚀 ~ payload3:", payload3)
             this.allTeams.forEach(team => {
               if (team.teamId === payload2.competitions[0].competitors[0].id) {
                 this.allTeams.forEach(team2 => {
@@ -287,7 +286,12 @@ export class HttpService {
                     team.nextOpponentLosses = team2.losses;
                     team.nextOpponentAtsWins = team2.atsWins;
                     team.nextOpponentAtsLosses = team2.atsLosses;
-                    team.nextGameSpread = payload3.items[0].details;
+                    team.nextGameDetails = payload3.items[0].details;
+                    if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim()) {
+                      team.isNextGameFavorite = true;
+                    } else {
+                      team.isNextGameFavorite = false;
+                    }
                   }
                 })
               }
@@ -300,7 +304,12 @@ export class HttpService {
                     team.nextOpponentLosses = team2.losses;
                     team.nextOpponentAtsWins = team2.atsWins;
                     team.nextOpponentAtsLosses = team2.atsLosses;
-                    team.nextGameSpread = payload3.items[0].details;
+                    team.nextGameDetails = payload3.items[0].details;
+                    if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim()) {
+                      team.isNextGameFavorite = true;
+                    } else {
+                      team.isNextGameFavorite = false;
+                    }
                   }
                 })
               }
@@ -309,5 +318,19 @@ export class HttpService {
         });
       });
     })
+  }
+  determineFavoriteTeam(inputVal: string) {
+    let tmpStr = '';
+    let gotStrTeam = false;
+    const tmpStrArray = [...inputVal];
+    tmpStrArray.forEach((charVal, charIndex) => {
+      if (charVal !== '-' && !gotStrTeam) {
+        tmpStr += charVal;
+      }
+      if (charVal === ' ') {
+        gotStrTeam = true;
+      }
+    });
+    return tmpStr;
   }
 }

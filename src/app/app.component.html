@@ -1,5 +1,5 @@
-<mat-tab-group class="main-tab-group">
-  <mat-tab label="Set Up">
+<mat-tab-group class="main-tab-group" [selectedIndex]="isActiveTab">
+  <mat-tab label="Set Up" [disabled]="isSetupFinished">
     <section>
       <div class="margin-left-5rem-top-1rem">
         <b class="color-red">1. Click Button #1 and wait for the number of games to stop increasing.</b>
@@ -16,22 +16,23 @@
         (click)="downloadLastYear2()">1.5 Download 2024</button>
       <div class="animate-wrapper">
         <h3 class="animate-charcter">Number of Games Downloaded: {{currentDownloadCounter}}
-          <span><i>{{currentDownloadCounterPostMsg}}</i></span></h3>
+          <span><i>{{currentDownloadCounterPostMsg}}</i></span>
+        </h3>
       </div>
-      <ng-container *ngIf="currentDownloadCounter < 800 && currentDownloadCounter !== 0">
+      <ng-container *ngIf="currentDownloadCounter < 90 && currentDownloadCounter !== 0">
         <div class="cell" class="margin-left-5rem-top-1rem">
           <div class="wrapper">
             <div class="spinner spinner4"></div>
           </div>
         </div>
       </ng-container>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers()">2.
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers()" [disabled]="isSetupFinished">2.
         Crunch(process) Data</button>
       <div class="margin-left-5rem-top-1rem">Process Opponent Data Status: <i>{{crunchStatus}}</i></div>
     </section>
   </mat-tab>
-  <mat-tab label="Basic Stats">
-    <mat-tab-group class="basic-tab-group">
+  <mat-tab label="Basic Stats" [disabled]="!isSetupFinished">
+    <mat-tab-group class="basic-tab-group" [selectedIndex]="isActiveTab2">
       <mat-tab label="Team Stats">
         <mat-slide-toggle class="margin-left-5rem-top-1rem"
           (change)="toggleAvgTotalStatus($event)">{{totalAvgToggle}}</mat-slide-toggle>
@@ -422,10 +423,10 @@
           <h3 class="animate-charcter">{{selectedTeam}} (Selected)</h3>
         </span>
         <div>
-          <button mat-raised-button (click)="openKeyDialog('2000ms', '1000ms')">View Color Key</button>
+          <button mat-raised-button (click)="openKeyDialog('1000ms', '750ms')">View Color Key</button>
         </div>
         <form [formGroup]="basicStatsForm">
-          <mat-form-field>
+          <mat-form-field [ngClass]="returnFilterColorPassAttempts()">
             <mat-label>Pass Attempts</mat-label>
             <mat-select formControlName="passAttemptsCtrl" name="Pass Attempts"
               (selectionChange)="passAttemptChange($event)">
@@ -436,7 +437,7 @@
               <mat-option value="quart4">75%+</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field [ngClass]="returnFilterColorPassYards()">
             <mat-label>Pass Yards</mat-label>
             <mat-select formControlName="passYardsCtrl" name="Pass Yards" (selectionChange)="passYardsChange($event)">
               <mat-option value="">None</mat-option>
@@ -446,7 +447,7 @@
               <mat-option value="quart4">75%+</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field [ngClass]="returnFilterColorPassTds()">
             <mat-label>Pass TDs</mat-label>
             <mat-select formControlName="passTdsCtrl" name="Pass TDs" (selectionChange)="passTdsChange($event)">
               <mat-option value="">None</mat-option>
@@ -456,7 +457,7 @@
               <mat-option value="quart4">75%+</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field [ngClass]="returnFilterColorRushAttempts()">
             <mat-label>Rush Attempts</mat-label>
             <mat-select formControlName="rushAttemptsCtrl" name="Rush Attempts"
               (selectionChange)="rushAttemptsChange($event)">
@@ -467,7 +468,7 @@
               <mat-option value="quart4">75%+</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field [ngClass]="returnFilterColorRushYards()">
             <mat-label>Rush Yards</mat-label>
             <mat-select formControlName="rushYardsCtrl" name="Rush Yards" (selectionChange)="rushYardsChange($event)">
               <mat-option value="">None</mat-option>
@@ -477,7 +478,7 @@
               <mat-option value="quart4">75%+</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field [ngClass]="returnFilterColorRushTds()">
             <mat-label>Rush TDs</mat-label>
             <mat-select formControlName="rushTdCtrl" name="Rush TDs" (selectionChange)="rushTdsChange($event)">
               <mat-option value="">None</mat-option>
@@ -487,7 +488,7 @@
               <mat-option value="quart4">75%+</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field [ngClass]="returnFilterColorFirstDowns()">
             <mat-label>First Downs</mat-label>
             <mat-select formControlName="firstDownsCtrl" name="First Downs"
               (selectionChange)="firstDownsChange($event)">
@@ -519,7 +520,7 @@
               <mat-option value="quart4">75%+</mat-option>
             </mat-select>
           </mat-form-field> -->
-          <mat-form-field>
+          <mat-form-field [ngClass]="returnFilterColorThirdDown()">
             <mat-label>Third Down%</mat-label>
             <mat-select formControlName="thirdDownPctCtrl" name="Third Down%"
               (selectionChange)="thirdDownChange($event)">
@@ -530,7 +531,7 @@
               <mat-option value="quart4">75%+</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field [ngClass]="returnFilterColorRedzone()">
             <mat-label>RedZone Scoring%</mat-label>
             <mat-select formControlName="redzoneScoringCtrl" name="Redzone Scoring%"
               (selectionChange)="redzoneChange($event)">
@@ -541,7 +542,7 @@
               <mat-option value="quart4">75%+</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field [ngClass]="returnFilterColorPoints()">
             <mat-label>Points</mat-label>
             <mat-select formControlName="pointsCtrl" name="Points" (selectionChange)="pointsChange($event)">
               <mat-option value="">None</mat-option>
@@ -552,13 +553,23 @@
             </mat-select>
           </mat-form-field>
         </form>
+        <section>
+          <small>Search Filter</small>
+          <div>
+            <input (keyup)="applyFilter($any($event.target).value)">
+          </div>
+        </section>
         <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortColumn3($event)" matSortDisableClear>
           <ng-container matColumnDef="teamName">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <span [ngClass]="returnCellColor(row.wins, 'score')">{{row.teamName}}</span>
+              <hr>
               <div [ngClass]="returnCellColor(row.wins, 'score')">Score: {{row.wins}}-{{row.losses}}</div>
+              <hr>
               <div>Spread: {{row.nextGameSpread}}</div>
+              <div [ngClass]="{'bold-font': row.isNextGameFavorite, 'italic-font': !row.isNextGameFavorite}">
+                {{returnIfFavorite(row.isNextGameFavorite)}}</div>
               <div><button mat-raised-button (click)="defaultFormControls(row)">Set</button></div>
             </mat-cell>
           </ng-container>
@@ -582,14 +593,25 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <div>
-                <div>Score: {{row.filterStats.passAttempts.wins}}-{{row.filterStats.passAttempts.losses}}</div>
-                <div>ATS: {{row.filterAtsStats.passAttempts.wins}}-{{row.filterAtsStats.passAttempts.losses}}</div>
-                <div>FavATS:
+                <div
+                  [ngClass]="processMatCellColor(row.filterStats.passAttempts.wins, row.filterStats.passAttempts.losses)">
+                  Score: {{row.filterStats.passAttempts.wins}}-{{row.filterStats.passAttempts.losses}}</div>
+                <hr>
+                <div
+                  [ngClass]="processMatCellColor(row.filterAtsStats.passAttempts.wins, row.filterAtsStats.passAttempts.losses)">
+                  ATS: {{row.filterAtsStats.passAttempts.wins}}-{{row.filterAtsStats.passAttempts.losses}}</div>
+                <hr>
+                <div *ngIf="row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.passAttempts.wins, row.filterAtsFavoritesStats.passAttempts.losses)">
+                  FavATS:
                   {{row.filterAtsFavoritesStats.passAttempts.wins}}-{{row.filterAtsFavoritesStats.passAttempts.losses}}
                 </div>
-                <div>UnderATS:
+                <div *ngIf="!row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.passAttempts.wins, row.filterAtsUnderdogStats.passAttempts.losses)">
+                  UnderATS:
                   {{row.filterAtsUnderdogStats.passAttempts.wins}}-{{row.filterAtsUnderdogStats.passAttempts.losses}}
                 </div>
+                <hr>
                 <div [ngClass]="checkPassYards(row.nextOpponent)">{{row.nextOpponent}}:
                   {{returnOpponentAvgPassAttempts(row.nextOpponent)| number
                   : '1.1-1'}}</div>
@@ -608,16 +630,26 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <div>
-                <div>Score: {{row.filterStats.passYards.wins}}-{{row.filterStats.passYards.losses}}</div>
-                <div>ATS: {{row.filterAtsStats.passYards.wins}}-{{row.filterAtsStats.passYards.losses}}</div>
-                <div>FavATS:
-                  {{row.filterAtsFavoritesStats.passYards.wins}}-{{row.filterAtsFavoritesStats.passYards.losses}}</div>
-                <div>UnderATS:
+                <div [ngClass]="processMatCellColor(row.filterStats.passYards.wins, row.filterStats.passYards.losses)">
+                  Score: {{row.filterStats.passYards.wins}}-{{row.filterStats.passYards.losses}}</div>
+                <hr>
+                <div
+                  [ngClass]="processMatCellColor(row.filterAtsStats.passYards.wins, row.filterAtsStats.passYards.losses)">
+                  ATS: {{row.filterAtsStats.passYards.wins}}-{{row.filterAtsStats.passYards.losses}}</div>
+                <hr>
+                <div *ngIf="row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.passYards.wins, row.filterAtsFavoritesStats.passYards.losses)">
+                  FavATS:
+                  {{row.filterAtsFavoritesStats.passYards.wins}}-{{row.filterAtsFavoritesStats.passYards.losses}}
+                </div>
+                <div *ngIf="!row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.passYards.wins, row.filterAtsUnderdogStats.passYards.losses)">
+                  UnderATS:
                   {{row.filterAtsUnderdogStats.passYards.wins}}-{{row.filterAtsUnderdogStats.passYards.losses}}</div>
+                <hr>
                 <div [ngClass]="checkPassYards(row.nextOpponent)">{{row.nextOpponent}}:
                   {{returnOpponentAvgPassYards(row.nextOpponent)| number
                   : '1.1-1'}}</div>
-
               </div>
             </mat-cell>
           </ng-container>
@@ -633,12 +665,22 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <div>
-                <div>Score: {{row.filterStats.passTds.wins}}-{{row.filterStats.passTds.losses}}</div>
-                <div>ATS: {{row.filterAtsStats.passTds.wins}}-{{row.filterAtsStats.passTds.losses}}</div>
-                <div>FavATS: {{row.filterAtsFavoritesStats.passTds.wins}}-{{row.filterAtsFavoritesStats.passTds.losses}}
+                <div [ngClass]="processMatCellColor(row.filterStats.passTds.wins, row.filterStats.passTds.losses)">
+                  Score: {{row.filterStats.passTds.wins}}-{{row.filterStats.passTds.losses}}</div>
+                <hr>
+                <div
+                  [ngClass]="processMatCellColor(row.filterAtsStats.passTds.wins, row.filterAtsStats.passTds.losses)">
+                  ATS: {{row.filterAtsStats.passTds.wins}}-{{row.filterAtsStats.passTds.losses}}</div>
+                <hr>
+                <div *ngIf="row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.passTds.wins, row.filterAtsFavoritesStats.passTds.losses)">
+                  FavATS: {{row.filterAtsFavoritesStats.passTds.wins}}-{{row.filterAtsFavoritesStats.passTds.losses}}
                 </div>
-                <div>UnderATS: {{row.filterAtsUnderdogStats.passTds.wins}}-{{row.filterAtsUnderdogStats.passTds.losses}}
+                <div *ngIf="!row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.passTds.wins, row.filterStats.passTds.losses)">
+                  UnderATS: {{row.filterAtsUnderdogStats.passTds.wins}}-{{row.filterAtsUnderdogStats.passTds.losses}}
                 </div>
+                <hr>
                 <div [ngClass]="checkPassTds(row.nextOpponent)">{{row.nextOpponent}}:
                   {{returnOpponentAvgPassTds(row.nextOpponent)| number :
                   '1.1-1'}}</div>
@@ -658,14 +700,25 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <div>
-                <div>Score: {{row.filterStats.rushAttempts.wins}}-{{row.filterStats.rushAttempts.losses}}</div>
-                <div>ATS: {{row.filterAtsStats.rushAttempts.wins}}-{{row.filterAtsStats.rushAttempts.losses}}</div>
-                <div>FavATS:
+                <div
+                  [ngClass]="processMatCellColor(row.filterStats.rushAttempts.wins, row.filterStats.rushAttempts.losses)">
+                  Score: {{row.filterStats.rushAttempts.wins}}-{{row.filterStats.rushAttempts.losses}}</div>
+                <hr>
+                <div
+                  [ngClass]="processMatCellColor(row.filterAtsStats.rushAttempts.wins, row.filterAtsStats.rushAttempts.losses)">
+                  ATS: {{row.filterAtsStats.rushAttempts.wins}}-{{row.filterAtsStats.rushAttempts.losses}}</div>
+                <hr>
+                <div *ngIf="row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.rushAttempts.wins, row.filterAtsFavoritesStats.rushAttempts.losses)">
+                  FavATS:
                   {{row.filterAtsFavoritesStats.rushAttempts.wins}}-{{row.filterAtsFavoritesStats.rushAttempts.losses}}
                 </div>
-                <div>UnderATS:
+                <div *ngIf="!row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.rushAttempts.wins, row.filterAtsUnderdogStats.rushAttempts.losses)">
+                  UnderATS:
                   {{row.filterAtsUnderdogStats.rushAttempts.wins}}-{{row.filterAtsUnderdogStats.rushAttempts.losses}}
                 </div>
+                <hr>
                 <div [ngClass]="checkRushAttempts(row.nextOpponent)">{{row.nextOpponent}}:
                   {{returnOpponentAvgRushAttempts(row.nextOpponent)|
                   number : '1.1-1'}}</div>
@@ -684,12 +737,23 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <div>
-                <div>Score: {{row.filterStats.rushYards.wins}}-{{row.filterStats.rushYards.losses}}</div>
-                <div>ATS: {{row.filterAtsStats.rushYards.wins}}-{{row.filterAtsStats.rushYards.losses}}</div>
-                <div>FavATS:
-                  {{row.filterAtsFavoritesStats.rushYards.wins}}-{{row.filterAtsFavoritesStats.rushYards.losses}}</div>
-                <div>UnderATS:
+                <div [ngClass]="processMatCellColor(row.filterStats.rushYards.wins, row.filterStats.rushYards.losses)">
+                  Score: {{row.filterStats.rushYards.wins}}-{{row.filterStats.rushYards.losses}}</div>
+                <hr>
+                <div
+                  [ngClass]="processMatCellColor(row.filterAtsStats.rushYards.wins, row.filterAtsStats.rushYards.losses)">
+                  ATS: {{row.filterAtsStats.rushYards.wins}}-{{row.filterAtsStats.rushYards.losses}}</div>
+                <hr>
+                <div *ngIf="row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.rushYards.wins, row.filterAtsFavoritesStats.rushYards.losses)">
+                  FavATS:
+                  {{row.filterAtsFavoritesStats.rushYards.wins}}-{{row.filterAtsFavoritesStats.rushYards.losses}}
+                </div>
+                <div *ngIf="!row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.rushYards.wins, row.filterAtsUnderdogStats.rushYards.losses)">
+                  UnderATS:
                   {{row.filterAtsUnderdogStats.rushYards.wins}}-{{row.filterAtsUnderdogStats.rushYards.losses}}</div>
+                <hr>
                 <div [ngClass]="checkRushYards(row.nextOpponent)">{{row.nextOpponent}}:
                   {{returnOpponentAvgRushYards(row.nextOpponent)| number
                   : '1.1-1'}}</div>
@@ -708,12 +772,22 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <div>
-                <div>Score: {{row.filterStats.rushTds.wins}}-{{row.filterStats.rushTds.losses}}</div>
-                <div>ATS: {{row.filterAtsStats.rushTds.wins}}-{{row.filterAtsStats.rushTds.losses}}</div>
-                <div>FavATS: {{row.filterAtsFavoritesStats.rushTds.wins}}-{{row.filterAtsFavoritesStats.rushTds.losses}}
+                <div [ngClass]="processMatCellColor(row.filterStats.rushTds.wins, row.filterStats.rushTds.losses)">
+                  Score: {{row.filterStats.rushTds.wins}}-{{row.filterStats.rushTds.losses}}</div>
+                <hr>
+                <div
+                  [ngClass]="processMatCellColor(row.filterAtsStats.rushTds.wins, row.filterAtsStats.rushTds.losses)">
+                  ATS: {{row.filterAtsStats.rushTds.wins}}-{{row.filterAtsStats.rushTds.losses}}</div>
+                <hr>
+                <div *ngIf="row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.rushTds.wins, row.filterAtsFavoritesStats.rushTds.losses)">
+                  FavATS: {{row.filterAtsFavoritesStats.rushTds.wins}}-{{row.filterAtsFavoritesStats.rushTds.losses}}
                 </div>
-                <div>UnderATS: {{row.filterAtsUnderdogStats.rushTds.wins}}-{{row.filterAtsUnderdogStats.rushTds.losses}}
+                <div *ngIf="!row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.rushTds.wins, row.filterAtsUnderdogStats.rushTds.losses)">
+                  UnderATS: {{row.filterAtsUnderdogStats.rushTds.wins}}-{{row.filterAtsUnderdogStats.rushTds.losses}}
                 </div>
+                <hr>
                 <div [ngClass]="checkRushTds(row.nextOpponent)">{{row.nextOpponent}}:
                   {{returnOpponentAvgRushTds(row.nextOpponent)| number :
                   '1.1-1'}}</div>
@@ -732,13 +806,25 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <div>
-                <div>Score: {{row.filterStats.firstDowns.wins}}-{{row.filterStats.firstDowns.losses}}</div>
-                <div>ATS: {{row.filterAtsStats.firstDowns.wins}}-{{row.filterAtsStats.firstDowns.losses}}</div>
-                <div>FavATS:
+                <div
+                  [ngClass]="processMatCellColor(row.filterStats.firstDowns.wins, row.filterStats.firstDowns.losses)">
+                  Score: {{row.filterStats.firstDowns.wins}}-{{row.filterStats.firstDowns.losses}}</div>
+                <hr>
+                <div
+                  [ngClass]="processMatCellColor(row.filterAtsStats.firstDowns.wins, row.filterAtsStats.firstDowns.losses)">
+                  ATS: {{row.filterAtsStats.firstDowns.wins}}-{{row.filterAtsStats.firstDowns.losses}}</div>
+                <hr>
+                <div *ngIf="row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.firstDowns.wins, row.filterAtsFavoritesStats.firstDowns.losses)">
+                  FavATS:
                   {{row.filterAtsFavoritesStats.firstDowns.wins}}-{{row.filterAtsFavoritesStats.firstDowns.losses}}
                 </div>
-                <div>UnderATS:
-                  {{row.filterAtsUnderdogStats.firstDowns.wins}}-{{row.filterAtsUnderdogStats.firstDowns.losses}}</div>
+                <div *ngIf="!row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.firstDowns.wins, row.filterAtsUnderdogStats.firstDowns.losses)">
+                  UnderATS:
+                  {{row.filterAtsUnderdogStats.firstDowns.wins}}-{{row.filterAtsUnderdogStats.firstDowns.losses}}
+                </div>
+                <hr>
                 <div [ngClass]="checkFirstDowns(row.nextOpponent)">{{row.nextOpponent}}:
                   {{returnOpponentAvgFirstDowns(row.nextOpponent)|
                   number : '1.1-1'}}</div>
@@ -799,12 +885,23 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <div>
-                <div>Score: {{row.filterStats.thirdDown.wins}}-{{row.filterStats.thirdDown.losses}}</div>
-                <div>ATS: {{row.filterAtsStats.thirdDown.wins}}-{{row.filterAtsStats.thirdDown.losses}}</div>
-                <div>FavATS:
-                  {{row.filterAtsFavoritesStats.thirdDown.wins}}-{{row.filterAtsFavoritesStats.thirdDown.losses}}</div>
-                <div>UnderATS:
+                <div [ngClass]="processMatCellColor(row.filterStats.thirdDown.wins, row.filterStats.thirdDown.losses)">
+                  Score: {{row.filterStats.thirdDown.wins}}-{{row.filterStats.thirdDown.losses}}</div>
+                <hr>
+                <div
+                  [ngClass]="processMatCellColor(row.filterAtsStats.thirdDown.wins, row.filterAtsStats.thirdDown.losses)">
+                  ATS: {{row.filterAtsStats.thirdDown.wins}}-{{row.filterAtsStats.thirdDown.losses}}</div>
+                <hr>
+                <div *ngIf="row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.thirdDown.wins, row.filterAtsFavoritesStats.thirdDown.losses)">
+                  FavATS:
+                  {{row.filterAtsFavoritesStats.thirdDown.wins}}-{{row.filterAtsFavoritesStats.thirdDown.losses}}
+                </div>
+                <div *ngIf="!row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.thirdDown.wins, row.filterAtsUnderdogStats.thirdDown.losses)">
+                  UnderATS:
                   {{row.filterAtsUnderdogStats.thirdDown.wins}}-{{row.filterAtsUnderdogStats.thirdDown.losses}}</div>
+                <hr>
                 <div [ngClass]="checkThirdDown(row.nextOpponent)">{{row.nextOpponent}}:
                   {{returnOpponentAvgThirdDowns(row.nextOpponent)|
                   number : '1.1-1'}}</div>
@@ -823,12 +920,22 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <div>
-                <div>Score: {{row.filterStats.redzone.wins}}-{{row.filterStats.redzone.losses}}</div>
-                <div>ATS: {{row.filterAtsStats.redzone.wins}}-{{row.filterAtsStats.redzone.losses}}</div>
-                <div>FavATS: {{row.filterAtsFavoritesStats.redzone.wins}}-{{row.filterAtsFavoritesStats.redzone.losses}}
+                <div [ngClass]="processMatCellColor(row.filterStats.redzone.wins, row.filterStats.redzone.losses)">
+                  Score: {{row.filterStats.redzone.wins}}-{{row.filterStats.redzone.losses}}</div>
+                <hr>
+                <div
+                  [ngClass]="processMatCellColor(row.filterAtsStats.redzone.wins, row.filterAtsStats.redzone.losses)">
+                  ATS: {{row.filterAtsStats.redzone.wins}}-{{row.filterAtsStats.redzone.losses}}</div>
+                <hr>
+                <div *ngIf="row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.redzone.wins, row.filterAtsFavoritesStats.redzone.losses)">
+                  FavATS: {{row.filterAtsFavoritesStats.redzone.wins}}-{{row.filterAtsFavoritesStats.redzone.losses}}
                 </div>
-                <div>UnderATS: {{row.filterAtsUnderdogStats.redzone.wins}}-{{row.filterAtsUnderdogStats.redzone.losses}}
+                <div *ngIf="!row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.redzone.wins, row.filterAtsUnderdogStats.redzone.losses)">
+                  UnderATS: {{row.filterAtsUnderdogStats.redzone.wins}}-{{row.filterAtsUnderdogStats.redzone.losses}}
                 </div>
+                <hr>
                 <div [ngClass]="checkRedzone(row.nextOpponent)">{{row.nextOpponent}}:
                   {{returnOpponentAvgRedzone(row.nextOpponent)| number :
                   '1.1-1'}}</div>
@@ -847,12 +954,21 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <div>
-                <div>Score: {{row.filterStats.points.wins}}-{{row.filterStats.points.losses}}</div>
-                <div>ATS: {{row.filterAtsStats.points.wins}}-{{row.filterAtsStats.points.losses}}</div>
-                <div>FavATS: {{row.filterAtsFavoritesStats.points.wins}}-{{row.filterAtsFavoritesStats.points.losses}}
+                <div [ngClass]="processMatCellColor(row.filterStats.points.wins, row.filterStats.points.losses)">
+                  Score: {{row.filterStats.points.wins}}-{{row.filterStats.points.losses}}</div>
+                <hr>
+                <div [ngClass]="processMatCellColor(row.filterAtsStats.points.wins, row.filterAtsStats.points.losses)">
+                  ATS: {{row.filterAtsStats.points.wins}}-{{row.filterAtsStats.points.losses}}</div>
+                <hr>
+                <div *ngIf="row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.points.wins, row.filterAtsFavoritesStats.points.losses)">
+                  FavATS: {{row.filterAtsFavoritesStats.points.wins}}-{{row.filterAtsFavoritesStats.points.losses}}
                 </div>
-                <div>UnderATS: {{row.filterAtsUnderdogStats.points.wins}}-{{row.filterAtsUnderdogStats.points.losses}}
+                <div *ngIf="!row.isNextGameFavorite"
+                  [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.points.wins, row.filterAtsUnderdogStats.points.losses)">
+                  UnderATS: {{row.filterAtsUnderdogStats.points.wins}}-{{row.filterAtsUnderdogStats.points.losses}}
                 </div>
+                <hr>
                 <div [ngClass]="checkPoints(row.nextOpponent)">{{row.nextOpponent}}:
                   {{returnOpponentAvgPoints(row.nextOpponent)| number :
                   '1.1-1'}}</div>
