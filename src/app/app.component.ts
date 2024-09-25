@@ -1,7 +1,7 @@
 import { CommonModule, NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { AfterViewInit, ChangeDetectionStrategy, Component, inject, input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { RouterOutlet } from '@angular/router';
@@ -26,6 +26,17 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   currentFilter = '';
   isActiveTab = 0;
   isActiveTab2 = 2;
+  passAttemptsPanelColor = 'grey';
+  passYardsPanelColor = 'grey';
+  passTdsPanelColor = 'grey';
+  rushAttemptsPanelColor = 'grey';
+  rushYardsPanelColor = 'grey';
+  rushTdsPanelColor = 'grey';
+  firstDownsPanelColor = 'grey';
+  thirdDownPanelColor = 'grey';
+  redzonePanelColor = 'grey';
+  pointsPanelColor = 'grey';
+  toggleInterUnionMsg = 'Standalone Logic';
   title = 'nfl-year-three';
   displayedColumns = ['teamName', 'ats', 'nextOpponent', 'nextOpponentAts', 'passingAttempts', 'passingYards', 'passingTds', 'rushingAttempts', 'rushingYards',
     'rushingTds',
@@ -52,17 +63,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   rushTdsQuartile: number[] = [];
   rushYardsQuartile: number[] = [];
   sacksQuartile: number[] = [];
-  scoreQuartile: number[] = [];
-  currentOpponentPassAttempts = '';
-  currentOpponentPassYards = '';
-  currentOpponentPassTds = '';
-  currentOpponentRushAttempts = '';
-  currentOpponentRushYards = '';
-  currentOpponentRushTds = '';
-  currentOpponentFirstDowns = '';
-  currentOpponentThirdDown = '';
-  currentOpponentRedzone = '';
-  currentOpponentPoints = '';
+  pointsQuartile: number[] = [];
   selectedTeam = '';
   thirdDownQuartile: number[] = [];
   totalAvgToggle = 'Total';
@@ -70,11 +71,25 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly dialog = inject(MatDialog);
 
   constructor(
+    private fb: FormBuilder,
     private dateService: DateService,
     private httpService: HttpService,
-    private fb: FormBuilder
   ) {
-    // this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+    this.basicStatsForm = this.fb.group({
+      passAttemptsCtrl: ['', []],
+      passYardsCtrl: ['', []],
+      passTdsCtrl: ['', []],
+      rushAttemptsCtrl: ['', []],
+      rushYardsCtrl: ['', []],
+      rushTdCtrl: ['', []],
+      firstDownsCtrl: ['', []],
+      // sacksCtrl: ['', []],
+      // interceptionsCtrl: ['', []],
+      thirdDownPctCtrl: ['', []],
+      redzoneScoringCtrl: ['', []],
+      pointsCtrl: ['', []],
+    });
+
   }
 
   ngOnInit(): void {
@@ -91,20 +106,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.httpService.updateTotalData.subscribe(payload => {
     });
-    this.basicStatsForm = this.fb.group({
-      passAttemptsCtrl: ['', []],
-      passYardsCtrl: ['', []],
-      passTdsCtrl: ['', []],
-      rushAttemptsCtrl: ['', []],
-      rushYardsCtrl: ['', []],
-      rushTdCtrl: ['', []],
-      firstDownsCtrl: ['', []],
-      // sacksCtrl: ['', []],
-      // interceptionsCtrl: ['', []],
-      thirdDownPctCtrl: ['', []],
-      redzoneScoringCtrl: ['', []],
-      pointsCtrl: ['', []],
-    });
   }
 
   ngOnDestroy(): void {
@@ -115,318 +116,395 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
+  toggleInterUnion() {
+    if (this.toggleInterUnionMsg === 'Standalone Logic') {
+      this.toggleInterUnionMsg = 'Intersection Logic';
+    } else {
+      this.toggleInterUnionMsg = 'Standalone Logic'
+    }
+  }
+
   returnFilterColorPassAttempts(): string {
-    switch (this.currentOpponentPassAttempts) {
-      case 'quart1': {
-        return 'border-red';
-      }
-      case 'quart2': {
-        return 'border-orange';
-      }
-      case 'quart3': {
-        return 'border-blueViolet';
-      }
-      case 'quart4': {
-        return 'border-green';
-      }
+    if (this.basicStatsForm.get('passAttemptsCtrl')) {
+      switch (this.basicStatsForm.get('passAttemptsCtrl')?.value) {
+        case 'quart1': {
+          return 'border-red';
+        }
+        case 'quart2': {
+          return 'border-orange';
+        }
+        case 'quart3': {
+          return 'border-blueViolet';
+        }
+        case 'quart4': {
+          return 'border-green';
+        }
+      };
     }
     return '';
-  }
+  };
   returnFilterColorPassYards(): string {
-    switch (this.currentOpponentPassYards) {
-      case 'quart1': {
-        return 'border-red';
-      }
-      case 'quart2': {
-        return 'border-orange';
-      }
-      case 'quart3': {
-        return 'border-blueViolet';
-      }
-      case 'quart4': {
-        return 'border-green';
+    if (this.basicStatsForm.get('passYardsCtrl')) {
+      switch (this.basicStatsForm.get('passYardsCtrl')?.value) {
+        case 'quart1': {
+          return 'border-red';
+        }
+        case 'quart2': {
+          return 'border-orange';
+        }
+        case 'quart3': {
+          return 'border-blueViolet';
+        }
+        case 'quart4': {
+          return 'border-green';
+        }
       }
     }
     return '';
-  }
+  };
   returnFilterColorPassTds(): string {
-    switch (this.currentOpponentPassTds) {
-      case 'quart1': {
-        return 'border-red';
-      }
-      case 'quart2': {
-        return 'border-orange';
-      }
-      case 'quart3': {
-        return 'border-blueViolet';
-      }
-      case 'quart4': {
-        return 'border-green';
+    if (this.basicStatsForm.get('passTdsCtrl')) {
+      switch (this.basicStatsForm.get('passTdsCtrl')?.value) {
+        case 'quart1': {
+          return 'border-red';
+        }
+        case 'quart2': {
+          return 'border-orange';
+        }
+        case 'quart3': {
+          return 'border-blueViolet';
+        }
+        case 'quart4': {
+          return 'border-green';
+        }
       }
     }
     return '';
-  }
+  };
   returnFilterColorRushAttempts(): string {
-    switch (this.currentOpponentRushAttempts) {
-      case 'quart1': {
-        return 'border-red';
-      }
-      case 'quart2': {
-        return 'border-orange';
-      }
-      case 'quart3': {
-        return 'border-blueViolet';
-      }
-      case 'quart4': {
-        return 'border-green';
+    if (this.basicStatsForm.get('rushAttemptsCtrl')) {
+      switch (this.basicStatsForm.get('rushAttemptsCtrl')?.value) {
+        case 'quart1': {
+          return 'border-red';
+        }
+        case 'quart2': {
+          return 'border-orange';
+        }
+        case 'quart3': {
+          return 'border-blueViolet';
+        }
+        case 'quart4': {
+          return 'border-green';
+        }
       }
     }
     return '';
-  }
+  };
   returnFilterColorRushYards(): string {
-    switch (this.currentOpponentRushYards) {
-      case 'quart1': {
-        return 'border-red';
-      }
-      case 'quart2': {
-        return 'border-orange';
-      }
-      case 'quart3': {
-        return 'border-blueViolet';
-      }
-      case 'quart4': {
-        return 'border-green';
+    if (this.basicStatsForm.get('rushYardsCtrl')) {
+      switch (this.basicStatsForm.get('rushYardsCtrl')?.value) {
+        case 'quart1': {
+          return 'border-red';
+        }
+        case 'quart2': {
+          return 'border-orange';
+        }
+        case 'quart3': {
+          return 'border-blueViolet';
+        }
+        case 'quart4': {
+          return 'border-green';
+        }
       }
     }
     return '';
-  }
+  };
   returnFilterColorRushTds(): string {
-    switch (this.currentOpponentRushTds) {
-      case 'quart1': {
-        return 'border-red';
-      }
-      case 'quart2': {
-        return 'border-orange';
-      }
-      case 'quart3': {
-        return 'border-blueViolet';
-      }
-      case 'quart4': {
-        return 'border-green';
+    if (this.basicStatsForm.get('rushTdCtrl')) {
+      switch (this.basicStatsForm.get('rushTdCtrl')?.value) {
+        case 'quart1': {
+          return 'border-red';
+        }
+        case 'quart2': {
+          return 'border-orange';
+        }
+        case 'quart3': {
+          return 'border-blueViolet';
+        }
+        case 'quart4': {
+          return 'border-green';
+        }
       }
     }
     return '';
-  }
+  };
   returnFilterColorFirstDowns(): string {
-    switch (this.currentOpponentFirstDowns) {
-      case 'quart1': {
-        return 'border-red';
-      }
-      case 'quart2': {
-        return 'border-orange';
-      }
-      case 'quart3': {
-        return 'border-blueViolet';
-      }
-      case 'quart4': {
-        return 'border-green';
+    if (this.basicStatsForm.get('firstDownsCtrl')) {
+      switch (this.basicStatsForm.get('firstDownsCtrl')?.value) {
+        case 'quart1': {
+          return 'border-red';
+        }
+        case 'quart2': {
+          return 'border-orange';
+        }
+        case 'quart3': {
+          return 'border-blueViolet';
+        }
+        case 'quart4': {
+          return 'border-green';
+        }
       }
     }
     return '';
-  }
+  };
   returnFilterColorThirdDown(): string {
-    switch (this.currentOpponentThirdDown) {
-      case 'quart1': {
-        return 'border-red';
-      }
-      case 'quart2': {
-        return 'border-orange';
-      }
-      case 'quart3': {
-        return 'border-blueViolet';
-      }
-      case 'quart4': {
-        return 'border-green';
+    if (this.basicStatsForm.get('thirdDownPctCtrl')) {
+      switch (this.basicStatsForm.get('thirdDownPctCtrl')?.value) {
+        case 'quart1': {
+          return 'border-red';
+        }
+        case 'quart2': {
+          return 'border-orange';
+        }
+        case 'quart3': {
+          return 'border-blueViolet';
+        }
+        case 'quart4': {
+          return 'border-green';
+        }
       }
     }
     return '';
-  }
+  };
   returnFilterColorRedzone(): string {
-    switch (this.currentOpponentRedzone) {
-      case 'quart1': {
-        return 'border-red';
-      }
-      case 'quart2': {
-        return 'border-orange';
-      }
-      case 'quart3': {
-        return 'border-blueViolet';
-      }
-      case 'quart4': {
-        return 'border-green';
+    if (this.basicStatsForm.get('redzoneScoringCtrl')) {
+      switch (this.basicStatsForm.get('redzoneScoringCtrl')?.value) {
+        case 'quart1': {
+          return 'border-red';
+        }
+        case 'quart2': {
+          return 'border-orange';
+        }
+        case 'quart3': {
+          return 'border-blueViolet';
+        }
+        case 'quart4': {
+          return 'border-green';
+        }
       }
     }
     return '';
-  }
+  };
   returnFilterColorPoints(): string {
-    switch (this.currentOpponentPoints) {
-      case 'quart1': {
-        return 'border-red';
-      }
-      case 'quart2': {
-        return 'border-orange';
-      }
-      case 'quart3': {
-        return 'border-blueViolet';
-      }
-      case 'quart4': {
-        return 'border-green';
+    if (this.basicStatsForm.get('pointsCtrl')) {
+      switch (this.basicStatsForm.get('pointsCtrl')?.value) {
+        case 'quart1': {
+          return 'border-red';
+        }
+        case 'quart2': {
+          return 'border-orange';
+        }
+        case 'quart3': {
+          return 'border-blueViolet';
+        }
+        case 'quart4': {
+          return 'border-green';
+        }
       }
     }
     return '';
   }
 
   defaultFormControls(row: Team) {
-    this.selectedTeam = row.teamName;
-    let tmpVal = '';
-    let tmpEvent = {
-      value: ''
-    }
-    this.httpService.allTeams.forEach(team => {
-      if (team.teamName === row.nextOpponent) {
-        if ((team.passingAttemptsTotal / team.games.length) < this.passAttemptsQuartile[0]) {
-          tmpVal = 'quart1';
-          tmpEvent.value = 'quart1';
-        } else if (((team.passingAttemptsTotal / team.games.length) >= this.passAttemptsQuartile[0] && (team.passingAttemptsTotal / team.games.length) < this.passAttemptsQuartile[1])) {
-          tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-        } else if (((team.passingAttemptsTotal / team.games.length) >= this.passAttemptsQuartile[1] && (team.passingAttemptsTotal / team.games.length) < this.passAttemptsQuartile[2])) {
-          tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-        } else {
-          tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-        }
-        this.basicStatsForm.get('passAttemptsCtrl')?.patchValue(tmpVal);
-        this.currentOpponentPassAttempts = tmpVal;
-        this.passAttemptChange(tmpEvent);
-
-        if ((team.passingYardsTotal / team.games.length) < this.passYardsQuartile[0]) {
-          tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-        } else if (((team.passingYardsTotal / team.games.length) >= this.passYardsQuartile[0] && (team.passingYardsTotal / team.games.length) < this.passYardsQuartile[1])) {
-          tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-        } else if (((team.passingYardsTotal / team.games.length) >= this.passYardsQuartile[1] && (team.passingYardsTotal / team.games.length) < this.passYardsQuartile[2])) {
-          tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-        } else {
-          tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-        }
-        this.basicStatsForm.get('passYardsCtrl')?.patchValue(tmpVal);
-        this.currentOpponentPassYards = tmpVal;
-        this.passYardsChange(tmpEvent);
-
-        if ((team.passingTdsTotal / team.games.length) < this.passTdsQuartile[0]) {
-          tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-        } else if (((team.passingTdsTotal / team.games.length) >= this.passTdsQuartile[0] && (team.passingTdsTotal / team.games.length) < this.passTdsQuartile[1])) {
-          tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-        } else if (((team.passingTdsTotal / team.games.length) >= this.passTdsQuartile[1] && (team.passingTdsTotal / team.games.length) < this.passTdsQuartile[2])) {
-          tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-        } else {
-          tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-        }
-        this.basicStatsForm.get('passTdsCtrl')?.patchValue(tmpVal);
-        this.currentOpponentPassTds = tmpVal;
-        this.passTdsChange(tmpEvent);
-
-        if ((team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[0]) {
-          tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-        } else if (((team.rushingAttemptsTotal / team.games.length) >= this.rushAttemptsQuartile[0] && (team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[1])) {
-          tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-        } else if (((team.rushingAttemptsTotal / team.games.length) >= this.rushAttemptsQuartile[1] && (team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[2])) {
-          tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-        } else {
-          tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-        }
-        this.basicStatsForm.get('rushAttemptsCtrl')?.patchValue(tmpVal);
-        this.currentOpponentRushAttempts = tmpVal;
-        this.rushAttemptsChange(tmpEvent);
-
-        if ((team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[0]) {
-          tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-        } else if (((team.rushingYardsTotal / team.games.length) >= this.rushYardsQuartile[0] && (team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[1])) {
-          tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-        } else if (((team.rushingYardsTotal / team.games.length) >= this.rushYardsQuartile[1] && (team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[2])) {
-          tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-        } else {
-          tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-        }
-        this.basicStatsForm.get('rushYardsCtrl')?.patchValue(tmpVal);
-        this.currentOpponentRushYards = tmpVal;
-        this.rushYardsChange(tmpEvent);
-
-        if ((team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[0]) {
-          tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-        } else if (((team.rushingTdsTotal / team.games.length) >= this.rushTdsQuartile[0] && (team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[1])) {
-          tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-        } else if (((team.rushingTdsTotal / team.games.length) >= this.rushTdsQuartile[1] && (team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[2])) {
-          tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-        } else {
-          tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-        }
-        this.basicStatsForm.get('rushTdCtrl')?.patchValue(tmpVal);
-        this.currentOpponentRushTds = tmpVal;
-        this.rushTdsChange(tmpEvent);
-
-        if ((team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[0]) {
-          tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-        } else if (((team.firstDownsTotal / team.games.length) >= this.firstDownsQuartile[0] && (team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[1])) {
-          tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-        } else if (((team.firstDownsTotal / team.games.length) >= this.firstDownsQuartile[1] && (team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[2])) {
-          tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-        } else {
-          tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-        }
-        this.basicStatsForm.get('firstDownsCtrl')?.patchValue(tmpVal);
-        this.currentOpponentFirstDowns = tmpVal;
-        this.firstDownsChange(tmpEvent);
-
-        if (team.thirdDownPctAvg < this.thirdDownQuartile[0]) {
-          tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-        } else if (team.thirdDownPctAvg >= this.thirdDownQuartile[0] && team.thirdDownPctAvg < this.thirdDownQuartile[1]) {
-          tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-        } else if (team.thirdDownPctAvg >= this.thirdDownQuartile[1] && team.thirdDownPctAvg < this.thirdDownQuartile[2]) {
-          tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-        } else {
-          tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-        }
-        this.basicStatsForm.get('thirdDownPctCtrl')?.patchValue(tmpVal);
-        this.currentOpponentThirdDown = tmpVal;
-        this.thirdDownChange(tmpEvent);
-
-        if (team.redzoneScoringPctAvg < this.redzoneQuartile[0]) {
-          tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-        } else if (team.redzoneScoringPctAvg >= this.redzoneQuartile[0] && team.redzoneScoringPctAvg < this.redzoneQuartile[1]) {
-          tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-        } else if (team.redzoneScoringPctAvg >= this.redzoneQuartile[1] && team.redzoneScoringPctAvg < this.redzoneQuartile[2]) {
-          tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-        } else {
-          tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-        }
-        this.basicStatsForm.get('redzoneScoringCtrl')?.patchValue(tmpVal);
-        this.currentOpponentRedzone = tmpVal;
-        this.redzoneChange(tmpEvent);
-
-        if ((team.pointsTotal / team.games.length) < this.scoreQuartile[0]) {
-          tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-        } else if (((team.pointsTotal / team.games.length) >= this.scoreQuartile[0] && (team.pointsTotal / team.games.length) < this.scoreQuartile[1])) {
-          tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-        } else if (((team.pointsTotal / team.games.length) >= this.scoreQuartile[1] && (team.pointsTotal / team.games.length) < this.scoreQuartile[2])) {
-          tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-        } else {
-          tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-        }
-        this.basicStatsForm.get('pointsCtrl')?.patchValue(tmpVal);
-        this.currentOpponentPoints = tmpVal;
-        this.pointsChange(tmpEvent);
+    if (this.toggleInterUnionMsg !== 'Intersection Logic') {
+      this.applyFilter(row.teamName);
+      this.selectedTeam = row.teamName;
+      let tmpVal = '';
+      let tmpEvent = {
+        value: ''
       }
-    })
-    this.applyFilter(this.currentFilter);
+      this.httpService.allTeams.forEach(team => {
+        if (team.teamName === row.nextOpponent) {
+          if ((team.passingAttemptsTotal / team.games.length) < this.passAttemptsQuartile[0]) {
+            tmpVal = 'quart1';
+            tmpEvent.value = 'quart1';
+            this.passAttemptsPanelColor = 'crimson';
+          } else if (((team.passingAttemptsTotal / team.games.length) >= this.passAttemptsQuartile[0] && (team.passingAttemptsTotal / team.games.length) < this.passAttemptsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.passAttemptsPanelColor = 'orange';
+          } else if (((team.passingAttemptsTotal / team.games.length) >= this.passAttemptsQuartile[1] && (team.passingAttemptsTotal / team.games.length) < this.passAttemptsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.passAttemptsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.passAttemptsPanelColor = 'green';
+          }
+          this.basicStatsForm.get('passAttemptsCtrl')?.patchValue(tmpVal);
+          this.passAttemptChange(tmpEvent);
+
+          if ((team.passingYardsTotal / team.games.length) < this.passYardsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.passYardsPanelColor = 'crimson';
+          } else if (((team.passingYardsTotal / team.games.length) >= this.passYardsQuartile[0] && (team.passingYardsTotal / team.games.length) < this.passYardsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.passYardsPanelColor = 'orange';
+          } else if (((team.passingYardsTotal / team.games.length) >= this.passYardsQuartile[1] && (team.passingYardsTotal / team.games.length) < this.passYardsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.passYardsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.passYardsPanelColor = 'green';
+          }
+          this.basicStatsForm.get('passYardsCtrl')?.patchValue(tmpVal);
+          this.passYardsChange(tmpEvent);
+
+          if ((team.passingTdsTotal / team.games.length) < this.passTdsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.passTdsPanelColor = 'crimson';
+          } else if (((team.passingTdsTotal / team.games.length) >= this.passTdsQuartile[0] && (team.passingTdsTotal / team.games.length) < this.passTdsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.passTdsPanelColor = 'orange';
+          } else if (((team.passingTdsTotal / team.games.length) >= this.passTdsQuartile[1] && (team.passingTdsTotal / team.games.length) < this.passTdsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.passTdsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.passTdsPanelColor = 'green';
+          }
+          this.basicStatsForm.get('passTdsCtrl')?.patchValue(tmpVal);
+          this.passTdsChange(tmpEvent);
+
+          if ((team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.rushAttemptsPanelColor = 'crimson';
+          } else if (((team.rushingAttemptsTotal / team.games.length) >= this.rushAttemptsQuartile[0] && (team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.rushAttemptsPanelColor = 'orange';
+          } else if (((team.rushingAttemptsTotal / team.games.length) >= this.rushAttemptsQuartile[1] && (team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.rushAttemptsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.rushAttemptsPanelColor = 'green';
+          }
+          this.basicStatsForm.get('rushAttemptsCtrl')?.patchValue(tmpVal);
+          this.rushAttemptsChange(tmpEvent);
+
+          if ((team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.rushYardsPanelColor = 'crimson';
+          } else if (((team.rushingYardsTotal / team.games.length) >= this.rushYardsQuartile[0] && (team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.rushYardsPanelColor = 'orange';
+          } else if (((team.rushingYardsTotal / team.games.length) >= this.rushYardsQuartile[1] && (team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.rushYardsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.rushYardsPanelColor = 'green';
+          }
+          this.basicStatsForm.get('rushYardsCtrl')?.patchValue(tmpVal);
+          this.rushYardsChange(tmpEvent);
+
+          if ((team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.rushTdsPanelColor = 'crimson';
+          } else if (((team.rushingTdsTotal / team.games.length) >= this.rushTdsQuartile[0] && (team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.rushTdsPanelColor = 'orange';
+          } else if (((team.rushingTdsTotal / team.games.length) >= this.rushTdsQuartile[1] && (team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.rushTdsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.rushTdsPanelColor = 'green';
+          }
+          this.basicStatsForm.get('rushTdCtrl')?.patchValue(tmpVal);
+          this.rushTdsChange(tmpEvent);
+
+          if ((team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.firstDownsPanelColor = 'crimson';
+          } else if (((team.firstDownsTotal / team.games.length) >= this.firstDownsQuartile[0] && (team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.firstDownsPanelColor = 'orange';
+          } else if (((team.firstDownsTotal / team.games.length) >= this.firstDownsQuartile[1] && (team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.firstDownsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.firstDownsPanelColor = 'green';
+          }
+          this.basicStatsForm.get('firstDownsCtrl')?.patchValue(tmpVal);
+          this.firstDownsChange(tmpEvent);
+
+          if (team.thirdDownPctAvg < this.thirdDownQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.thirdDownPanelColor = 'crimson';
+          } else if (team.thirdDownPctAvg >= this.thirdDownQuartile[0] && team.thirdDownPctAvg < this.thirdDownQuartile[1]) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.thirdDownPanelColor = 'orange';
+          } else if (team.thirdDownPctAvg >= this.thirdDownQuartile[1] && team.thirdDownPctAvg < this.thirdDownQuartile[2]) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.thirdDownPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.thirdDownPanelColor = 'green';
+          }
+          this.basicStatsForm.get('thirdDownPctCtrl')?.patchValue(tmpVal);
+          this.thirdDownChange(tmpEvent);
+
+          if (team.redzoneScoringPctAvg < this.redzoneQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.redzonePanelColor = 'crimson';
+          } else if (team.redzoneScoringPctAvg >= this.redzoneQuartile[0] && team.redzoneScoringPctAvg < this.redzoneQuartile[1]) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.redzonePanelColor = 'orange';
+          } else if (team.redzoneScoringPctAvg >= this.redzoneQuartile[1] && team.redzoneScoringPctAvg < this.redzoneQuartile[2]) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.redzonePanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.redzonePanelColor = 'green';
+          }
+          this.basicStatsForm.get('redzoneScoringCtrl')?.patchValue(tmpVal);
+          this.redzoneChange(tmpEvent);
+
+          if ((team.pointsTotal / team.games.length) < this.pointsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.pointsPanelColor = 'crimson';
+          } else if (((team.pointsTotal / team.games.length) >= this.pointsQuartile[0] && (team.pointsTotal / team.games.length) < this.pointsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.pointsPanelColor = 'orange';
+          } else if (((team.pointsTotal / team.games.length) >= this.pointsQuartile[1] && (team.pointsTotal / team.games.length) < this.pointsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.pointsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.pointsPanelColor = 'green';
+          }
+          this.basicStatsForm.get('pointsCtrl')?.patchValue(tmpVal);
+          this.pointsChange(tmpEvent);
+        }
+      })
+      this.applyFilter(this.currentFilter);
+    } else {
+      // let intersectionPassAttempts = this.basicStatsForm.get('passAttemptsCtrl')?.value;
+      // let intersectionPassYards = this.basicStatsForm.get('passYardsCtrl')?.value;
+      // let intersectionPassTds = this.basicStatsForm.get('passTdsCtrl')?.value;
+      // let intersectionRushAttempts = this.basicStatsForm.get('rushAttemptsCtrl')?.value;
+      // let intersectionRushYards = this.basicStatsForm.get('rushYardsCtrl')?.value;
+      // let intersectionRushTds = this.basicStatsForm.get('rushTdCtrl')?.value;
+      // let intersectionFirstDowns = this.basicStatsForm.get('firstDownsCtrl')?.value;
+      // let intersectionThirdDown = this.basicStatsForm.get('thirdDownPctCtrl')?.value;
+      // let intersectionRedzone = this.basicStatsForm.get('redzoneScoringCtrl')?.value;
+      // let intersectionPoints = this.basicStatsForm.get('pointsCtrl')?.value;
+      // if (intersectionPassAttempts !== '') {
+      //   if (intersectionPassYards !== '') {
+
+      //   }
+      // }
+    }
   }
 
 
@@ -653,11 +731,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     let tmpVal = '';
     this.httpService.allTeams.forEach(team => {
       if (team.teamName === opponentName) {
-        if ((team.pointsTotal / team.games.length) < this.scoreQuartile[0]) {
+        if ((team.pointsTotal / team.games.length) < this.pointsQuartile[0]) {
           tmpVal = 'crimson';
-        } else if (((team.pointsTotal / team.games.length) >= this.scoreQuartile[0] && (team.pointsTotal / team.games.length) < this.scoreQuartile[1])) {
+        } else if (((team.pointsTotal / team.games.length) >= this.pointsQuartile[0] && (team.pointsTotal / team.games.length) < this.pointsQuartile[1])) {
           tmpVal = 'orange';
-        } else if (((team.pointsTotal / team.games.length) >= this.scoreQuartile[1] && (team.pointsTotal / team.games.length) < this.scoreQuartile[2])) {
+        } else if (((team.pointsTotal / team.games.length) >= this.pointsQuartile[1] && (team.pointsTotal / team.games.length) < this.pointsQuartile[2])) {
           tmpVal = 'blueviolet';
         } else {
           tmpVal = 'green';
@@ -778,844 +856,881 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   passAttemptChange(event: any) {
-    this.httpService.allTeams.forEach(team => {
-      team.filterStats.passAttempts.wins = 0;
-      team.filterStats.passAttempts.losses = 0;
-      team.filterAtsStats.passAttempts.wins = 0;
-      team.filterAtsStats.passAttempts.losses = 0;
-      team.filterAtsFavoritesStats.passAttempts.wins = 0;
-      team.filterAtsFavoritesStats.passAttempts.losses = 0;
-      team.filterAtsUnderdogStats.passAttempts.wins = 0;
-      team.filterAtsUnderdogStats.passAttempts.losses = 0;
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.passingAttemptsGiven < this.passAttemptsQuartile[0]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.passAttempts.wins++;
-              } else {
-                team.filterStats.passAttempts.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passAttempts.wins++;
-                  team.filterAtsFavoritesStats.passAttempts.wins++;
+    if (this.toggleInterUnionMsg !== 'Intersection Logic') {
+      this.httpService.allTeams.forEach(team => {
+        team.filterStats.passAttempts.wins = 0;
+        team.filterStats.passAttempts.losses = 0;
+        team.filterAtsStats.passAttempts.wins = 0;
+        team.filterAtsStats.passAttempts.losses = 0;
+        team.filterAtsFavoritesStats.passAttempts.wins = 0;
+        team.filterAtsFavoritesStats.passAttempts.losses = 0;
+        team.filterAtsUnderdogStats.passAttempts.wins = 0;
+        team.filterAtsUnderdogStats.passAttempts.losses = 0;
+      });
+      switch (event.value) {
+        case 'quart1': {
+          this.passAttemptsPanelColor = 'crimson';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.passingAttemptsGiven < this.passAttemptsQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passAttempts.wins++;
                 } else {
-                  team.filterAtsStats.passAttempts.losses++;
-                  team.filterAtsFavoritesStats.passAttempts.losses++;
+                  team.filterStats.passAttempts.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passAttempts.wins++;
-                  team.filterAtsUnderdogStats.passAttempts.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsFavoritesStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsFavoritesStats.passAttempts.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.passAttempts.losses++;
-                  team.filterAtsUnderdogStats.passAttempts.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsUnderdogStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsUnderdogStats.passAttempts.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart2': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if ((game.passingAttemptsGiven >= this.passAttemptsQuartile[0]) && (game.passingAttemptsGiven <= this.passAttemptsQuartile[1])) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.passAttempts.wins++;
-              } else {
-                team.filterStats.passAttempts.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passAttempts.wins++;
-                  team.filterAtsFavoritesStats.passAttempts.wins++;
+          break;
+        }
+        case 'quart2': {
+          this.passAttemptsPanelColor = 'orange';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if ((game.passingAttemptsGiven >= this.passAttemptsQuartile[0]) && (game.passingAttemptsGiven <= this.passAttemptsQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passAttempts.wins++;
                 } else {
-                  team.filterAtsStats.passAttempts.losses++;
-                  team.filterAtsFavoritesStats.passAttempts.losses++;
+                  team.filterStats.passAttempts.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passAttempts.wins++;
-                  team.filterAtsUnderdogStats.passAttempts.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsFavoritesStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsFavoritesStats.passAttempts.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.passAttempts.losses++;
-                  team.filterAtsUnderdogStats.passAttempts.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsUnderdogStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsUnderdogStats.passAttempts.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart3': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.passingAttemptsGiven > this.passAttemptsQuartile[1] && game.passingAttemptsGiven <= this.passAttemptsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.passAttempts.wins++;
-              } else {
-                team.filterStats.passAttempts.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passAttempts.wins++;
-                  team.filterAtsFavoritesStats.passAttempts.wins++;
+          break;
+        }
+        case 'quart3': {
+          this.passAttemptsPanelColor = 'blueviolet';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.passingAttemptsGiven > this.passAttemptsQuartile[1] && game.passingAttemptsGiven <= this.passAttemptsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passAttempts.wins++;
                 } else {
-                  team.filterAtsStats.passAttempts.losses++;
-                  team.filterAtsFavoritesStats.passAttempts.losses++;
+                  team.filterStats.passAttempts.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passAttempts.wins++;
-                  team.filterAtsUnderdogStats.passAttempts.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsFavoritesStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsFavoritesStats.passAttempts.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.passAttempts.losses++;
-                  team.filterAtsUnderdogStats.passAttempts.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsUnderdogStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsUnderdogStats.passAttempts.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart4': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.passingAttemptsGiven > this.passAttemptsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.passAttempts.wins++;
-              } else {
-                team.filterStats.passAttempts.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passAttempts.wins++;
-                  team.filterAtsFavoritesStats.passAttempts.wins++;
+          break;
+        }
+        case 'quart4': {
+          this.passAttemptsPanelColor = 'green';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.passingAttemptsGiven > this.passAttemptsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passAttempts.wins++;
                 } else {
-                  team.filterAtsStats.passAttempts.losses++;
-                  team.filterAtsFavoritesStats.passAttempts.losses++;
+                  team.filterStats.passAttempts.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passAttempts.wins++;
-                  team.filterAtsUnderdogStats.passAttempts.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsFavoritesStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsFavoritesStats.passAttempts.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.passAttempts.losses++;
-                  team.filterAtsUnderdogStats.passAttempts.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsUnderdogStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsUnderdogStats.passAttempts.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
+          break;
+        }
       }
+      this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+      this.dataSource.sort = this.sort;
     }
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
   }
   passYardsChange(event: any) {
-    this.httpService.allTeams.forEach(team => {
-      team.filterStats.passYards.wins = 0;
-      team.filterStats.passYards.losses = 0;
-      team.filterAtsStats.passYards.wins = 0;
-      team.filterAtsStats.passYards.losses = 0;
-      team.filterAtsFavoritesStats.passYards.wins = 0;
-      team.filterAtsFavoritesStats.passYards.losses = 0;
-      team.filterAtsUnderdogStats.passYards.wins = 0;
-      team.filterAtsUnderdogStats.passYards.losses = 0;
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.passingYardsGiven < this.passYardsQuartile[0]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.passYards.wins++;
-              } else {
-                team.filterStats.passYards.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passYards.wins++;
-                  team.filterAtsFavoritesStats.passYards.wins++;
+    if (this.toggleInterUnionMsg !== 'Intersection Logic') {
+      this.httpService.allTeams.forEach(team => {
+        team.filterStats.passYards.wins = 0;
+        team.filterStats.passYards.losses = 0;
+        team.filterAtsStats.passYards.wins = 0;
+        team.filterAtsStats.passYards.losses = 0;
+        team.filterAtsFavoritesStats.passYards.wins = 0;
+        team.filterAtsFavoritesStats.passYards.losses = 0;
+        team.filterAtsUnderdogStats.passYards.wins = 0;
+        team.filterAtsUnderdogStats.passYards.losses = 0;
+      });
+      switch (event.value) {
+        case 'quart1': {
+          this.passYardsPanelColor = 'crimson';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.passingYardsGiven < this.passYardsQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passYards.wins++;
                 } else {
-                  team.filterAtsStats.passYards.losses++;
-                  team.filterAtsFavoritesStats.passYards.losses++;
+                  team.filterStats.passYards.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passYards.wins++;
-                  team.filterAtsUnderdogStats.passYards.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsFavoritesStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsFavoritesStats.passYards.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.passYards.losses++;
-                  team.filterAtsUnderdogStats.passYards.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsUnderdogStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsUnderdogStats.passYards.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart2': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if ((game.passingYardsGiven >= this.passYardsQuartile[0]) && (game.passingYardsGiven <= this.passYardsQuartile[1])) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.passYards.wins++;
-              } else {
-                team.filterStats.passYards.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passYards.wins++;
-                  team.filterAtsFavoritesStats.passYards.wins++;
+          break;
+        }
+        case 'quart2': {
+          this.passYardsPanelColor = 'orange';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if ((game.passingYardsGiven >= this.passYardsQuartile[0]) && (game.passingYardsGiven <= this.passYardsQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passYards.wins++;
                 } else {
-                  team.filterAtsStats.passYards.losses++;
-                  team.filterAtsFavoritesStats.passYards.losses++;
+                  team.filterStats.passYards.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passYards.wins++;
-                  team.filterAtsUnderdogStats.passYards.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsFavoritesStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsFavoritesStats.passYards.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.passYards.losses++;
-                  team.filterAtsUnderdogStats.passYards.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsUnderdogStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsUnderdogStats.passYards.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart3': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.passingYardsGiven > this.passYardsQuartile[1] && game.passingYardsGiven <= this.passYardsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.passYards.wins++;
-              } else {
-                team.filterStats.passYards.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passYards.wins++;
-                  team.filterAtsFavoritesStats.passYards.wins++;
+          break;
+        }
+        case 'quart3': {
+          this.passYardsPanelColor = 'blueviolet';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.passingYardsGiven > this.passYardsQuartile[1] && game.passingYardsGiven <= this.passYardsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passYards.wins++;
                 } else {
-                  team.filterAtsStats.passYards.losses++;
-                  team.filterAtsFavoritesStats.passYards.losses++;
+                  team.filterStats.passYards.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passYards.wins++;
-                  team.filterAtsUnderdogStats.passYards.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsFavoritesStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsFavoritesStats.passYards.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.passYards.losses++;
-                  team.filterAtsUnderdogStats.passYards.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsUnderdogStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsUnderdogStats.passYards.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart4': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.passingYardsGiven > this.passYardsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.passYards.wins++;
-              } else {
-                team.filterStats.passYards.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passYards.wins++;
-                  team.filterAtsFavoritesStats.passYards.wins++;
+          break;
+        }
+        case 'quart4': {
+          this.passYardsPanelColor = 'green';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.passingYardsGiven > this.passYardsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passYards.wins++;
                 } else {
-                  team.filterAtsStats.passYards.losses++;
-                  team.filterAtsFavoritesStats.passYards.losses++;
+                  team.filterStats.passYards.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passYards.wins++;
-                  team.filterAtsUnderdogStats.passYards.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsFavoritesStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsFavoritesStats.passYards.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.passYards.losses++;
-                  team.filterAtsUnderdogStats.passYards.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsUnderdogStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsUnderdogStats.passYards.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
+          break;
+        }
       }
+      this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+      this.dataSource.sort = this.sort;
     }
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
   }
   passTdsChange(event: any) {
-    this.httpService.allTeams.forEach(team => {
-      team.filterStats.passTds.wins = 0;
-      team.filterStats.passTds.losses = 0;
-      team.filterAtsStats.passTds.wins = 0;
-      team.filterAtsStats.passTds.losses = 0;
-      team.filterAtsFavoritesStats.passTds.wins = 0;
-      team.filterAtsFavoritesStats.passTds.losses = 0;
-      team.filterAtsUnderdogStats.passTds.wins = 0;
-      team.filterAtsUnderdogStats.passTds.losses = 0;
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.passingTdsGiven < this.passTdsQuartile[0]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.passTds.wins++;
-              } else {
-                team.filterStats.passTds.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passTds.wins++;
-                  team.filterAtsFavoritesStats.passTds.wins++;
+    if (this.toggleInterUnionMsg !== 'Intersection Logic') {
+      this.httpService.allTeams.forEach(team => {
+        team.filterStats.passTds.wins = 0;
+        team.filterStats.passTds.losses = 0;
+        team.filterAtsStats.passTds.wins = 0;
+        team.filterAtsStats.passTds.losses = 0;
+        team.filterAtsFavoritesStats.passTds.wins = 0;
+        team.filterAtsFavoritesStats.passTds.losses = 0;
+        team.filterAtsUnderdogStats.passTds.wins = 0;
+        team.filterAtsUnderdogStats.passTds.losses = 0;
+      });
+      switch (event.value) {
+        case 'quart1': {
+          this.passTdsPanelColor = 'crimson';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.passingTdsGiven < this.passTdsQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passTds.wins++;
                 } else {
-                  team.filterAtsStats.passTds.losses++;
-                  team.filterAtsFavoritesStats.passTds.losses++;
+                  team.filterStats.passTds.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passTds.wins++;
-                  team.filterAtsUnderdogStats.passTds.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsFavoritesStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsFavoritesStats.passTds.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.passTds.losses++;
-                  team.filterAtsUnderdogStats.passTds.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsUnderdogStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsUnderdogStats.passTds.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart2': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if ((game.passingTdsGiven >= this.passTdsQuartile[0]) && (game.passingTdsGiven <= this.passTdsQuartile[1])) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.passTds.wins++;
-              } else {
-                team.filterStats.passTds.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passTds.wins++;
-                  team.filterAtsFavoritesStats.passTds.wins++;
+          break;
+        }
+        case 'quart2': {
+          this.passTdsPanelColor = 'orange';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if ((game.passingTdsGiven >= this.passTdsQuartile[0]) && (game.passingTdsGiven <= this.passTdsQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passTds.wins++;
                 } else {
-                  team.filterAtsStats.passTds.losses++;
-                  team.filterAtsFavoritesStats.passTds.losses++;
+                  team.filterStats.passTds.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passTds.wins++;
-                  team.filterAtsUnderdogStats.passTds.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsFavoritesStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsFavoritesStats.passTds.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.passTds.losses++;
-                  team.filterAtsUnderdogStats.passTds.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsUnderdogStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsUnderdogStats.passTds.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart3': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.passingTdsGiven > this.passTdsQuartile[1] && game.passingTdsGiven <= this.passTdsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.passTds.wins++;
-              } else {
-                team.filterStats.passTds.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passTds.wins++;
-                  team.filterAtsFavoritesStats.passTds.wins++;
+          break;
+        }
+        case 'quart3': {
+          this.passTdsPanelColor = 'blueviolet';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.passingTdsGiven > this.passTdsQuartile[1] && game.passingTdsGiven <= this.passTdsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passTds.wins++;
                 } else {
-                  team.filterAtsStats.passTds.losses++;
-                  team.filterAtsFavoritesStats.passTds.losses++;
+                  team.filterStats.passTds.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passTds.wins++;
-                  team.filterAtsUnderdogStats.passTds.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsFavoritesStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsFavoritesStats.passTds.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.passTds.losses++;
-                  team.filterAtsUnderdogStats.passTds.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsUnderdogStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsUnderdogStats.passTds.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart4': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.passingTdsGiven > this.passTdsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.passTds.wins++;
-              } else {
-                team.filterStats.passTds.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passTds.wins++;
-                  team.filterAtsFavoritesStats.passTds.wins++;
+          break;
+        }
+        case 'quart4': {
+          this.passTdsPanelColor = 'green';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.passingTdsGiven > this.passTdsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passTds.wins++;
                 } else {
-                  team.filterAtsStats.passTds.losses++;
-                  team.filterAtsFavoritesStats.passTds.losses++;
+                  team.filterStats.passTds.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.passTds.wins++;
-                  team.filterAtsUnderdogStats.passTds.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsFavoritesStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsFavoritesStats.passTds.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.passTds.losses++;
-                  team.filterAtsUnderdogStats.passTds.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsUnderdogStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsUnderdogStats.passTds.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
+          break;
+        }
       }
+      this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+      this.dataSource.sort = this.sort;
     }
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
   }
   rushAttemptsChange(event: any) {
-    this.httpService.allTeams.forEach(team => {
-      team.filterStats.rushAttempts.wins = 0;
-      team.filterStats.rushAttempts.losses = 0;
-      team.filterAtsStats.rushAttempts.wins = 0;
-      team.filterAtsStats.rushAttempts.losses = 0;
-      team.filterAtsFavoritesStats.rushAttempts.wins = 0;
-      team.filterAtsFavoritesStats.rushAttempts.losses = 0;
-      team.filterAtsUnderdogStats.rushAttempts.wins = 0;
-      team.filterAtsUnderdogStats.rushAttempts.losses = 0;
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.rushingAttemptsGiven < this.rushAttemptsQuartile[0]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.rushAttempts.wins++;
-              } else {
-                team.filterStats.rushAttempts.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushAttempts.wins++;
-                  team.filterAtsFavoritesStats.rushAttempts.wins++;
+    if (this.toggleInterUnionMsg !== 'Intersection Logic') {
+      this.httpService.allTeams.forEach(team => {
+        team.filterStats.rushAttempts.wins = 0;
+        team.filterStats.rushAttempts.losses = 0;
+        team.filterAtsStats.rushAttempts.wins = 0;
+        team.filterAtsStats.rushAttempts.losses = 0;
+        team.filterAtsFavoritesStats.rushAttempts.wins = 0;
+        team.filterAtsFavoritesStats.rushAttempts.losses = 0;
+        team.filterAtsUnderdogStats.rushAttempts.wins = 0;
+        team.filterAtsUnderdogStats.rushAttempts.losses = 0;
+      });
+      switch (event.value) {
+        case 'quart1': {
+          this.rushAttemptsPanelColor = 'crimson';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.rushingAttemptsGiven < this.rushAttemptsQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushAttempts.wins++;
                 } else {
-                  team.filterAtsStats.rushAttempts.losses++;
-                  team.filterAtsFavoritesStats.rushAttempts.losses++;
+                  team.filterStats.rushAttempts.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushAttempts.wins++;
-                  team.filterAtsUnderdogStats.rushAttempts.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsFavoritesStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsFavoritesStats.rushAttempts.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.rushAttempts.losses++;
-                  team.filterAtsUnderdogStats.rushAttempts.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsUnderdogStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsUnderdogStats.rushAttempts.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart2': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if ((game.rushingAttemptsGiven >= this.rushAttemptsQuartile[0]) && (game.rushingAttemptsGiven <= this.rushAttemptsQuartile[1])) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.rushAttempts.wins++;
-              } else {
-                team.filterStats.rushAttempts.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushAttempts.wins++;
-                  team.filterAtsFavoritesStats.rushAttempts.wins++;
+          break;
+        }
+        case 'quart2': {
+          this.rushAttemptsPanelColor = 'orange';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if ((game.rushingAttemptsGiven >= this.rushAttemptsQuartile[0]) && (game.rushingAttemptsGiven <= this.rushAttemptsQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushAttempts.wins++;
                 } else {
-                  team.filterAtsStats.rushAttempts.losses++;
-                  team.filterAtsFavoritesStats.rushAttempts.losses++;
+                  team.filterStats.rushAttempts.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushAttempts.wins++;
-                  team.filterAtsUnderdogStats.rushAttempts.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsFavoritesStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsFavoritesStats.rushAttempts.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.rushAttempts.losses++;
-                  team.filterAtsUnderdogStats.rushAttempts.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsUnderdogStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsUnderdogStats.rushAttempts.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart3': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.rushingAttemptsGiven > this.rushAttemptsQuartile[1] && game.rushingAttemptsGiven <= this.rushAttemptsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.rushAttempts.wins++;
-              } else {
-                team.filterStats.rushAttempts.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushAttempts.wins++;
-                  team.filterAtsFavoritesStats.rushAttempts.wins++;
+          break;
+        }
+        case 'quart3': {
+          this.rushAttemptsPanelColor = 'blueviolet';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.rushingAttemptsGiven > this.rushAttemptsQuartile[1] && game.rushingAttemptsGiven <= this.rushAttemptsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushAttempts.wins++;
                 } else {
-                  team.filterAtsStats.rushAttempts.losses++;
-                  team.filterAtsFavoritesStats.rushAttempts.losses++;
+                  team.filterStats.rushAttempts.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushAttempts.wins++;
-                  team.filterAtsUnderdogStats.rushAttempts.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsFavoritesStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsFavoritesStats.rushAttempts.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.rushAttempts.losses++;
-                  team.filterAtsUnderdogStats.rushAttempts.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsUnderdogStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsUnderdogStats.rushAttempts.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart4': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.rushingAttemptsGiven > this.rushAttemptsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.rushAttempts.wins++;
-              } else {
-                team.filterStats.rushAttempts.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushAttempts.wins++;
-                  team.filterAtsFavoritesStats.rushAttempts.wins++;
+          break;
+        }
+        case 'quart4': {
+          this.rushAttemptsPanelColor = 'green';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.rushingAttemptsGiven > this.rushAttemptsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushAttempts.wins++;
                 } else {
-                  team.filterAtsStats.rushAttempts.losses++;
-                  team.filterAtsFavoritesStats.rushAttempts.losses++;
+                  team.filterStats.rushAttempts.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushAttempts.wins++;
-                  team.filterAtsUnderdogStats.rushAttempts.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsFavoritesStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsFavoritesStats.rushAttempts.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.rushAttempts.losses++;
-                  team.filterAtsUnderdogStats.rushAttempts.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsUnderdogStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsUnderdogStats.rushAttempts.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
+          break;
+        }
       }
+      this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+      this.dataSource.sort = this.sort;
     }
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
   }
   rushYardsChange(event: any) {
-    this.httpService.allTeams.forEach(team => {
-      team.filterStats.rushYards.wins = 0;
-      team.filterStats.rushYards.losses = 0;
-      team.filterAtsStats.rushYards.wins = 0;
-      team.filterAtsStats.rushYards.losses = 0;
-      team.filterAtsFavoritesStats.rushYards.wins = 0;
-      team.filterAtsFavoritesStats.rushYards.losses = 0;
-      team.filterAtsUnderdogStats.rushYards.wins = 0;
-      team.filterAtsUnderdogStats.rushYards.losses = 0;
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.rushingYardsGiven < this.rushYardsQuartile[0]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.rushYards.wins++;
-              } else {
-                team.filterStats.rushYards.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushYards.wins++;
-                  team.filterAtsFavoritesStats.rushYards.wins++;
+    if (this.toggleInterUnionMsg !== 'Intersection Logic') {
+      this.httpService.allTeams.forEach(team => {
+        team.filterStats.rushYards.wins = 0;
+        team.filterStats.rushYards.losses = 0;
+        team.filterAtsStats.rushYards.wins = 0;
+        team.filterAtsStats.rushYards.losses = 0;
+        team.filterAtsFavoritesStats.rushYards.wins = 0;
+        team.filterAtsFavoritesStats.rushYards.losses = 0;
+        team.filterAtsUnderdogStats.rushYards.wins = 0;
+        team.filterAtsUnderdogStats.rushYards.losses = 0;
+      });
+      switch (event.value) {
+        case 'quart1': {
+          this.rushYardsPanelColor = 'crimson';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.rushingYardsGiven < this.rushYardsQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushYards.wins++;
                 } else {
-                  team.filterAtsStats.rushYards.losses++;
-                  team.filterAtsFavoritesStats.rushYards.losses++;
+                  team.filterStats.rushYards.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushYards.wins++;
-                  team.filterAtsUnderdogStats.rushYards.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsFavoritesStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsFavoritesStats.rushYards.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.rushYards.losses++;
-                  team.filterAtsUnderdogStats.rushYards.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsUnderdogStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsUnderdogStats.rushYards.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart2': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if ((game.rushingYardsGiven >= this.rushYardsQuartile[0]) && (game.rushingYardsGiven <= this.rushYardsQuartile[1])) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.rushYards.wins++;
-              } else {
-                team.filterStats.rushYards.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushYards.wins++;
-                  team.filterAtsFavoritesStats.rushYards.wins++;
+          break;
+        }
+        case 'quart2': {
+          this.rushYardsPanelColor = 'orange';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if ((game.rushingYardsGiven >= this.rushYardsQuartile[0]) && (game.rushingYardsGiven <= this.rushYardsQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushYards.wins++;
                 } else {
-                  team.filterAtsStats.rushYards.losses++;
-                  team.filterAtsFavoritesStats.rushYards.losses++;
+                  team.filterStats.rushYards.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushYards.wins++;
-                  team.filterAtsUnderdogStats.rushYards.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsFavoritesStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsFavoritesStats.rushYards.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.rushYards.losses++;
-                  team.filterAtsUnderdogStats.rushYards.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsUnderdogStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsUnderdogStats.rushYards.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart3': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.rushingYardsGiven > this.rushYardsQuartile[1] && game.rushingYardsGiven <= this.rushYardsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.rushYards.wins++;
-              } else {
-                team.filterStats.rushYards.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushYards.wins++;
-                  team.filterAtsFavoritesStats.rushYards.wins++;
+          break;
+        }
+        case 'quart3': {
+          this.rushYardsPanelColor = 'blueviolet';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.rushingYardsGiven > this.rushYardsQuartile[1] && game.rushingYardsGiven <= this.rushYardsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushYards.wins++;
                 } else {
-                  team.filterAtsStats.rushYards.losses++;
-                  team.filterAtsFavoritesStats.rushYards.losses++;
+                  team.filterStats.rushYards.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushYards.wins++;
-                  team.filterAtsUnderdogStats.rushYards.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsFavoritesStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsFavoritesStats.rushYards.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.rushYards.losses++;
-                  team.filterAtsUnderdogStats.rushYards.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsUnderdogStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsUnderdogStats.rushYards.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart4': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.rushingYardsGiven > this.rushYardsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.rushYards.wins++;
-              } else {
-                team.filterStats.rushYards.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushYards.wins++;
-                  team.filterAtsFavoritesStats.rushYards.wins++;
+          break;
+        }
+        case 'quart4': {
+          this.rushYardsPanelColor = 'green';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.rushingYardsGiven > this.rushYardsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushYards.wins++;
                 } else {
-                  team.filterAtsStats.rushYards.losses++;
-                  team.filterAtsFavoritesStats.rushYards.losses++;
+                  team.filterStats.rushYards.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushYards.wins++;
-                  team.filterAtsUnderdogStats.rushYards.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsFavoritesStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsFavoritesStats.rushYards.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.rushYards.losses++;
-                  team.filterAtsUnderdogStats.rushYards.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsUnderdogStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsUnderdogStats.rushYards.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
+          break;
+        }
       }
+      this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+      this.dataSource.sort = this.sort;
     }
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
+
   }
   rushTdsChange(event: any) {
-    this.httpService.allTeams.forEach(team => {
-      team.filterStats.rushTds.wins = 0;
-      team.filterStats.rushTds.losses = 0;
-      team.filterAtsStats.rushTds.wins = 0;
-      team.filterAtsStats.rushTds.losses = 0;
-      team.filterAtsFavoritesStats.rushTds.wins = 0;
-      team.filterAtsFavoritesStats.rushTds.losses = 0;
-      team.filterAtsUnderdogStats.rushTds.wins = 0;
-      team.filterAtsUnderdogStats.rushTds.losses = 0;
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.rushingTdsGiven < this.rushTdsQuartile[0]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.rushTds.wins++;
-              } else {
-                team.filterStats.rushTds.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushTds.wins++;
-                  team.filterAtsFavoritesStats.rushTds.wins++;
+    if (this.toggleInterUnionMsg !== 'Intersection Logic') {
+      this.httpService.allTeams.forEach(team => {
+        team.filterStats.rushTds.wins = 0;
+        team.filterStats.rushTds.losses = 0;
+        team.filterAtsStats.rushTds.wins = 0;
+        team.filterAtsStats.rushTds.losses = 0;
+        team.filterAtsFavoritesStats.rushTds.wins = 0;
+        team.filterAtsFavoritesStats.rushTds.losses = 0;
+        team.filterAtsUnderdogStats.rushTds.wins = 0;
+        team.filterAtsUnderdogStats.rushTds.losses = 0;
+      });
+      switch (event.value) {
+        case 'quart1': {
+          this.rushTdsPanelColor = 'crimson';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.rushingTdsGiven < this.rushTdsQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushTds.wins++;
                 } else {
-                  team.filterAtsStats.rushTds.losses++;
-                  team.filterAtsFavoritesStats.rushTds.losses++;
+                  team.filterStats.rushTds.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushTds.wins++;
-                  team.filterAtsUnderdogStats.rushTds.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsFavoritesStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsFavoritesStats.rushTds.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.rushTds.losses++;
-                  team.filterAtsUnderdogStats.rushTds.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsUnderdogStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsUnderdogStats.rushTds.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart2': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if ((game.rushingTdsGiven >= this.rushTdsQuartile[0]) && (game.rushingTdsGiven <= this.rushTdsQuartile[1])) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.rushTds.wins++;
-              } else {
-                team.filterStats.rushTds.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushTds.wins++;
-                  team.filterAtsFavoritesStats.rushTds.wins++;
+          break;
+        }
+        case 'quart2': {
+          this.rushTdsPanelColor = 'orange';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if ((game.rushingTdsGiven >= this.rushTdsQuartile[0]) && (game.rushingTdsGiven <= this.rushTdsQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushTds.wins++;
                 } else {
-                  team.filterAtsStats.rushTds.losses++;
-                  team.filterAtsFavoritesStats.rushTds.losses++;
+                  team.filterStats.rushTds.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushTds.wins++;
-                  team.filterAtsUnderdogStats.rushTds.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsFavoritesStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsFavoritesStats.rushTds.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.rushTds.losses++;
-                  team.filterAtsUnderdogStats.rushTds.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsUnderdogStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsUnderdogStats.rushTds.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart3': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.rushingTdsGiven > this.rushTdsQuartile[1] && game.rushingTdsGiven <= this.rushTdsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.rushTds.wins++;
-              } else {
-                team.filterStats.rushTds.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushTds.wins++;
-                  team.filterAtsFavoritesStats.rushTds.wins++;
+          break;
+        }
+        case 'quart3': {
+          this.rushTdsPanelColor = 'blueviolet';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.rushingTdsGiven > this.rushTdsQuartile[1] && game.rushingTdsGiven <= this.rushTdsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushTds.wins++;
                 } else {
-                  team.filterAtsStats.rushTds.losses++;
-                  team.filterAtsFavoritesStats.rushTds.losses++;
+                  team.filterStats.rushTds.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushTds.wins++;
-                  team.filterAtsUnderdogStats.rushTds.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsFavoritesStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsFavoritesStats.rushTds.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.rushTds.losses++;
-                  team.filterAtsUnderdogStats.rushTds.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsUnderdogStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsUnderdogStats.rushTds.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart4': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.rushingTdsGiven > this.rushTdsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.rushTds.wins++;
-              } else {
-                team.filterStats.rushTds.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushTds.wins++;
-                  team.filterAtsFavoritesStats.rushTds.wins++;
+          break;
+        }
+        case 'quart4': {
+          this.rushTdsPanelColor = 'green';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.rushingTdsGiven > this.rushTdsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushTds.wins++;
                 } else {
-                  team.filterAtsStats.rushTds.losses++;
-                  team.filterAtsFavoritesStats.rushTds.losses++;
+                  team.filterStats.rushTds.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.rushTds.wins++;
-                  team.filterAtsUnderdogStats.rushTds.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsFavoritesStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsFavoritesStats.rushTds.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.rushTds.losses++;
-                  team.filterAtsUnderdogStats.rushTds.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsUnderdogStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsUnderdogStats.rushTds.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
+          break;
+        }
       }
+      this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+      this.dataSource.sort = this.sort;
     }
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
   }
   sacksChange(event: any) {
     this.httpService.allTeams.forEach(team => {
@@ -1898,565 +2013,589 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
   firstDownsChange(event: any) {
-    this.httpService.allTeams.forEach(team => {
-      team.filterStats.firstDowns.wins = 0;
-      team.filterStats.firstDowns.losses = 0;
-      team.filterAtsStats.firstDowns.wins = 0;
-      team.filterAtsStats.firstDowns.losses = 0;
-      team.filterAtsFavoritesStats.firstDowns.wins = 0;
-      team.filterAtsFavoritesStats.firstDowns.losses = 0;
-      team.filterAtsUnderdogStats.firstDowns.wins = 0;
-      team.filterAtsUnderdogStats.firstDowns.losses = 0;
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.firstDownsGiven < this.firstDownsQuartile[0]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.firstDowns.wins++;
-              } else {
-                team.filterStats.firstDowns.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.firstDowns.wins++;
-                  team.filterAtsFavoritesStats.firstDowns.wins++;
+    if (this.toggleInterUnionMsg !== 'Intersection Logic') {
+      this.httpService.allTeams.forEach(team => {
+        team.filterStats.firstDowns.wins = 0;
+        team.filterStats.firstDowns.losses = 0;
+        team.filterAtsStats.firstDowns.wins = 0;
+        team.filterAtsStats.firstDowns.losses = 0;
+        team.filterAtsFavoritesStats.firstDowns.wins = 0;
+        team.filterAtsFavoritesStats.firstDowns.losses = 0;
+        team.filterAtsUnderdogStats.firstDowns.wins = 0;
+        team.filterAtsUnderdogStats.firstDowns.losses = 0;
+      });
+      switch (event.value) {
+        case 'quart1': {
+          this.firstDownsPanelColor = 'crimson';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.firstDownsGiven < this.firstDownsQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.firstDowns.wins++;
                 } else {
-                  team.filterAtsStats.firstDowns.losses++;
-                  team.filterAtsFavoritesStats.firstDowns.losses++;
+                  team.filterStats.firstDowns.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.firstDowns.wins++;
-                  team.filterAtsUnderdogStats.firstDowns.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsFavoritesStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsFavoritesStats.firstDowns.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.firstDowns.losses++;
-                  team.filterAtsUnderdogStats.firstDowns.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsUnderdogStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsUnderdogStats.firstDowns.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart2': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if ((game.firstDownsGiven >= this.firstDownsQuartile[0]) && (game.firstDownsGiven <= this.firstDownsQuartile[1])) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.firstDowns.wins++;
-              } else {
-                team.filterStats.firstDowns.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.firstDowns.wins++;
-                  team.filterAtsFavoritesStats.firstDowns.wins++;
+          break;
+        }
+        case 'quart2': {
+          this.firstDownsPanelColor = 'orange';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if ((game.firstDownsGiven >= this.firstDownsQuartile[0]) && (game.firstDownsGiven <= this.firstDownsQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.firstDowns.wins++;
                 } else {
-                  team.filterAtsStats.firstDowns.losses++;
-                  team.filterAtsFavoritesStats.firstDowns.losses++;
+                  team.filterStats.firstDowns.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.firstDowns.wins++;
-                  team.filterAtsUnderdogStats.firstDowns.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsFavoritesStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsFavoritesStats.firstDowns.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.firstDowns.losses++;
-                  team.filterAtsUnderdogStats.firstDowns.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsUnderdogStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsUnderdogStats.firstDowns.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart3': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.firstDownsGiven > this.firstDownsQuartile[1] && game.firstDownsGiven <= this.firstDownsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.firstDowns.wins++;
-              } else {
-                team.filterStats.firstDowns.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.firstDowns.wins++;
-                  team.filterAtsFavoritesStats.firstDowns.wins++;
+          break;
+        }
+        case 'quart3': {
+          this.firstDownsPanelColor = 'blueviolet';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.firstDownsGiven > this.firstDownsQuartile[1] && game.firstDownsGiven <= this.firstDownsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.firstDowns.wins++;
                 } else {
-                  team.filterAtsStats.firstDowns.losses++;
-                  team.filterAtsFavoritesStats.firstDowns.losses++;
+                  team.filterStats.firstDowns.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.firstDowns.wins++;
-                  team.filterAtsUnderdogStats.firstDowns.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsFavoritesStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsFavoritesStats.firstDowns.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.firstDowns.losses++;
-                  team.filterAtsUnderdogStats.firstDowns.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsUnderdogStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsUnderdogStats.firstDowns.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart4': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.firstDownsGiven > this.firstDownsQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.firstDowns.wins++;
-              } else {
-                team.filterStats.firstDowns.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.firstDowns.wins++;
-                  team.filterAtsFavoritesStats.firstDowns.wins++;
+          break;
+        }
+        case 'quart4': {
+          this.firstDownsPanelColor = 'green';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.firstDownsGiven > this.firstDownsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.firstDowns.wins++;
                 } else {
-                  team.filterAtsStats.firstDowns.losses++;
-                  team.filterAtsFavoritesStats.firstDowns.losses++;
+                  team.filterStats.firstDowns.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.firstDowns.wins++;
-                  team.filterAtsUnderdogStats.firstDowns.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsFavoritesStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsFavoritesStats.firstDowns.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.firstDowns.losses++;
-                  team.filterAtsUnderdogStats.firstDowns.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsUnderdogStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsUnderdogStats.firstDowns.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
+          break;
+        }
       }
+      this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+      this.dataSource.sort = this.sort;
     }
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
   }
 
   thirdDownChange(event: any) {
-    this.httpService.allTeams.forEach(team => {
-      team.filterStats.thirdDown.wins = 0;
-      team.filterStats.thirdDown.losses = 0;
-      team.filterAtsStats.thirdDown.wins = 0;
-      team.filterAtsStats.thirdDown.losses = 0;
-      team.filterAtsFavoritesStats.thirdDown.wins = 0;
-      team.filterAtsFavoritesStats.thirdDown.losses = 0;
-      team.filterAtsUnderdogStats.thirdDown.wins = 0;
-      team.filterAtsUnderdogStats.thirdDown.losses = 0;
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.thirdDownConvPctGiven < this.thirdDownQuartile[0]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.thirdDown.wins++;
-              } else {
-                team.filterStats.thirdDown.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.thirdDown.wins++;
-                  team.filterAtsFavoritesStats.thirdDown.wins++;
+    if (this.toggleInterUnionMsg !== 'Intersection Logic') {
+      this.httpService.allTeams.forEach(team => {
+        team.filterStats.thirdDown.wins = 0;
+        team.filterStats.thirdDown.losses = 0;
+        team.filterAtsStats.thirdDown.wins = 0;
+        team.filterAtsStats.thirdDown.losses = 0;
+        team.filterAtsFavoritesStats.thirdDown.wins = 0;
+        team.filterAtsFavoritesStats.thirdDown.losses = 0;
+        team.filterAtsUnderdogStats.thirdDown.wins = 0;
+        team.filterAtsUnderdogStats.thirdDown.losses = 0;
+      });
+      switch (event.value) {
+        case 'quart1': {
+          this.thirdDownPanelColor = 'crimson';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.thirdDownConvPctGiven < this.thirdDownQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.thirdDown.wins++;
                 } else {
-                  team.filterAtsStats.thirdDown.losses++;
-                  team.filterAtsFavoritesStats.thirdDown.losses++;
+                  team.filterStats.thirdDown.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.thirdDown.wins++;
-                  team.filterAtsUnderdogStats.thirdDown.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsFavoritesStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsFavoritesStats.thirdDown.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.thirdDown.losses++;
-                  team.filterAtsUnderdogStats.thirdDown.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsUnderdogStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsUnderdogStats.thirdDown.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart2': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if ((game.thirdDownConvPctGiven >= this.thirdDownQuartile[0]) && (game.thirdDownConvPctGiven <= this.thirdDownQuartile[1])) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.thirdDown.wins++;
-              } else {
-                team.filterStats.thirdDown.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.thirdDown.wins++;
-                  team.filterAtsFavoritesStats.thirdDown.wins++;
+          break;
+        }
+        case 'quart2': {
+          this.thirdDownPanelColor = 'orange';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if ((game.thirdDownConvPctGiven >= this.thirdDownQuartile[0]) && (game.thirdDownConvPctGiven <= this.thirdDownQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.thirdDown.wins++;
                 } else {
-                  team.filterAtsStats.thirdDown.losses++;
-                  team.filterAtsFavoritesStats.thirdDown.losses++;
+                  team.filterStats.thirdDown.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.thirdDown.wins++;
-                  team.filterAtsUnderdogStats.thirdDown.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsFavoritesStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsFavoritesStats.thirdDown.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.thirdDown.losses++;
-                  team.filterAtsUnderdogStats.thirdDown.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsUnderdogStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsUnderdogStats.thirdDown.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart3': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.thirdDownConvPctGiven > this.thirdDownQuartile[1] && game.thirdDownConvPctGiven <= this.thirdDownQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.thirdDown.wins++;
-              } else {
-                team.filterStats.thirdDown.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.thirdDown.wins++;
-                  team.filterAtsFavoritesStats.thirdDown.wins++;
+          break;
+        }
+        case 'quart3': {
+          this.thirdDownPanelColor = 'blueviolet';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.thirdDownConvPctGiven > this.thirdDownQuartile[1] && game.thirdDownConvPctGiven <= this.thirdDownQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.thirdDown.wins++;
                 } else {
-                  team.filterAtsStats.thirdDown.losses++;
-                  team.filterAtsFavoritesStats.thirdDown.losses++;
+                  team.filterStats.thirdDown.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.thirdDown.wins++;
-                  team.filterAtsUnderdogStats.thirdDown.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsFavoritesStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsFavoritesStats.thirdDown.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.thirdDown.losses++;
-                  team.filterAtsUnderdogStats.thirdDown.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsUnderdogStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsUnderdogStats.thirdDown.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart4': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.thirdDownConvPctGiven > this.thirdDownQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.thirdDown.wins++;
-              } else {
-                team.filterStats.thirdDown.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.thirdDown.wins++;
-                  team.filterAtsFavoritesStats.thirdDown.wins++;
+          break;
+        }
+        case 'quart4': {
+          this.thirdDownPanelColor = 'green';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.thirdDownConvPctGiven > this.thirdDownQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.thirdDown.wins++;
                 } else {
-                  team.filterAtsStats.thirdDown.losses++;
-                  team.filterAtsFavoritesStats.thirdDown.losses++;
+                  team.filterStats.thirdDown.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.thirdDown.wins++;
-                  team.filterAtsUnderdogStats.thirdDown.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsFavoritesStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsFavoritesStats.thirdDown.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.thirdDown.losses++;
-                  team.filterAtsUnderdogStats.thirdDown.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsUnderdogStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsUnderdogStats.thirdDown.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
+          break;
+        }
       }
+      this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+      this.dataSource.sort = this.sort;
     }
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
   }
   redzoneChange(event: any) {
-    this.httpService.allTeams.forEach(team => {
-      team.filterStats.redzone.wins = 0;
-      team.filterStats.redzone.losses = 0;
-      team.filterAtsStats.redzone.wins = 0;
-      team.filterAtsStats.redzone.losses = 0;
-      team.filterAtsFavoritesStats.redzone.wins = 0;
-      team.filterAtsFavoritesStats.redzone.losses = 0;
-      team.filterAtsUnderdogStats.redzone.wins = 0;
-      team.filterAtsUnderdogStats.redzone.losses = 0;
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.redzoneScoringPctGiven < this.redzoneQuartile[0]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.redzone.wins++;
-              } else {
-                team.filterStats.redzone.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.redzone.wins++;
-                  team.filterAtsFavoritesStats.redzone.wins++;
+    if (this.toggleInterUnionMsg !== 'Intersection Logic') {
+      this.httpService.allTeams.forEach(team => {
+        team.filterStats.redzone.wins = 0;
+        team.filterStats.redzone.losses = 0;
+        team.filterAtsStats.redzone.wins = 0;
+        team.filterAtsStats.redzone.losses = 0;
+        team.filterAtsFavoritesStats.redzone.wins = 0;
+        team.filterAtsFavoritesStats.redzone.losses = 0;
+        team.filterAtsUnderdogStats.redzone.wins = 0;
+        team.filterAtsUnderdogStats.redzone.losses = 0;
+      });
+      switch (event.value) {
+        case 'quart1': {
+          this.redzonePanelColor = 'crimson';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.redzoneScoringPctGiven < this.redzoneQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.redzone.wins++;
                 } else {
-                  team.filterAtsStats.redzone.losses++;
-                  team.filterAtsFavoritesStats.redzone.losses++;
+                  team.filterStats.redzone.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.redzone.wins++;
-                  team.filterAtsUnderdogStats.redzone.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsFavoritesStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsFavoritesStats.redzone.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.redzone.losses++;
-                  team.filterAtsUnderdogStats.redzone.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsUnderdogStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsUnderdogStats.redzone.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart2': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if ((game.redzoneScoringPctGiven >= this.redzoneQuartile[0]) && (game.redzoneScoringPctGiven <= this.redzoneQuartile[1])) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.redzone.wins++;
-              } else {
-                team.filterStats.redzone.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.redzone.wins++;
-                  team.filterAtsFavoritesStats.redzone.wins++;
+          break;
+        }
+        case 'quart2': {
+          this.redzonePanelColor = 'orange';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if ((game.redzoneScoringPctGiven >= this.redzoneQuartile[0]) && (game.redzoneScoringPctGiven <= this.redzoneQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.redzone.wins++;
                 } else {
-                  team.filterAtsStats.redzone.losses++;
-                  team.filterAtsFavoritesStats.redzone.losses++;
+                  team.filterStats.redzone.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.redzone.wins++;
-                  team.filterAtsUnderdogStats.redzone.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsFavoritesStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsFavoritesStats.redzone.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.redzone.losses++;
-                  team.filterAtsUnderdogStats.redzone.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsUnderdogStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsUnderdogStats.redzone.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart3': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.redzoneScoringPctGiven > this.redzoneQuartile[1] && game.redzoneScoringPctGiven <= this.redzoneQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.redzone.wins++;
-              } else {
-                team.filterStats.redzone.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.redzone.wins++;
-                  team.filterAtsFavoritesStats.redzone.wins++;
+          break;
+        }
+        case 'quart3': {
+          this.redzonePanelColor = 'blueviolet';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.redzoneScoringPctGiven > this.redzoneQuartile[1] && game.redzoneScoringPctGiven <= this.redzoneQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.redzone.wins++;
                 } else {
-                  team.filterAtsStats.redzone.losses++;
-                  team.filterAtsFavoritesStats.redzone.losses++;
+                  team.filterStats.redzone.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.redzone.wins++;
-                  team.filterAtsUnderdogStats.redzone.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsFavoritesStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsFavoritesStats.redzone.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.redzone.losses++;
-                  team.filterAtsUnderdogStats.redzone.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsUnderdogStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsUnderdogStats.redzone.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart4': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.redzoneScoringPctGiven > this.redzoneQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.redzone.wins++;
-              } else {
-                team.filterStats.redzone.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.redzone.wins++;
-                  team.filterAtsFavoritesStats.redzone.wins++;
+          break;
+        }
+        case 'quart4': {
+          this.redzonePanelColor = 'green';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.redzoneScoringPctGiven > this.redzoneQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.redzone.wins++;
                 } else {
-                  team.filterAtsStats.redzone.losses++;
-                  team.filterAtsFavoritesStats.redzone.losses++;
+                  team.filterStats.redzone.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.redzone.wins++;
-                  team.filterAtsUnderdogStats.redzone.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsFavoritesStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsFavoritesStats.redzone.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.redzone.losses++;
-                  team.filterAtsUnderdogStats.redzone.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsUnderdogStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsUnderdogStats.redzone.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
+          break;
+        }
       }
+      this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+      this.dataSource.sort = this.sort;
     }
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
   }
   pointsChange(event: any) {
-    this.httpService.allTeams.forEach(team => {
-      team.filterStats.points.wins = 0;
-      team.filterStats.points.losses = 0;
-      team.filterAtsStats.points.wins = 0;
-      team.filterAtsStats.points.losses = 0;
-      team.filterAtsFavoritesStats.points.wins = 0;
-      team.filterAtsFavoritesStats.points.losses = 0;
-      team.filterAtsUnderdogStats.points.wins = 0;
-      team.filterAtsUnderdogStats.points.losses = 0;
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.pointsGiven < this.scoreQuartile[0]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.points.wins++;
-              } else {
-                team.filterStats.points.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.points.wins++;
-                  team.filterAtsFavoritesStats.points.wins++;
+    if (this.toggleInterUnionMsg !== 'Intersection Logic') {
+      this.httpService.allTeams.forEach(team => {
+        team.filterStats.points.wins = 0;
+        team.filterStats.points.losses = 0;
+        team.filterAtsStats.points.wins = 0;
+        team.filterAtsStats.points.losses = 0;
+        team.filterAtsFavoritesStats.points.wins = 0;
+        team.filterAtsFavoritesStats.points.losses = 0;
+        team.filterAtsUnderdogStats.points.wins = 0;
+        team.filterAtsUnderdogStats.points.losses = 0;
+      });
+      switch (event.value) {
+        case 'quart1': {
+          this.pointsPanelColor = 'crimson';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.pointsGiven < this.pointsQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.points.wins++;
                 } else {
-                  team.filterAtsStats.points.losses++;
-                  team.filterAtsFavoritesStats.points.losses++;
+                  team.filterStats.points.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.points.wins++;
-                  team.filterAtsUnderdogStats.points.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsFavoritesStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsFavoritesStats.points.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.points.losses++;
-                  team.filterAtsUnderdogStats.points.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsUnderdogStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsUnderdogStats.points.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart2': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if ((game.pointsGiven >= this.scoreQuartile[0]) && (game.pointsGiven <= this.scoreQuartile[1])) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.points.wins++;
-              } else {
-                team.filterStats.points.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.points.wins++;
-                  team.filterAtsFavoritesStats.points.wins++;
+          break;
+        }
+        case 'quart2': {
+          this.pointsPanelColor = 'orange';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if ((game.pointsGiven >= this.pointsQuartile[0]) && (game.pointsGiven <= this.pointsQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.points.wins++;
                 } else {
-                  team.filterAtsStats.points.losses++;
-                  team.filterAtsFavoritesStats.points.losses++;
+                  team.filterStats.points.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.points.wins++;
-                  team.filterAtsUnderdogStats.points.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsFavoritesStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsFavoritesStats.points.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.points.losses++;
-                  team.filterAtsUnderdogStats.points.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsUnderdogStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsUnderdogStats.points.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart3': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.pointsGiven > this.scoreQuartile[1] && game.pointsGiven <= this.scoreQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.points.wins++;
-              } else {
-                team.filterStats.points.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.points.wins++;
-                  team.filterAtsFavoritesStats.points.wins++;
+          break;
+        }
+        case 'quart3': {
+          this.pointsPanelColor = 'blueviolet';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.pointsGiven > this.pointsQuartile[1] && game.pointsGiven <= this.pointsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.points.wins++;
                 } else {
-                  team.filterAtsStats.points.losses++;
-                  team.filterAtsFavoritesStats.points.losses++;
+                  team.filterStats.points.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.points.wins++;
-                  team.filterAtsUnderdogStats.points.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsFavoritesStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsFavoritesStats.points.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.points.losses++;
-                  team.filterAtsUnderdogStats.points.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsUnderdogStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsUnderdogStats.points.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
-      }
-      case 'quart4': {
-        this.httpService.allTeams.forEach(team => {
-          team.games.forEach(game => {
-            if (game.pointsGiven > this.scoreQuartile[2]) {
-              if (game.points > game.pointsGiven) {
-                team.filterStats.points.wins++;
-              } else {
-                team.filterStats.points.losses++;
-              }
-              if (game.isFavorite) {
-                if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.points.wins++;
-                  team.filterAtsFavoritesStats.points.wins++;
+          break;
+        }
+        case 'quart4': {
+          this.pointsPanelColor = 'green';
+          this.httpService.allTeams.forEach(team => {
+            team.games.forEach(game => {
+              if (game.pointsGiven > this.pointsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.points.wins++;
                 } else {
-                  team.filterAtsStats.points.losses++;
-                  team.filterAtsFavoritesStats.points.losses++;
+                  team.filterStats.points.losses++;
                 }
-              } else {
-                if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                  team.filterAtsStats.points.wins++;
-                  team.filterAtsUnderdogStats.points.wins++;
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsFavoritesStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsFavoritesStats.points.losses++;
+                  }
                 } else {
-                  team.filterAtsStats.points.losses++;
-                  team.filterAtsUnderdogStats.points.losses++;
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsUnderdogStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsUnderdogStats.points.losses++;
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        break;
+          break;
+        }
       }
+      this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+      this.dataSource.sort = this.sort;
     }
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
   }
 
   checkTabStatus(): boolean {
@@ -3086,7 +3225,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.httpService.allTeams.forEach(team => {
       tmpTotalArr.push(team.pointsTotal / team.games.length);
     })
-    this.scoreQuartile = this.calculateQuartiles(tmpTotalArr);
+    this.pointsQuartile = this.calculateQuartiles(tmpTotalArr);
     tmpTotalArr = [];
     this.httpService.allTeams.forEach(team => {
       tmpTotalArr.push(team.passingAttemptsTotal / team.games.length);

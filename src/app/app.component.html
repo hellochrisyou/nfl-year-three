@@ -2,13 +2,13 @@
   <mat-tab label="Set Up" [disabled]="isSetupFinished">
     <section>
       <div class="margin-left-5rem-top-1rem">
-        <b class="color-red">1. Click Button #1 and wait for the number of games to stop increasing.</b>
+        <b class="crimson">1. Click Button #1 and wait for the number of games to stop increasing.</b>
       </div>
       <div class="margin-left-5rem-top-1rem">
-        <b class="color-red">2. Once you have downloaded all the games, click Button #2.</b>
+        <b class="crimson">2. Once you have downloaded all the games, click Button #2.</b>
       </div>
       <div class="margin-left-5rem-top-1rem">
-        <b class="color-red">3. You can now access the other sections at the top of the page.</b>
+        <b class="crimson">3. You can now access the other sections at the top of the page.</b>
       </div>
       <button class="margin-left-5rem-top-1rem" [disabled]="!checkTabStatus()" mat-button
         (click)="downloadLastYear()">1.0 Download as far as Last Year</button>
@@ -416,20 +416,31 @@
         </div>
       </mat-tab>
       <mat-tab label="Filter Tables">
-        <span class="animate-wrapper" *ngIf="selectedTeam === ''">
-          <h3 class="animate-charcter">Click SET Button to view Stats</h3>
-        </span>
-        <span class="animate-wrapper" *ngIf="selectedTeam !== ''">
-          <h3 class="animate-charcter">{{selectedTeam}} (Selected)</h3>
-        </span>
-        <div>
-          <button mat-raised-button (click)="openKeyDialog('1000ms', '750ms')">View Color Key</button>
+        <div class="top-wrapper">
+          <span>
+            <button mat-raised-button (click)="openKeyDialog('1000ms', '750ms')">View Color Key</button>
+            <mat-slide-toggle (change)="toggleInterUnion()" class="toggle-slider">{{toggleInterUnionMsg}}</mat-slide-toggle>
+          </span>
+          <span class="animate-wrapper" *ngIf="selectedTeam === ''">
+            <h3 class="animate-charcter">Click SET Button to view Stats</h3>
+          </span>
+          <span class="animate-wrapper" *ngIf="selectedTeam !== ''">
+            <h3 class="animate-charcter">{{selectedTeam}} (Selected)</h3>
+          </span>
         </div>
         <form [formGroup]="basicStatsForm">
+          <span>
+            <mat-form-field appearance="outline" class="search-form-field">
+              <mat-label>Search Filter</mat-label>
+              <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="Ex. Arizona Cardinals...">
+              <mat-icon matSuffix>search</mat-icon>
+              <mat-hint>Search for team</mat-hint>
+            </mat-form-field>
+          </span>
           <mat-form-field [ngClass]="returnFilterColorPassAttempts()">
             <mat-label>Pass Attempts</mat-label>
             <mat-select formControlName="passAttemptsCtrl" name="Pass Attempts"
-              (selectionChange)="passAttemptChange($event)">
+              (selectionChange)="passAttemptChange($event)" panelClass="select-panel-{{passAttemptsPanelColor}}">
               <mat-option value="">None</mat-option>
               <mat-option value="quart1">0-25%</mat-option>
               <mat-option value="quart2">25-50%</mat-option>
@@ -439,7 +450,7 @@
           </mat-form-field>
           <mat-form-field [ngClass]="returnFilterColorPassYards()">
             <mat-label>Pass Yards</mat-label>
-            <mat-select formControlName="passYardsCtrl" name="Pass Yards" (selectionChange)="passYardsChange($event)">
+            <mat-select formControlName="passYardsCtrl" name="Pass Yards" (selectionChange)="passYardsChange($event)" panelClass="select-panel-{{passYardsPanelColor}}">
               <mat-option value="">None</mat-option>
               <mat-option value="quart1">0-25%</mat-option>
               <mat-option value="quart2">25-50%</mat-option>
@@ -449,7 +460,7 @@
           </mat-form-field>
           <mat-form-field [ngClass]="returnFilterColorPassTds()">
             <mat-label>Pass TDs</mat-label>
-            <mat-select formControlName="passTdsCtrl" name="Pass TDs" (selectionChange)="passTdsChange($event)">
+            <mat-select formControlName="passTdsCtrl" name="Pass TDs" (selectionChange)="passTdsChange($event)" panelClass="select-panel-{{passTdsPanelColor}}">
               <mat-option value="">None</mat-option>
               <mat-option value="quart1">0-25%</mat-option>
               <mat-option value="quart2">25-50%</mat-option>
@@ -460,7 +471,7 @@
           <mat-form-field [ngClass]="returnFilterColorRushAttempts()">
             <mat-label>Rush Attempts</mat-label>
             <mat-select formControlName="rushAttemptsCtrl" name="Rush Attempts"
-              (selectionChange)="rushAttemptsChange($event)">
+              (selectionChange)="rushAttemptsChange($event)" panelClass="select-panel-{{rushAttemptsPanelColor}}">
               <mat-option value="">None</mat-option>
               <mat-option value="quart1">0-25%</mat-option>
               <mat-option value="quart2">25-50%</mat-option>
@@ -470,7 +481,7 @@
           </mat-form-field>
           <mat-form-field [ngClass]="returnFilterColorRushYards()">
             <mat-label>Rush Yards</mat-label>
-            <mat-select formControlName="rushYardsCtrl" name="Rush Yards" (selectionChange)="rushYardsChange($event)">
+            <mat-select formControlName="rushYardsCtrl" name="Rush Yards" (selectionChange)="rushYardsChange($event)" panelClass="select-panel-{{rushYardsPanelColor}}">
               <mat-option value="">None</mat-option>
               <mat-option value="quart1">0-25%</mat-option>
               <mat-option value="quart2">25-50%</mat-option>
@@ -480,7 +491,7 @@
           </mat-form-field>
           <mat-form-field [ngClass]="returnFilterColorRushTds()">
             <mat-label>Rush TDs</mat-label>
-            <mat-select formControlName="rushTdCtrl" name="Rush TDs" (selectionChange)="rushTdsChange($event)">
+            <mat-select formControlName="rushTdCtrl" name="Rush TDs" (selectionChange)="rushTdsChange($event)" panelClass="select-panel-{{rushTdsPanelColor}}">
               <mat-option value="">None</mat-option>
               <mat-option value="quart1">0-25%</mat-option>
               <mat-option value="quart2">25-50%</mat-option>
@@ -491,7 +502,7 @@
           <mat-form-field [ngClass]="returnFilterColorFirstDowns()">
             <mat-label>First Downs</mat-label>
             <mat-select formControlName="firstDownsCtrl" name="First Downs"
-              (selectionChange)="firstDownsChange($event)">
+              (selectionChange)="firstDownsChange($event)" panelClass="select-panel-{{firstDownsPanelColor}}">
               <mat-option value="">None</mat-option>
               <mat-option value="quart1">0-25%</mat-option>
               <mat-option value="quart2">25-50%</mat-option>
@@ -523,7 +534,7 @@
           <mat-form-field [ngClass]="returnFilterColorThirdDown()">
             <mat-label>Third Down%</mat-label>
             <mat-select formControlName="thirdDownPctCtrl" name="Third Down%"
-              (selectionChange)="thirdDownChange($event)">
+              (selectionChange)="thirdDownChange($event)" panelClass="select-panel-{{thirdDownPanelColor}}">
               <mat-option value="">None</mat-option>
               <mat-option value="quart1">0-25%</mat-option>
               <mat-option value="quart2">25-50%</mat-option>
@@ -534,7 +545,7 @@
           <mat-form-field [ngClass]="returnFilterColorRedzone()">
             <mat-label>RedZone Scoring%</mat-label>
             <mat-select formControlName="redzoneScoringCtrl" name="Redzone Scoring%"
-              (selectionChange)="redzoneChange($event)">
+              (selectionChange)="redzoneChange($event)" panelClass="select-panel-{{redzonePanelColor}}">
               <mat-option value="">None</mat-option>
               <mat-option value="quart1">0-25%</mat-option>
               <mat-option value="quart2">25-50%</mat-option>
@@ -544,7 +555,7 @@
           </mat-form-field>
           <mat-form-field [ngClass]="returnFilterColorPoints()">
             <mat-label>Points</mat-label>
-            <mat-select formControlName="pointsCtrl" name="Points" (selectionChange)="pointsChange($event)">
+            <mat-select formControlName="pointsCtrl" name="Points" (selectionChange)="pointsChange($event)" panelClass="select-panel-{{pointsPanelColor}}">
               <mat-option value="">None</mat-option>
               <mat-option value="quart1">0-25%</mat-option>
               <mat-option value="quart2">25-50%</mat-option>
@@ -553,12 +564,6 @@
             </mat-select>
           </mat-form-field>
         </form>
-        <section>
-          <small>Search Filter</small>
-          <div>
-            <input (keyup)="applyFilter($any($event.target).value)">
-          </div>
-        </section>
         <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortColumn3($event)" matSortDisableClear>
           <ng-container matColumnDef="teamName">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
@@ -585,7 +590,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Pass Attempts</div>
               <div class="header-row2">
-                <span class="color-red">{{passAttemptsQuartile[0]| number : '1.1-1'}}</span>/
+                <span class="crimson">{{passAttemptsQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{passAttemptsQuartile[1]| number :
                   '1.1-1'}}</span>/
                 <span class="green">{{passAttemptsQuartile[2]| number : '1.1-1'}}</span>
@@ -622,7 +627,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Pass Yards</div>
               <div class="header-row2">
-                <span class="color-red">{{passYardsQuartile[0]| number : '1.1-1'}}</span>/
+                <span class="crimson">{{passYardsQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{passYardsQuartile[1]| number :
                   '1.1-1'}}</span>/
                 <span class="green">{{passYardsQuartile[2]| number : '1.1-1'}}</span>
@@ -657,7 +662,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Pass Tds</div>
               <div class="header-row2">
-                <span class="color-red">{{passTdsQuartile[0]| number : '1.1-1'}}</span>/
+                <span class="crimson">{{passTdsQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{passTdsQuartile[1]| number :
                   '1.1-1'}}</span>/
                 <span class="green">{{passTdsQuartile[2]| number : '1.1-1'}}</span>
@@ -692,7 +697,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Rush Attempts</div>
               <div class="header-row2">
-                <span class="color-red">{{rushAttemptsQuartile[0]| number : '1.1-1'}}</span>/
+                <span class="crimson">{{rushAttemptsQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{rushAttemptsQuartile[1]| number :
                   '1.1-1'}}</span>/
                 <span class="green">{{rushAttemptsQuartile[2]| number : '1.1-1'}}</span>
@@ -729,7 +734,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Rush Yards</div>
               <div class="header-row2">
-                <span class="color-red">{{rushYardsQuartile[0]| number : '1.1-1'}}</span>/
+                <span class="crimson">{{rushYardsQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{rushYardsQuartile[1]| number :
                   '1.1-1'}}</span>/
                 <span class="green">{{rushYardsQuartile[2]| number : '1.1-1'}}</span>
@@ -764,7 +769,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Rush Tds</div>
               <div class="header-row2">
-                <span class="color-red">{{rushTdsQuartile[0]| number : '1.1-1'}}</span>/
+                <span class="crimson">{{rushTdsQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{rushTdsQuartile[1]| number :
                   '1.1-1'}}</span>/
                 <span class="green">{{rushTdsQuartile[2]| number : '1.1-1'}}</span>
@@ -798,7 +803,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>First Downs</div>
               <div class="header-row2">
-                <span class="color-red">{{firstDownsQuartile[0]| number : '1.1-1'}}</span>/
+                <span class="crimson">{{firstDownsQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{firstDownsQuartile[1]| number :
                   '1.1-1'}}</span>/
                 <span class="green">{{firstDownsQuartile[2]| number : '1.1-1'}}</span>
@@ -835,7 +840,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Sacks</div>
               <div class="header-row2">
-                <span class="color-red">{{sacksQuartile[0]| number : '1.1-1'}}</span>/
+                <span class="crimson">{{sacksQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{sacksQuartile[1]| number :
                   '1.1-1'}}</span>/
                 <span class="green">{{sacksQuartile[2]| number : '1.1-1'}}</span>
@@ -856,7 +861,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Interceptions</div>
               <div class="header-row2">
-                <span class="color-red">{{interceptionsQuartile[0]| number : '1.1-1'}}</span>/
+                <span class="crimson">{{interceptionsQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{interceptionsQuartile[1]| number :
                   '1.1-1'}}</span>/
                 <span class="green">{{interceptionsQuartile[2]| number : '1.1-1'}}</span>
@@ -877,7 +882,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Third Down %</div>
               <div class="header-row2">
-                <span class="color-red">{{thirdDownQuartile[0]| number : '1.1-1'}}</span>/
+                <span class="crimson">{{thirdDownQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{thirdDownQuartile[1]| number :
                   '1.1-1'}}</span>/
                 <span class="green">{{thirdDownQuartile[2]| number : '1.1-1'}}</span>
@@ -912,7 +917,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Redzone Scoring %</div>
               <div class="header-row2">
-                <span class="color-red">{{redzoneQuartile[0]| number : '1.1-1'}}</span>/
+                <span class="crimson">{{redzoneQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{redzoneQuartile[1]| number :
                   '1.1-1'}}</span>/
                 <span class="green">{{redzoneQuartile[2]| number : '1.1-1'}}</span>
@@ -946,10 +951,10 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Points</div>
               <div class="header-row2">
-                <span class="color-red">{{scoreQuartile[0]| number : '1.1-1'}}</span>/
-                <span class="orange">{{scoreQuartile[1]| number :
+                <span class="crimson">{{pointsQuartile[0]| number : '1.1-1'}}</span>/
+                <span class="orange">{{pointsQuartile[1]| number :
                   '1.1-1'}}</span>/
-                <span class="green">{{scoreQuartile[2]| number : '1.1-1'}}</span>
+                <span class="green">{{pointsQuartile[2]| number : '1.1-1'}}</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">

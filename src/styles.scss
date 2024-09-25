@@ -27,14 +27,6 @@ mat-cell {
   font-size: 12px;
 }
 
-.color-red {
-  color: crimson;
-}
-
-.green {
-  color: green;
-}
-
 .crimson {
   color: crimson;
 }
@@ -47,6 +39,10 @@ mat-cell {
   color: blueviolet;
 }
 
+.green {
+  color: green;
+}
+
 .mat-mdc-dialog-surface {
   overflow-y: hidden !important;
 }
@@ -54,3 +50,24 @@ mat-cell {
 .mat-mdc-form-field-subscript-wrapper {
   height: 0px;
 }
+
+// Mat-select background color
+  .select-panel-crimson.mat-mdc-select-panel {
+    background: rgba(220, 20, 60, 0.85);
+  }
+
+  .select-panel-orange.mat-mdc-select-panel {
+    background: rgba(255, 69, 0, 0.85);
+  }
+
+  .select-panel-blueviolet.mat-mdc-select-panel {
+    background: rgba(106, 99, 113, 0.85);
+  }
+
+  .select-panel-green.mat-mdc-select-panel {
+    background: rgba(0, 128, 0, 0.85);
+  }
+
+  .select-panel-grey.mat-mdc-select-panel {
+    background: rgba(128, 128, 128, 0.85);
+  }

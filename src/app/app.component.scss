@@ -216,7 +216,9 @@ hr {
 }
 
 .mat-mdc-form-field {
-  max-width: 9rem;
+  min-width: 9rem;
+  width: 16rem;
+  max-width: 16rem;
   margin: 0 4px;
 }
 
@@ -308,4 +310,20 @@ form {
   overflow: auto;
 }
 
+small {
+  padding-left: 4px;
+}
 
+div.top-wrapper {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.search-form-field {
+  position: relative;
+  top: -7px;
+}
+
+.toggle-slider {
+  margin: 0 1rem;
+}
