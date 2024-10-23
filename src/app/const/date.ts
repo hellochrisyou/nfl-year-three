@@ -8,23 +8,23 @@ export class DateService {
   week2 = new Date('2024-09-11');
   week3 = new Date('2024-09-16');
   week4 = new Date('2024-09-23');
-  week5 = new Date('2024-10-02');
-  week6 = new Date('2024-10-09');
-  week7 = new Date('2024-10-16');
-  week8 = new Date('2024-10-23');
-  week9 = new Date('2024-10-30');
-  week10 = new Date('2024-11-06');
-  week11 = new Date('2024-11-13');
-  week12 = new Date('2024-11-20');
-  week13 = new Date('2024-11-27');
-  week14 = new Date('2024-12-04');
-  week15 = new Date('2024-12-11');
-  week16 = new Date('2024-12-18');
-  week17 = new Date('2024-12-25');
+  week5 = new Date('2024-10-01');
+  week6 = new Date('2024-10-07');
+  week7 = new Date('2024-10-15');
+  week8 = new Date('2024-10-22');
+  week9 = new Date('2024-10-29');
+  week10 = new Date('2024-11-05');
+  week11 = new Date('2024-11-12');
+  week12 = new Date('2024-11-19');
+  week13 = new Date('2024-11-26');
+  week14 = new Date('2024-12-03');
+  week15 = new Date('2024-12-10');
+  week16 = new Date('2024-12-17');
+  week17 = new Date('2024-12-24');
   week18 = new Date('2025-01-01');
   endOfSeason = new Date('2025-01-08');
 
-  private _currentWeek = 4;
+  private _currentWeek = 8;
 
   public get currentWeek() {
     return this._currentWeek;

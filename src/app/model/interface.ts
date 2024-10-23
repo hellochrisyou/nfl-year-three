@@ -1,3 +1,15 @@
+export interface FilterNbaStats {
+  blocks: WinLoss;
+  defensiveRebounds: WinLoss;
+  steals: WinLoss;
+  assists: WinLoss;
+  fieldGoals: WinLoss;
+  offensiveRebounds: WinLoss;
+  points: WinLoss;
+  turnovers: WinLoss;
+  threePoints: WinLoss;
+}
+
 export interface FilterStats {
   passAttempts: WinLoss;
   passYards: WinLoss;
@@ -20,6 +32,17 @@ export interface WinLoss {
 
 
 export interface Team {
+  netSpread: number;
+  passAttemptsStd: number;
+  passYardsStd: number;
+  passTdsStd: number;
+  rushAttemptsStd: number;
+  rushYardsStd: number;
+  rushTdsStd: number;
+  firstDownsStd: number;
+  thirdDownStd: number;
+  redzoneStd: number;
+  pointsStd: number;
   filterStats: FilterStats;
   filterAtsStats: FilterStats;
   filterAtsFavoritesStats: FilterStats;
@@ -71,6 +94,82 @@ export interface Team {
   atsLosses: number;
   customAtsWins: number;
   customAtsLosses: number;
+}
+
+export interface NbaTeam {
+  netSpread: number;
+  filterStats: FilterNbaStats;
+  filterAtsStats: FilterNbaStats;
+  filterAtsFavoritesStats: FilterNbaStats;
+  filterAtsUnderdogStats: FilterNbaStats;
+  nextGameDate: Date;
+  nextGameSpread: string;
+  nextGameDetails: string;
+  teamInitials: string;
+  isNextGameFavorite: boolean;
+  nextOpponent: string;
+  nextOpponentWins: number;
+  nextOpponentLosses: number;
+  nextOpponentAtsWins: number;
+  nextOpponentAtsLosses: number;
+  teamIndex: number;
+  teamId: string;
+  teamName: string;
+  games: NbaGame[];
+  blocksTotal: number;
+  defensiveReboundsTotal: number;
+  stealsTotal: number;
+  assistsTotal: number;
+  fieldGoalsTotal: number;
+  offensiveReboundsTotal: number;
+  pointsTotal: number;
+  turnoversTotal: number;
+  threePointsTotal: number;
+  blocksGivenTotal: number;
+  defensiveReboundsGivenTotal: number;
+  stealsGivenTotal: number;
+  assistsGivenTotal: number;
+  fieldGoalsGivenTotal: number;
+  offensiveReboundsGivenTotal: number;
+  pointsGivenTotal: number;
+  turnoversGivenTotal: number;
+  threePointsGivenTotal: number;
+  wins: number;
+  losses: number;
+  atsWins: number;
+  atsLosses: number;
+  customAtsWins: number;
+  customAtsLosses: number;
+}
+
+export interface NbaGame {
+  date: any;
+  opponentId: string;
+  homeOrAway: string;
+  isFavorite?: boolean;
+  gameId: number;
+  blocks: number;
+  defensiveRebounds: number;
+  steals: number;
+  assists: number;
+  fieldGoals: number;
+  offensiveRebounds: number;
+  points: number;
+  turnovers: number;
+  threePoints: number;
+  blocksGiven: number;
+  defensiveReboundsGiven: number;
+  stealsGiven: number;
+  assistsGiven: number;
+  fieldGoalsGiven: number;
+  offensiveReboundsGiven: number;
+  turnoversGiven: number;
+  threePointsGiven: number;
+  //
+  spread: number;
+
+  //
+  pointsGiven: number;
 }
 
 export interface Game {
