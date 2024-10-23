@@ -42,10 +42,6 @@ export class HttpService {
           let tmpOpponentIndex = 1;
 
           if (payload2.competitions[0].competitors[1].id.length <= 2 && payload2.competitions[0].competitors[0].id.length <= 2) {
-
-            if (team.teamId === '8') {
-              console.log("🚀 ~ payload2.competitions[0].competitors[1].id:", payload2.competitions[0].competitors[1].id)
-            }
             if (payload2.competitions[0].competitors[0].id === team.teamId) {
               tmpGame.opponentId = payload2.competitions[0].competitors[1].id;
               if (payload2.competitions[0].competitors[tmpCompetitorIndex].homeAway === 'home') {
@@ -77,6 +73,9 @@ export class HttpService {
                 tmpGame.isFavorite = payload3.items[0].awayTeamOdds.favorite;
               }
               this.apiService.httpGet(tmpStatsAddy).subscribe((payload4: any) => {
+                if (team.teamId === '17') {
+                  console.log("🚀 ~ tmpGame:", tmpGame)
+                }
                 tmpGame.blocks = payload4.splits.categories[0].stats[0].value;
                 tmpGame.defensiveRebounds = payload4.splits.categories[0].stats[1].value;
                 tmpGame.steals = payload4.splits.categories[0].stats[2].value;

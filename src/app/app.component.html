@@ -72,8 +72,6 @@
           <div [ngClass]="checkBlocks(row.nextOpponent)">{{row.nextOpponent}}:
             {{returnOpponentAvgBlocks(row.nextOpponent)| number
             : '1.1-1'}}</div>
-            <div>STD: {{row.passAttemptsStd| number :
-            '1.1-1'}}</div>
         </div>
       </mat-cell>
     </ng-container>
@@ -111,8 +109,6 @@
           <div [ngClass]="checkDefensiveRebounds(row.nextOpponent)">{{row.nextOpponent}}:
             {{returnOpponentAvgDefensiveRebounds(row.nextOpponent)| number
             : '1.1-1'}}</div>
-            <div>STD: {{row.passAttemptsStd| number :
-            '1.1-1'}}</div>
         </div>
       </mat-cell>
     </ng-container>
@@ -150,8 +146,6 @@
           <div [ngClass]="checkSteals(row.nextOpponent)">{{row.nextOpponent}}:
             {{returnOpponentAvgSteals(row.nextOpponent)| number
             : '1.1-1'}}</div>
-            <div>STD: {{row.passAttemptsStd| number :
-            '1.1-1'}}</div>
         </div>
       </mat-cell>
     </ng-container>
@@ -189,8 +183,6 @@
           <div [ngClass]="checkAssists(row.nextOpponent)">{{row.nextOpponent}}:
             {{returnOpponentAvgAssists(row.nextOpponent)| number
             : '1.1-1'}}</div>
-            <div>STD: {{row.passAttemptsStd| number :
-            '1.1-1'}}</div>
         </div>
       </mat-cell>
     </ng-container>
