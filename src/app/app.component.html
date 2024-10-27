@@ -1,9 +1,8 @@
 <mat-tab-group class="main-tab-group" [selectedIndex]="isActiveTab">
-  <mat-tab label="Set Up NHL" [disabled]="isNbaSetupFinished">
-    <button class="margin-left-5rem-top-1rem" [disabled]="!checkNhlTabStatus()" mat-button
-      (click)="downloadNhlLastYear()">1.0 Download as far as Last Year</button>
-    <button class="margin-left-5rem-top-1rem" [disabled]="!checkNhlTabStatus()" mat-button
-      (click)="downloadNhlLastYear2()">1.5 Download 2024</button>
+  <mat-tab label="Set Up NHL">
+    <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadNhlLastYear()">1.0 Download as far as Last
+      Year</button>
+    <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadNhlLastYear2()">1.5 Download 2024</button>
     <div class="animate-wrapper">
       <h3 class="animate-charcter">Number of Games Downloaded: {{currentNbaDownloadCounter}}
         <span><i>{{currentNhlDownloadCounterPostMsg}}</i></span>
@@ -16,9 +15,8 @@
         </div>
       </div>
     </ng-container>
-    <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNhlNumbers()" [disabled]="isSetupFinished">2.
+    <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNhlNumbers()">2.
       Crunch(process) Data</button>
-    <div class="margin-left-5rem-top-1rem">Process Opponent Data Status: <i>{{nhlCrunchStatus}}</i></div>
   </mat-tab>
   <mat-tab label="checkNhlTabStatusStats">
     <div><button mat-raised-button (click)="defaultNhlFormControls()">Do Magic</button></div>
@@ -166,11 +164,10 @@
       </mat-row>
     </mat-table>
   </mat-tab>
-  <mat-tab label="Set Up NBA" [disabled]="isNbaSetupFinished">
-    <button class="margin-left-5rem-top-1rem" [disabled]="!checkNbaTabStatus()" mat-button
-      (click)="downloadNbaLastYear()">1.0 Download as far as Last Year</button>
-    <button class="margin-left-5rem-top-1rem" [disabled]="!checkNbaTabStatus()" mat-button
-      (click)="downloadNbaLastYear2()">1.5 Download 2024</button>
+  <mat-tab label="Set Up NBA">
+    <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadNbaLastYear()">1.0 Download as far as Last
+      Year</button>
+    <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadNbaLastYear2()">1.5 Download 2024</button>
     <div class="animate-wrapper">
       <h3 class="animate-charcter">Number of Games Downloaded: {{currentNbaDownloadCounter}}
         <span><i>{{currentNbaDownloadCounterPostMsg}}</i></span>
@@ -183,9 +180,8 @@
         </div>
       </div>
     </ng-container>
-    <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNbaNumbers()" [disabled]="isSetupFinished">2.
+    <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNbaNumbers()">2.
       Crunch(process) Data</button>
-    <div class="margin-left-5rem-top-1rem">Process Opponent Data Status: <i>{{nbaCrunchStatus}}</i></div>
   </mat-tab>
 
   <mat-tab label="NBA Stats">
@@ -569,7 +565,7 @@
     </mat-table>
   </mat-tab>
 
-  <mat-tab label="Set Up NFL" [disabled]="isSetupFinished">
+  <mat-tab label="Set Up NFL">
     <section>
       <!-- <mat-form-field>
         <mat-label>Select Week</mat-label>
@@ -589,10 +585,9 @@
       <div class="margin-left-5rem-top-1rem">
         <b class="crimson">3. You can now access the other sections at the top of the page.</b>
       </div>
-      <button class="margin-left-5rem-top-1rem" [disabled]="!checkTabStatus()" mat-button
-        (click)="downloadLastYear()">1.0 Download as far as Last Year</button>
-      <button class="margin-left-5rem-top-1rem" [disabled]="!checkTabStatus()" mat-button
-        (click)="downloadLastYear2()">1.5 Download 2024</button>
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear()">1.0 Download as far as Last
+        Year</button>
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear2()">1.5 Download 2024</button>
       <div class="animate-wrapper">
         <h3 class="animate-charcter">Number of Games Downloaded: {{currentDownloadCounter}}
           <span><i>{{currentDownloadCounterPostMsg}}</i></span>
@@ -605,12 +600,11 @@
           </div>
         </div>
       </ng-container>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers()" [disabled]="isSetupFinished">2.
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers()">2.
         Crunch(process) Data</button>
-      <div class="margin-left-5rem-top-1rem">Process Opponent Data Status: <i>{{crunchStatus}}</i></div>
     </section>
   </mat-tab>
-  <mat-tab label="Basic Stats" [disabled]="!isSetupFinished">
+  <mat-tab label="Basic Stats">
     <mat-tab-group class="basic-tab-group" [selectedIndex]="isActiveTab2">
       <mat-tab label="Team Stats">
         <mat-slide-toggle class="margin-left-5rem-top-1rem"

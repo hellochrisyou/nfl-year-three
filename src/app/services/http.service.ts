@@ -259,7 +259,7 @@ export class HttpService {
                 tmpGame.redzoneScoringPct = payload4.splits.categories[10].stats[22].value;
 
                 this.allTeams.forEach(team2 => {
-                  if (team.teamId === tmpGame.opponentId) {
+                  if (team2.teamId === tmpGame.opponentId) {
                     team2.pointsGivenTotal += tmpGame.points;
                     team2.passingAttemptsGivenTotal += tmpGame.passingAttempts;
                     team2.passingYardsGivenTotal += tmpGame.passingYards;
@@ -465,6 +465,8 @@ export class HttpService {
   setOpponentStats() {
     this.allTeams.forEach(team => team.thirdDownPctAvg = this.returnSumAvg(team.thirdDownPctTotal));
     this.allTeams.forEach(team => team.thirdDownConvPctGivenAvg = this.returnSumAvg(team.thirdDownConvPctGivenTotal));
+    this.allTeams.forEach(team => team.redzoneScoringPctAvg = this.returnSumAvg(team.redzoneScoringPctTotal));
+    this.allTeams.forEach(team => team.redzoneScoringPctGivenAvg = this.returnSumAvg(team.redzoneScoringPctGivenTotal));
   }
 
   setNhlOpponentStats() {

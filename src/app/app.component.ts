@@ -42,8 +42,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) nbaSort: MatSort;
   @ViewChild(MatSort) nhlSort: MatSort;
 
-  nbaCrunchStatus = '';
-  nhlCrunchStatus = '';
 
   currentFilter = '';
   currentNbaFilter = '';
@@ -79,7 +77,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   displayedColumns4 = ['teamName', 'goals', 'assists', 'shooting',
   ];
   basicStatsForm: FormGroup;
-  crunchStatus = 'Initial';
   currentDownloadCounter = 0;
   currentDownloadCounterPostMsg = ' - DOWNLOAD REQUIRED';
   currentWeek: number = 0;
@@ -88,7 +85,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   dataSource: MatTableDataSource<Team>;
   firstDownsQuartile: number[] = [];
   interceptionsQuartile: number[] = [];
-  isSetupFinished = false;
   blocksQuartile: number[] = [];
   defensiveReboundsQuartile: number[] = [];
   stealsQuartile: number[] = [];
@@ -113,7 +109,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedTeam = '';
   thirdDownQuartile: number[] = [];
   totalAvgToggle = 'Total';
-  isNbaSetupFinished = false;
   isNhlSetupFinished = false;
   readonly dialog = inject(MatDialog);
 
@@ -153,27 +148,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       this.currentNhlDownloadCounterPostMsg = '';
     });
     this.httpService.updateAggregatingData.subscribe(payload => {
-      this.crunchStatus = 'Processed';
-      this.nbaCrunchStatus = 'Processed';
-      this.nhlCrunchStatus = 'Processed';
     });
     this.httpService.updateTotalData.subscribe(payload => {
     });
   }
-  checkNbaTabStatus() {
-    if (this.nbaCrunchStatus === 'Processed' && this.currentNbaDownloadCounterPostMsg === '') {
-      return false;
-    } else {
-      return true;
-    }
-  }
-  checkNhlTabStatus() {
-    if (this.nhlCrunchStatus === 'Processed' && this.currentNhlDownloadCounterPostMsg === '') {
-      return false;
-    } else {
-      return true;
-    }
-  }
+
   downloadNbaLastYear() {
     this.currentNbaDownloadCounter++;
     this.currentNbaDownloadCounterPostMsg = ' ...Currently Downloading...';
@@ -239,8 +218,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       team.redzoneStd = stats.standardDeviation(tmpRedzone);
       team.pointsStd = stats.standardDeviation(tmpPoints);
     })
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
   }
 
   ngOnDestroy(): void {
@@ -574,11 +551,22 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
     });
-    this.nbaDataSource = new MatTableDataSource(this.httpService.nbaAllTeams.filter(team => {
-      if (team.nextGameDate.getTime() !== new Date('01/01/2999').getTime()) {
-        return team;
+    let tmpNbaAllTeam: NbaTeam[] = [];
+    this.httpService.nbaAllTeams.forEach(team1 => {
+      if (team1.nextGameDate.getTime() != new Date('01/01/2999').getTime()) {
+        this.httpService.nbaAllTeams.forEach(team2 => {
+          if (team2.teamName === team1.nextOpponent) {
+            if (!tmpNbaAllTeam.includes(team1)) {
+              tmpNbaAllTeam.push(team1);
+            }
+            if (!tmpNbaAllTeam.includes(team2)) {
+              tmpNbaAllTeam.push(team2);
+            }
+          }
+        });
       }
-    }));
+    });
+    this.nbaDataSource = new MatTableDataSource(tmpNbaAllTeam);
     this.nbaDataSource.sort = this.nbaSort;
   }
 
@@ -621,11 +609,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           tmpEvent.value = '';
           if ((team.shootingPctAvg) < this.shootingPctQuartile[0]) {
             tmpEvent.value = 'quart1';
-          } else if (team.shootingPctAvg >= this.assistsQuartile[0] && team.shootingPctAvg < this.assistsQuartile[1]) {
+          } else if (team.shootingPctAvg >= this.shootingPctQuartile[0] && team.shootingPctAvg < this.shootingPctQuartile[1]) {
             tmpEvent.value = 'quart2';
-          } else if (team.shootingPctAvg >= this.assistsQuartile[1] && team.shootingPctAvg < this.assistsQuartile[2]) {
+          } else if (team.shootingPctAvg >= this.shootingPctQuartile[1] && team.shootingPctAvg < this.shootingPctQuartile[2]) {
             tmpEvent.value = 'quart3';
-          } else if (team.shootingPctAvg >= this.assistsQuartile[2]) {
+          } else if (team.shootingPctAvg >= this.shootingPctQuartile[2]) {
             tmpEvent.value = 'quart4';
           }
           if (tmpEvent.value !== '') {
@@ -634,11 +622,22 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
     });
-    this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.filter(team => {
-      if (team.nextGameDate.getTime() !== new Date('01/01/2999').getTime()) {
-        return team;
+    let tmpNhlAllTeam: NhlTeam[] = [];
+    this.httpService.nhlAllTeams.forEach(team1 => {
+      if (team1.nextGameDate.getTime() != new Date('01/01/2999').getTime()) {
+        this.httpService.nhlAllTeams.forEach(team2 => {
+          if (team2.teamName === team1.nextOpponent) {
+            if (!tmpNhlAllTeam.includes(team1)) {
+              tmpNhlAllTeam.push(team1);
+            }
+            if (!tmpNhlAllTeam.includes(team2)) {
+              tmpNhlAllTeam.push(team2);
+            }
+          }
+        });
       }
-    }));
+    });
+    this.nhlDataSource = new MatTableDataSource(tmpNhlAllTeam);
     this.nhlDataSource.sort = this.nhlSort;
   }
 
@@ -1264,9 +1263,23 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     })
     // this.applyFilter(this.currentFilter);
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
     this.calculateStd();
+    let tmpAllTeam: Team[] = [];
+    this.httpService.allTeams.forEach(team1 => {
+        this.httpService.allTeams.forEach(team2 => {
+          if (team2.teamName === team1.nextOpponent) {
+            if (!tmpAllTeam.includes(team1)) {
+              tmpAllTeam.push(team1);
+            }
+            if (!tmpAllTeam.includes(team2)) {
+              tmpAllTeam.push(team2);
+            }
+          }
+        });
+    });
+    console.log("🚀 ~ tmpAllTeam:", tmpAllTeam)
+    this.dataSource = new MatTableDataSource(tmpAllTeam);
+    this.dataSource.sort = this.sort;
   }
 
 
@@ -5107,14 +5120,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  checkTabStatus(): boolean {
-    if (this.crunchStatus === 'Processed' && this.currentDownloadCounterPostMsg === '') {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   checkTabStatus2(): boolean {
     if (this.currentDownloadCounterPostMsg === ' - DOWNLOAD REQUIRED') {
       return true;
@@ -5818,30 +5823,25 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   crunchNumbers() {
-    this.crunchStatus = 'Pending';
     this.httpService.getNextOpponentInfo();
     this.httpService.crunchTotals();
     this.httpService.calculateWinLossRecord();
     this.httpService.setOpponentStats();
     this.httpService.setupGivenData();
     this.runQuartiles();
-    this.isSetupFinished = true;
-    this.isActiveTab = 3;
+    this.isActiveTab = 5;
   }
 
   crunchNbaNumbers() {
-    this.nbaCrunchStatus = 'Pending';
     this.httpService.getNbaNextOpponentInfo();
     this.httpService.crunchNbaTotals();
     this.httpService.calculateNbaWinLossRecord();
     this.httpService.setupNbaGivenData();
     this.runNbaQuartiles();
-    this.isNbaSetupFinished = true;
-    this.isActiveTab = 1;
+    this.isActiveTab = 3;
   }
 
   crunchNhlNumbers() {
-    this.nhlCrunchStatus = 'Pending';
     this.httpService.getNhlNextOpponentInfo();
     this.httpService.crunchNhlTotals();
     this.httpService.calculateNhlWinLossRecord();
