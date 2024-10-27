@@ -146,10 +146,16 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log("🚀 ~ this.currentWeek:", this.currentWeek);
     this.httpService.updateDownloadStatus.subscribe(payload => {
       this.currentDownloadCounter = payload;
+      this.currentNbaDownloadCounter = payload;
+      this.currentNhlDownloadCounter = payload;
       this.currentDownloadCounterPostMsg = '';
+      this.currentNbaDownloadCounterPostMsg = '';
+      this.currentNhlDownloadCounterPostMsg = '';
     });
     this.httpService.updateAggregatingData.subscribe(payload => {
       this.crunchStatus = 'Processed';
+      this.nbaCrunchStatus = 'Processed';
+      this.nhlCrunchStatus = 'Processed';
     });
     this.httpService.updateTotalData.subscribe(payload => {
     });
@@ -241,10 +247,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
-    this.nbaDataSource = new MatTableDataSource(this.httpService.nbaAllTeams);
-    this.nbaDataSource.sort = this.nbaSort;
   }
 
   toggleInterUnion() {
@@ -572,7 +574,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
     });
-    this.nbaDataSource = new MatTableDataSource(this.httpService.nbaAllTeams);
+    this.nbaDataSource = new MatTableDataSource(this.httpService.nbaAllTeams.filter(team => {
+      if (team.nextGameDate.getTime() !== new Date('01/01/2999').getTime()) {
+        return team;
+      }
+    }));
+    this.nbaDataSource.sort = this.nbaSort;
   }
 
   defaultNhlFormControls() {
@@ -633,7 +640,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }));
     this.nhlDataSource.sort = this.nhlSort;
-    console.log("🚀 ~ this.httpService.nhlAllTeams:", this.httpService.nhlAllTeams)
   }
 
   goalsChange(event: any, teamName: string) {
@@ -1258,6 +1264,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     })
     // this.applyFilter(this.currentFilter);
+    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
+    this.dataSource.sort = this.sort;
     this.calculateStd();
   }
 
@@ -5817,8 +5825,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.httpService.setOpponentStats();
     this.httpService.setupGivenData();
     this.runQuartiles();
-    this.dataSource = new MatTableDataSource(this.httpService.allTeams);
-    this.dataSource.sort = this.sort;
     this.isSetupFinished = true;
     this.isActiveTab = 3;
   }
@@ -5830,8 +5836,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.httpService.calculateNbaWinLossRecord();
     this.httpService.setupNbaGivenData();
     this.runNbaQuartiles();
-    this.nbaDataSource = new MatTableDataSource(this.httpService.nbaAllTeams);
-    this.nbaDataSource.sort = this.nbaSort;
     this.isNbaSetupFinished = true;
     this.isActiveTab = 1;
   }

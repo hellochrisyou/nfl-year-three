@@ -18,6 +18,7 @@
     </ng-container>
     <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNhlNumbers()" [disabled]="isSetupFinished">2.
       Crunch(process) Data</button>
+    <div class="margin-left-5rem-top-1rem">Process Opponent Data Status: <i>{{nhlCrunchStatus}}</i></div>
   </mat-tab>
   <mat-tab label="checkNhlTabStatusStats">
     <div><button mat-raised-button (click)="defaultNhlFormControls()">Do Magic</button></div>
@@ -47,10 +48,14 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <div>Goals</div>
           <div class="header-row2">
-            <span class="crimson">{{goalsQuartile[0]| number : '1.1-1'}}</span>/
-            <span class="orange">{{goalsQuartile[1]| number :
-              '1.1-1'}}</span>/
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{goalsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{goalsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
             <span class="green">{{goalsQuartile[2]| number : '1.1-1'}}</span>
+            <span class="green">&plus;</span>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -82,10 +87,13 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <div>Assists</div>
           <div class="header-row2">
-            <span class="crimson">{{nhlAssistsQuartile[0]| number : '1.1-1'}}</span>/
-            <span class="orange">{{nhlAssistsQuartile[1]| number :
-              '1.1-1'}}/</span>
-            <span class="green">{{nhlAssistsQuartile[2]| number : '1.1-1'}}</span>
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{nhlAssistsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{nhlAssistsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
+            <span class="green">{{nhlAssistsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -117,10 +125,13 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <div>Shooting%</div>
           <div class="header-row2">
-            <span class="crimson">{{shootingPctQuartile[0]| number : '1.1-1'}}</span>/
-            <span class="orange">{{shootingPctQuartile[1]| number :
-              '1.1-1'}}</span>/
-            <span class="green">{{shootingPctQuartile[2]| number : '1.1-1'}}</span>
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{shootingPctQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{shootingPctQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
+            <span class="green">{{shootingPctQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -174,6 +185,7 @@
     </ng-container>
     <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNbaNumbers()" [disabled]="isSetupFinished">2.
       Crunch(process) Data</button>
+    <div class="margin-left-5rem-top-1rem">Process Opponent Data Status: <i>{{nbaCrunchStatus}}</i></div>
   </mat-tab>
 
   <mat-tab label="NBA Stats">
@@ -203,10 +215,13 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <div>Blocks</div>
           <div class="header-row2">
-            <span class="crimson">{{blocksQuartile[0]| number : '1.1-1'}}</span>/
-            <span class="orange">{{blocksQuartile[1]| number :
-              '1.1-1'}}</span>/
-            <span class="green">{{blocksQuartile[2]| number : '1.1-1'}}</span>
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{blocksQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{blocksQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
+            <span class="green">{{blocksQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -238,10 +253,14 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <div>Def-Rebounds</div>
           <div class="header-row2">
-            <span class="crimson">{{defensiveReboundsQuartile[0]| number : '1.1-1'}}</span>/
-            <span class="orange">{{defensiveReboundsQuartile[1]| number :
-              '1.1-1'}}</span>/
-            <span class="green">{{defensiveReboundsQuartile[2]| number : '1.1-1'}}</span>
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{defensiveReboundsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{defensiveReboundsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
+            <span class="green">{{defensiveReboundsQuartile[2]| number : '1.1-1'}}</span><span
+              class="green">&plus;</span>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -275,10 +294,13 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <div>Steals</div>
           <div class="header-row2">
-            <span class="crimson">{{stealsQuartile[0]| number : '1.1-1'}}</span>/
-            <span class="orange">{{stealsQuartile[1]| number :
-              '1.1-1'}}</span>/
-            <span class="green">{{stealsQuartile[2]| number : '1.1-1'}}</span>
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{stealsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{stealsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
+            <span class="green">{{stealsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -310,10 +332,13 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <div>Assists</div>
           <div class="header-row2">
-            <span class="crimson">{{assistsQuartile[0]| number : '1.1-1'}}</span>/
-            <span class="orange">{{assistsQuartile[1]| number :
-              '1.1-1'}}</span>/
-            <span class="green">{{assistsQuartile[2]| number : '1.1-1'}}</span>
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{assistsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{assistsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
+            <span class="green">{{assistsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -345,10 +370,13 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <div>FieldGoals</div>
           <div class="header-row2">
-            <span class="crimson">{{fieldGoalsQuartile[0]| number : '1.1-1'}}</span>/
-            <span class="orange">{{fieldGoalsQuartile[1]| number :
-              '1.1-1'}}</span>/
-            <span class="green">{{fieldGoalsQuartile[2]| number : '1.1-1'}}</span>
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{fieldGoalsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{fieldGoalsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
+            <span class="green">{{fieldGoalsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -381,10 +409,14 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <div>Off-Rebounds</div>
           <div class="header-row2">
-            <span class="crimson">{{offensiveReboundsQuartile[0]| number : '1.1-1'}}</span>/
-            <span class="orange">{{offensiveReboundsQuartile[1]| number :
-              '1.1-1'}}</span>/
-            <span class="green">{{offensiveReboundsQuartile[2]| number : '1.1-1'}}</span>
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{offensiveReboundsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{offensiveReboundsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
+            <span class="green">{{offensiveReboundsQuartile[2]| number : '1.1-1'}}</span><span
+              class="green">&plus;</span>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -418,10 +450,13 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <div>Turnovers</div>
           <div class="header-row2">
-            <span class="crimson">{{turnoversQuartile[0]| number : '1.1-1'}}</span>/
-            <span class="orange">{{turnoversQuartile[1]| number :
-              '1.1-1'}}</span>/
-            <span class="green">{{turnoversQuartile[2]| number : '1.1-1'}}</span>
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{turnoversQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{turnoversQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
+            <span class="green">{{turnoversQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -454,10 +489,13 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <div>3-Points</div>
           <div class="header-row2">
-            <span class="crimson">{{threePointsQuartile[0]| number : '1.1-1'}}</span>/
-            <span class="orange">{{threePointsQuartile[1]| number :
-              '1.1-1'}}</span>/
-            <span class="green">{{threePointsQuartile[2]| number : '1.1-1'}}</span>
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{threePointsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{threePointsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
+            <span class="green">{{threePointsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -490,10 +528,13 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <div>Points</div>
           <div class="header-row2">
-            <span class="crimson">{{nbaPointsQuartile[0]| number : '1.1-1'}}</span>/
-            <span class="orange">{{nbaPointsQuartile[1]| number :
-              '1.1-1'}}</span>/
-            <span class="green">{{nbaPointsQuartile[2]| number : '1.1-1'}}</span>
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{nbaPointsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{nbaPointsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
+            <span class="green">{{nbaPointsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
           </div>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -1133,10 +1174,14 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Pass Attempts</div>
               <div class="header-row2">
-                <span class="crimson">{{passAttemptsQuartile[0]| number : '1.1-1'}}</span>/
-                <span class="orange">{{passAttemptsQuartile[1]| number :
-                  '1.1-1'}}</span>/
-                <span class="green">{{passAttemptsQuartile[2]| number : '1.1-1'}}</span>
+                <span class="crimson">0</span>
+                <span class="">&rlarr;</span>
+                <span class="orange">{{passAttemptsQuartile[0]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="blueviolet">{{passAttemptsQuartile[1]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="green">{{passAttemptsQuartile[2]| number : '1.1-1'}}</span><span
+                  class="green">&plus;</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
@@ -1172,10 +1217,13 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Pass Yards</div>
               <div class="header-row2">
-                <span class="crimson">{{passYardsQuartile[0]| number : '1.1-1'}}</span>/
-                <span class="orange">{{passYardsQuartile[1]| number :
-                  '1.1-1'}}</span>/
-                <span class="green">{{passYardsQuartile[2]| number : '1.1-1'}}</span>
+                <span class="crimson">0</span>
+                <span class="">&rlarr;</span>
+                <span class="orange">{{passYardsQuartile[0]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="blueviolet">{{passYardsQuartile[1]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="green">{{passYardsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
@@ -1209,10 +1257,13 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Pass Tds</div>
               <div class="header-row2">
-                <span class="crimson">{{passTdsQuartile[0]| number : '1.1-1'}}</span>/
-                <span class="orange">{{passTdsQuartile[1]| number :
-                  '1.1-1'}}</span>/
-                <span class="green">{{passTdsQuartile[2]| number : '1.1-1'}}</span>
+                <span class="crimson">0</span>
+                <span class="">&rlarr;</span>
+                <span class="orange">{{passTdsQuartile[0]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="blueviolet">{{passTdsQuartile[1]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="green">{{passTdsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
@@ -1246,10 +1297,14 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Rush Attempts</div>
               <div class="header-row2">
-                <span class="crimson">{{rushAttemptsQuartile[0]| number : '1.1-1'}}</span>/
-                <span class="orange">{{rushAttemptsQuartile[1]| number :
-                  '1.1-1'}}</span>/
-                <span class="green">{{rushAttemptsQuartile[2]| number : '1.1-1'}}</span>
+                <span class="crimson">0</span>
+                <span class="">&rlarr;</span>
+                <span class="orange">{{rushAttemptsQuartile[0]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="blueviolet">{{rushAttemptsQuartile[1]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="green">{{rushAttemptsQuartile[2]| number : '1.1-1'}}</span><span
+                  class="green">&plus;</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
@@ -1285,10 +1340,13 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Rush Yards</div>
               <div class="header-row2">
-                <span class="crimson">{{rushYardsQuartile[0]| number : '1.1-1'}}</span>/
-                <span class="orange">{{rushYardsQuartile[1]| number :
-                  '1.1-1'}}</span>/
-                <span class="green">{{rushYardsQuartile[2]| number : '1.1-1'}}</span>
+                <span class="crimson">0</span>
+                <span class="">&rlarr;</span>
+                <span class="orange">{{rushYardsQuartile[0]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="blueviolet">{{rushYardsQuartile[1]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="green">{{rushYardsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
@@ -1322,10 +1380,13 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Rush Tds</div>
               <div class="header-row2">
-                <span class="crimson">{{rushTdsQuartile[0]| number : '1.1-1'}}</span>/
-                <span class="orange">{{rushTdsQuartile[1]| number :
-                  '1.1-1'}}</span>/
-                <span class="green">{{rushTdsQuartile[2]| number : '1.1-1'}}</span>
+                <span class="crimson">0</span>
+                <span class="">&rlarr;</span>
+                <span class="orange">{{rushTdsQuartile[0]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="blueviolet">{{rushTdsQuartile[1]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="green">{{rushTdsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
@@ -1358,10 +1419,13 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>First Downs</div>
               <div class="header-row2">
-                <span class="crimson">{{firstDownsQuartile[0]| number : '1.1-1'}}</span>/
-                <span class="orange">{{firstDownsQuartile[1]| number :
-                  '1.1-1'}}</span>/
-                <span class="green">{{firstDownsQuartile[2]| number : '1.1-1'}}</span>
+                <span class="crimson">0</span>
+                <span class="">&rlarr;</span>
+                <span class="orange">{{firstDownsQuartile[0]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="blueviolet">{{firstDownsQuartile[1]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="green">{{firstDownsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
@@ -1400,7 +1464,7 @@
                 <span class="crimson">{{sacksQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{sacksQuartile[1]| number :
                   '1.1-1'}}</span>/
-                <span class="green">{{sacksQuartile[2]| number : '1.1-1'}}</span>
+                <span class="green">{{sacksQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
@@ -1421,7 +1485,7 @@
                 <span class="crimson">{{interceptionsQuartile[0]| number : '1.1-1'}}</span>/
                 <span class="orange">{{interceptionsQuartile[1]| number :
                   '1.1-1'}}</span>/
-                <span class="green">{{interceptionsQuartile[2]| number : '1.1-1'}}</span>
+                <span class="green">{{interceptionsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
@@ -1439,10 +1503,13 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Third Down %</div>
               <div class="header-row2">
-                <span class="crimson">{{thirdDownQuartile[0]| number : '1.1-1'}}</span>/
-                <span class="orange">{{thirdDownQuartile[1]| number :
-                  '1.1-1'}}</span>/
-                <span class="green">{{thirdDownQuartile[2]| number : '1.1-1'}}</span>
+                <span class="crimson">0</span>
+                <span class="">&rlarr;</span>
+                <span class="orange">{{thirdDownQuartile[0]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="blueviolet">{{thirdDownQuartile[1]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="green">{{thirdDownQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
@@ -1476,10 +1543,13 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Redzone Scoring %</div>
               <div class="header-row2">
-                <span class="crimson">{{redzoneQuartile[0]| number : '1.1-1'}}</span>/
-                <span class="orange">{{redzoneQuartile[1]| number :
-                  '1.1-1'}}</span>/
-                <span class="green">{{redzoneQuartile[2]| number : '1.1-1'}}</span>
+                <span class="crimson">0</span>
+                <span class="">&rlarr;</span>
+                <span class="orange">{{redzoneQuartile[0]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="blueviolet">{{redzoneQuartile[1]| number : '1.1-1'}}</span>
+                <span class="">&rlarr;</span>
+                <span class="green">{{redzoneQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
@@ -1512,10 +1582,13 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               <div>Points</div>
               <div class="header-row2">
-                <span class="crimson">{{pointsQuartile[0]| number : '1.1-1'}}</span>/
-                <span class="orange">{{pointsQuartile[1]| number :
-                  '1.1-1'}}</span>/
-                <span class="green">{{pointsQuartile[2]| number : '1.1-1'}}</span>
+                <span class="crimson">0</span>
+                <span class="crimson">&rlarr;</span>
+                <span class="orange">{{pointsQuartile[0]| number : '1.1-1'}}</span>
+                <span class="orange">&rlarr;</span>
+                <span class="blueviolet">{{pointsQuartile[1]| number : '1.1-1'}}</span>
+                <span class="blueviolet">&rlarr;</span>
+                <span class="green">{{pointsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
               </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let row">

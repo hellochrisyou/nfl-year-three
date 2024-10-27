@@ -1723,7 +1723,7 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
 
 export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   let tmpTeam: NbaTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -1806,7 +1806,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -1889,7 +1889,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -1972,7 +1972,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -2055,7 +2055,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -2138,7 +2138,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -2221,7 +2221,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -2304,7 +2304,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -2387,7 +2387,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -2470,7 +2470,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -2553,7 +2553,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -2636,7 +2636,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -2719,7 +2719,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -2802,7 +2802,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -2885,7 +2885,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -2968,7 +2968,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -3051,7 +3051,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -3134,7 +3134,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -3217,7 +3217,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -3300,7 +3300,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -3383,7 +3383,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -3466,7 +3466,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -3549,7 +3549,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -3632,7 +3632,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -3715,7 +3715,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -3798,7 +3798,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -3881,7 +3881,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -3964,7 +3964,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -4047,7 +4047,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,
@@ -4130,7 +4130,7 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    blocksTotal: 0, nextGameDate: new Date(),
+    blocksTotal: 0, nextGameDate: new Date('01/01/2999'),
     blocksGivenTotal: 0,
     defensiveReboundsTotal: 0,
     defensiveReboundsGivenTotal: 0,

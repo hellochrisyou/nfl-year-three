@@ -118,7 +118,6 @@ export class HttpService {
         let tmpGame = this.initializeTmpNbaGame();
         const tmpEventAddy = element.$ref;
         this.apiService.httpGet(tmpEventAddy).subscribe((payload2: any) => {
-          console.log("🚀 ~ payload2:", payload2)
           tmpGame.gameId = payload2.id;
           tmpGame.date = payload2.date;
           let tmpDate: Date = new Date();
@@ -158,7 +157,6 @@ export class HttpService {
                 tmpGame.pointsGiven = payload5.value;
               });
               this.apiService.httpGet(tmpOddsAddy).subscribe((payload3: any) => {
-                console.log("🚀 ~ payload3:", payload3)
                 tmpGame.spread = payload3.items[0].spread;
                 if (tmpGame.homeOrAway === 'home') {
                   tmpGame.isFavorite = payload3.items[0].homeTeamOdds.favorite;
@@ -166,9 +164,6 @@ export class HttpService {
                   tmpGame.isFavorite = payload3.items[0].awayTeamOdds.favorite;
                 }
                 this.apiService.httpGet(tmpStatsAddy).subscribe((payload4: any) => {
-                  if (team.teamId === '17') {
-                    console.log("🚀 ~ tmpGame:", tmpGame)
-                  }
                   tmpGame.blocks = payload4.splits.categories[0].stats[0].value;
                   tmpGame.defensiveRebounds = payload4.splits.categories[0].stats[1].value;
                   tmpGame.steals = payload4.splits.categories[0].stats[2].value;
@@ -550,7 +545,7 @@ export class HttpService {
           let today = new Date();
           let diff = Math.abs(today.getTime() - tmpGameDate.getTime());
           let diffDays = Math.ceil(diff / (1000 * 3600 * 24));
-          if (today <= tmpGameDate && diffDays <= 2) {
+          if (today <= tmpGameDate && diffDays <= 1) {
             const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
             this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
               if (this.nbaAllTeams[i].teamId === payload2.competitions[0].competitors[0].id) {
@@ -576,6 +571,7 @@ export class HttpService {
               if (this.nbaAllTeams[i].teamId === payload2.competitions[0].competitors[1].id) {
                 this.nbaAllTeams.forEach(team2 => {
                   if (team2.teamId === payload2.competitions[0].competitors[0].id) {
+                    this.nbaAllTeams[i].nextGameDate = new Date(tmpGameDate);
                     this.nbaAllTeams[i].nextGameSpread = payload3.items[0].spread;
                     this.nbaAllTeams[i].nextOpponent = team2.teamName;
                     this.nbaAllTeams[i].nextOpponentWins = team2.wins;
@@ -682,9 +678,6 @@ export class HttpService {
   }
   calculateNbaWinLossRecord() {
     this.nbaAllTeams.forEach(team => team.games.forEach(game => {
-      if (team.teamName === 'Detroit Pistons') {
-        console.log('calculateNbaWinLossRecord.game', game);
-      }
       if ((game.points - game.pointsGiven) >= 0) {
         team.wins++;
       } else {
