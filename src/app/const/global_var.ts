@@ -23,14 +23,13 @@ export const BYE_WEEKS = [{
 
 export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   let tmpTeam: NhlTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -39,25 +38,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -77,14 +76,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -93,25 +91,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -131,14 +129,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -147,25 +144,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -185,14 +182,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -201,25 +197,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -239,14 +235,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -255,25 +250,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -293,14 +288,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -309,25 +303,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -347,14 +341,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -363,25 +356,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -401,14 +394,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -417,25 +409,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -455,14 +447,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -471,25 +462,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -509,14 +500,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -525,25 +515,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -563,14 +553,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -579,25 +568,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -617,14 +606,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -633,25 +621,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -671,14 +659,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -687,25 +674,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -725,14 +712,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -741,25 +727,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -779,14 +765,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -795,25 +780,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -833,14 +818,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -849,25 +833,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -887,14 +871,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -903,25 +886,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -941,14 +924,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -957,25 +939,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -995,14 +977,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1011,25 +992,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1049,14 +1030,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1065,25 +1045,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1103,14 +1083,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1119,25 +1098,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1157,14 +1136,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1173,25 +1151,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1211,14 +1189,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1227,25 +1204,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1265,14 +1242,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1281,25 +1257,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1319,14 +1295,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1335,25 +1310,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1373,14 +1348,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1389,25 +1363,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1427,14 +1401,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1443,25 +1416,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1481,14 +1454,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1497,25 +1469,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1535,14 +1507,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1551,25 +1522,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1589,14 +1560,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1605,25 +1575,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1643,14 +1613,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1659,25 +1628,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,
@@ -1697,14 +1666,13 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    pointsTotal: 0,
-    nextGameDate: new Date(),
+    nextGameDate: new Date('01/01/2999'),
     goalsTotal: 0,
     goalsGivenTotal: 0,
-    savesPctAvg: 0, savesPctTotal: [], savesPctGivenPctAvg: 0, savesPctGivenTotal: [],
+
     assistsTotal: 0,
     assistsGivenTotal: 0,
-    pointsGivenTotal: 0, shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
+    shootingPctAvg: 0, shootingPctTotal: [], shootingPctGivenTotal: [],
     shootingPctGivenAvg: 0,
     netSpread: 0,
     nextGameDetails: '',
@@ -1713,25 +1681,25 @@ export const INITIALIZE_NHL_TEAMS = (inputTeams: NhlTeam[]) => {
     filterStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsFavoritesStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     filterAtsUnderdogStats: {
       goals: { wins: 0, losses: 0 },
       assists: { wins: 0, losses: 0 },
-      saves: { wins: 0, losses: 0 },
+
       shootingPct: { wins: 0, losses: 0 },
     },
     teamIndex: 0,

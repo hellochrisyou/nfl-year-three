@@ -13,7 +13,6 @@ export interface FilterNbaStats {
 export interface FilterNhlStats {
   goals: WinLoss;
   assists: WinLoss;
-  saves: WinLoss;
   shootingPct: WinLoss;
 }
 
@@ -169,14 +168,8 @@ export interface NhlTeam {
   teamId: string;
   teamName: string;
   games: NhlGame[];
-  pointsTotal: number;
-  pointsGivenTotal: number;
   goalsTotal: number;
   goalsGivenTotal: number;
-  savesPctAvg: number;
-  savesPctTotal: number[];
-  savesPctGivenPctAvg: number;
-  savesPctGivenTotal: number[];
   assistsTotal: number;
   assistsGivenTotal: number;
   shootingPctAvg: number;
@@ -196,16 +189,12 @@ export interface NhlGame {
   homeOrAway: string;
   isFavorite?: boolean;
   gameId: number;
-  points: number;
   goals: number;
   assists: number;
-  savesPct: number;
   shootingPct: number;
   goalsGiven: number;
   assistsGiven: number;
-  savesPctGiven: number;
   shootingPctGiven: number;
-  pointsGiven: number;
   spread: number;
 }
 export interface NbaGame {
@@ -231,10 +220,7 @@ export interface NbaGame {
   offensiveReboundsGiven: number;
   turnoversGiven: number;
   threePointsGiven: number;
-  //
   spread: number;
-
-  //
   pointsGiven: number;
 }
 
@@ -256,10 +242,7 @@ export interface Game {
   firstDowns: number
   thirdDownConvPct: number;
   redzoneScoringPct: number;
-  //
   spread: number;
-
-  //
   pointsGiven: number;
   passingAttemptsGiven: number;
   passingYardsGiven: number;

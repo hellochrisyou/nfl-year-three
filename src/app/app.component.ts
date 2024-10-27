@@ -76,7 +76,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
   displayedColumns3 = ['teamName', 'blocks', 'defensiveRebounds', 'steals', 'assists', 'fieldGoals', 'offensiveRebounds', 'turnovers', 'threePoints', 'points',
   ];
-  displayedColumns4 = ['teamName', 'goals', 'assists', 'saves', 'assists', 'shooting',
+  displayedColumns4 = ['teamName', 'goals', 'assists', 'shooting',
   ];
   basicStatsForm: FormGroup;
   crunchStatus = 'Initial';
@@ -107,11 +107,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   rushYardsQuartile: number[] = [];
   sacksQuartile: number[] = [];
   pointsQuartile: number[] = [];
-  nhlPointsQuartile: number[] = [];
   goalsQuartile: number[] = [];
   nhlAssistsQuartile: number[] = [];
   shootingPctQuartile: number[] = [];
-  savePctQuartile: number[] = [];
   selectedTeam = '';
   thirdDownQuartile: number[] = [];
   totalAvgToggle = 'Total';
@@ -626,23 +624,16 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           if (tmpEvent.value !== '') {
             this.shootingChange(tmpEvent, team0.teamName);
           }
-          tmpEvent.value = '';
-          if ((team.savesPctAvg) < this.savePctQuartile[0]) {
-            tmpEvent.value = 'quart1';
-          } else if (team.savesPctAvg >= this.savePctQuartile[0] && team.savesPctAvg < this.savePctQuartile[1]) {
-            tmpEvent.value = 'quart2';
-          } else if (team.savesPctAvg >= this.savePctQuartile[1] && team.savesPctAvg < this.savePctQuartile[2]) {
-            tmpEvent.value = 'quart3';
-          } else if (team.savesPctAvg >= this.savePctQuartile[2]) {
-            tmpEvent.value = 'quart4';
-          }
-          if (tmpEvent.value !== '') {
-            this.saveChange(tmpEvent, team0.teamName);
-          }
         }
       });
     });
-    this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams);
+    this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.filter(team => {
+      if (team.nextGameDate.getTime() !== new Date('01/01/2999').getTime()) {
+        return team;
+      }
+    }));
+    this.nhlDataSource.sort = this.nhlSort;
+    console.log("🚀 ~ this.httpService.nhlAllTeams:", this.httpService.nhlAllTeams)
   }
 
   goalsChange(event: any, teamName: string) {
@@ -664,13 +655,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           if (team.teamName === teamName) {
             team.games.forEach(game => {
               if (game.goalsGiven <= this.goalsQuartile[0]) {
-                if (game.points > game.pointsGiven) {
+                if (game.goals >= game.goalsGiven) {
                   team.filterStats.goals.wins++;
                 } else {
                   team.filterStats.goals.losses++;
                 }
                 if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven - 1.5) > 0)) {
                     team.filterAtsStats.goals.wins++;
                     team.filterAtsFavoritesStats.goals.wins++;
                   } else {
@@ -678,7 +669,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     team.filterAtsFavoritesStats.goals.losses++;
                   }
                 } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven + 1.5) > 0)) {
                     team.filterAtsStats.goals.wins++;
                     team.filterAtsUnderdogStats.goals.wins++;
                   } else {
@@ -696,14 +687,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         this.httpService.nhlAllTeams.forEach(team => {
           if (team.teamName === teamName) {
             team.games.forEach(game => {
-              if ((game.goalsGiven > this.nhlPointsQuartile[0]) && (game.goalsGiven <= this.nhlPointsQuartile[1])) {
-                if (game.points > game.pointsGiven) {
+              if ((game.goalsGiven > this.goalsQuartile[0]) && (game.goalsGiven <= this.goalsQuartile[1])) {
+                if (game.goals >= game.goalsGiven) {
                   team.filterStats.goals.wins++;
                 } else {
                   team.filterStats.goals.losses++;
                 }
                 if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven - 1.5) > 0)) {
                     team.filterAtsStats.goals.wins++;
                     team.filterAtsFavoritesStats.goals.wins++;
                   } else {
@@ -711,7 +702,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     team.filterAtsFavoritesStats.goals.losses++;
                   }
                 } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven + 1.5) > 0)) {
                     team.filterAtsStats.goals.wins++;
                     team.filterAtsUnderdogStats.goals.wins++;
                   } else {
@@ -729,14 +720,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         this.httpService.nhlAllTeams.forEach(team => {
           if (team.teamName === teamName) {
             team.games.forEach(game => {
-              if (game.goalsGiven > this.nhlPointsQuartile[1] && game.goalsGiven <= this.nhlPointsQuartile[2]) {
-                if (game.points > game.pointsGiven) {
+              if (game.goalsGiven > this.goalsQuartile[1] && game.goalsGiven <= this.goalsQuartile[2]) {
+                if (game.goals >= game.goalsGiven) {
                   team.filterStats.goals.wins++;
                 } else {
                   team.filterStats.goals.losses++;
                 }
                 if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven - 1.5) > 0)) {
                     team.filterAtsStats.goals.wins++;
                     team.filterAtsFavoritesStats.goals.wins++;
                   } else {
@@ -744,7 +735,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     team.filterAtsFavoritesStats.goals.losses++;
                   }
                 } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven + 1.5) > 0)) {
                     team.filterAtsStats.goals.wins++;
                     team.filterAtsUnderdogStats.goals.wins++;
                   } else {
@@ -762,14 +753,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         this.httpService.nhlAllTeams.forEach(team => {
           if (team.teamName === teamName) {
             team.games.forEach(game => {
-              if (game.goalsGiven > this.nhlPointsQuartile[2]) {
-                if (game.points > game.pointsGiven) {
+              if (game.goalsGiven > this.goalsQuartile[2]) {
+                if (game.goals >= game.goalsGiven) {
                   team.filterStats.goals.wins++;
                 } else {
                   team.filterStats.goals.losses++;
                 }
                 if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven - 1.5) > 0)) {
                     team.filterAtsStats.goals.wins++;
                     team.filterAtsFavoritesStats.goals.wins++;
                   } else {
@@ -777,7 +768,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     team.filterAtsFavoritesStats.goals.losses++;
                   }
                 } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven + 1.5) > 0)) {
                     team.filterAtsStats.goals.wins++;
                     team.filterAtsUnderdogStats.goals.wins++;
                   } else {
@@ -813,13 +804,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           if (team.teamName === teamName) {
             team.games.forEach(game => {
               if (game.assistsGiven <= this.nhlAssistsQuartile[0]) {
-                if (game.points > game.pointsGiven) {
+                if (game.goals >= game.goalsGiven) {
                   team.filterStats.assists.wins++;
                 } else {
                   team.filterStats.assists.losses++;
                 }
                 if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven - 1.5) > 0)) {
                     team.filterAtsStats.assists.wins++;
                     team.filterAtsFavoritesStats.assists.wins++;
                   } else {
@@ -827,7 +818,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     team.filterAtsFavoritesStats.assists.losses++;
                   }
                 } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven + 1.5) > 0)) {
                     team.filterAtsStats.assists.wins++;
                     team.filterAtsUnderdogStats.assists.wins++;
                   } else {
@@ -845,14 +836,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         this.httpService.nhlAllTeams.forEach(team => {
           if (team.teamName === teamName) {
             team.games.forEach(game => {
-              if ((game.assistsGiven > this.nhlPointsQuartile[0]) && (game.assistsGiven <= this.nhlPointsQuartile[1])) {
-                if (game.points > game.pointsGiven) {
+              if ((game.assistsGiven > this.nhlAssistsQuartile[0]) && (game.assistsGiven <= this.nhlAssistsQuartile[1])) {
+                if (game.goals >= game.goalsGiven) {
                   team.filterStats.assists.wins++;
                 } else {
                   team.filterStats.assists.losses++;
                 }
                 if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven - 1.5) > 0)) {
                     team.filterAtsStats.assists.wins++;
                     team.filterAtsFavoritesStats.assists.wins++;
                   } else {
@@ -860,7 +851,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     team.filterAtsFavoritesStats.assists.losses++;
                   }
                 } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven + 1.5) > 0)) {
                     team.filterAtsStats.assists.wins++;
                     team.filterAtsUnderdogStats.assists.wins++;
                   } else {
@@ -879,13 +870,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           if (team.teamName === teamName) {
             team.games.forEach(game => {
               if (game.assistsGiven > this.nhlAssistsQuartile[1] && game.assistsGiven <= this.nhlAssistsQuartile[2]) {
-                if (game.points > game.pointsGiven) {
+                if (game.goals >= game.goalsGiven) {
                   team.filterStats.assists.wins++;
                 } else {
                   team.filterStats.assists.losses++;
                 }
                 if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven - 1.5) > 0)) {
                     team.filterAtsStats.assists.wins++;
                     team.filterAtsFavoritesStats.assists.wins++;
                   } else {
@@ -893,7 +884,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     team.filterAtsFavoritesStats.assists.losses++;
                   }
                 } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven + 1.5) > 0)) {
                     team.filterAtsStats.assists.wins++;
                     team.filterAtsUnderdogStats.assists.wins++;
                   } else {
@@ -912,13 +903,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           if (team.teamName === teamName) {
             team.games.forEach(game => {
               if (game.assistsGiven > this.nhlAssistsQuartile[2]) {
-                if (game.points > game.pointsGiven) {
+                if (game.goals >= game.goalsGiven) {
                   team.filterStats.assists.wins++;
                 } else {
                   team.filterStats.assists.losses++;
                 }
                 if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven - 1.5) > 0)) {
                     team.filterAtsStats.assists.wins++;
                     team.filterAtsFavoritesStats.assists.wins++;
                   } else {
@@ -926,7 +917,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     team.filterAtsFavoritesStats.assists.losses++;
                   }
                 } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven + 1.5) > 0)) {
                     team.filterAtsStats.assists.wins++;
                     team.filterAtsUnderdogStats.assists.wins++;
                   } else {
@@ -942,154 +933,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
-  saveChange(event: any, teamName: string) {
-    this.httpService.nhlAllTeams.forEach(team => {
-      if (team.teamName === teamName) {
-        team.filterStats.saves.wins = 0;
-        team.filterStats.saves.losses = 0;
-        team.filterAtsStats.saves.wins = 0;
-        team.filterAtsStats.saves.losses = 0;
-        team.filterAtsFavoritesStats.saves.wins = 0;
-        team.filterAtsFavoritesStats.saves.losses = 0;
-        team.filterAtsUnderdogStats.saves.wins = 0;
-        team.filterAtsUnderdogStats.saves.losses = 0;
-      }
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.httpService.nhlAllTeams.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.savesPctGiven <= this.savePctQuartile[0]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.saves.wins++;
-                } else {
-                  team.filterStats.saves.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.saves.wins++;
-                    team.filterAtsFavoritesStats.saves.wins++;
-                  } else {
-                    team.filterAtsStats.saves.losses++;
-                    team.filterAtsFavoritesStats.saves.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.saves.wins++;
-                    team.filterAtsUnderdogStats.saves.wins++;
-                  } else {
-                    team.filterAtsStats.saves.losses++;
-                    team.filterAtsUnderdogStats.saves.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart2': {
-        this.httpService.nhlAllTeams.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if ((game.savesPctGiven > this.savePctQuartile[0]) && (game.savesPctGiven <= this.savePctQuartile[1])) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.saves.wins++;
-                } else {
-                  team.filterStats.saves.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.saves.wins++;
-                    team.filterAtsFavoritesStats.saves.wins++;
-                  } else {
-                    team.filterAtsStats.saves.losses++;
-                    team.filterAtsFavoritesStats.saves.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.saves.wins++;
-                    team.filterAtsUnderdogStats.saves.wins++;
-                  } else {
-                    team.filterAtsStats.saves.losses++;
-                    team.filterAtsUnderdogStats.saves.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart3': {
-        this.httpService.nhlAllTeams.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.savesPctGiven > this.savePctQuartile[1] && game.savesPctGiven <= this.savePctQuartile[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.saves.wins++;
-                } else {
-                  team.filterStats.saves.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.saves.wins++;
-                    team.filterAtsFavoritesStats.saves.wins++;
-                  } else {
-                    team.filterAtsStats.saves.losses++;
-                    team.filterAtsFavoritesStats.saves.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.saves.wins++;
-                    team.filterAtsUnderdogStats.saves.wins++;
-                  } else {
-                    team.filterAtsStats.saves.losses++;
-                    team.filterAtsUnderdogStats.saves.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart4': {
-        this.httpService.nhlAllTeams.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.savesPctGiven > this.savePctQuartile[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.saves.wins++;
-                } else {
-                  team.filterStats.saves.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.saves.wins++;
-                    team.filterAtsFavoritesStats.saves.wins++;
-                  } else {
-                    team.filterAtsStats.saves.losses++;
-                    team.filterAtsFavoritesStats.saves.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.saves.wins++;
-                    team.filterAtsUnderdogStats.saves.wins++;
-                  } else {
-                    team.filterAtsStats.saves.losses++;
-                    team.filterAtsUnderdogStats.saves.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-    }
-  }
+
   shootingChange(event: any, teamName: string) {
     this.httpService.nhlAllTeams.forEach(team => {
       if (team.teamName === teamName) {
@@ -1109,13 +953,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           if (team.teamName === teamName) {
             team.games.forEach(game => {
               if (game.shootingPctGiven <= this.shootingPctQuartile[0]) {
-                if (game.points > game.pointsGiven) {
+                if (game.goals >= game.goalsGiven) {
                   team.filterStats.shootingPct.wins++;
                 } else {
                   team.filterStats.shootingPct.losses++;
                 }
                 if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven - 1.5) > 0)) {
                     team.filterAtsStats.shootingPct.wins++;
                     team.filterAtsFavoritesStats.shootingPct.wins++;
                   } else {
@@ -1123,7 +967,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     team.filterAtsFavoritesStats.shootingPct.losses++;
                   }
                 } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven + 1.5) > 0)) {
                     team.filterAtsStats.shootingPct.wins++;
                     team.filterAtsUnderdogStats.shootingPct.wins++;
                   } else {
@@ -1142,13 +986,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           if (team.teamName === teamName) {
             team.games.forEach(game => {
               if ((game.shootingPctGiven > this.shootingPctQuartile[0]) && (game.shootingPctGiven <= this.shootingPctQuartile[1])) {
-                if (game.points > game.pointsGiven) {
+                if (game.goals >= game.goalsGiven) {
                   team.filterStats.shootingPct.wins++;
                 } else {
                   team.filterStats.shootingPct.losses++;
                 }
                 if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven - 1.5) > 0)) {
                     team.filterAtsStats.shootingPct.wins++;
                     team.filterAtsFavoritesStats.shootingPct.wins++;
                   } else {
@@ -1156,7 +1000,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     team.filterAtsFavoritesStats.shootingPct.losses++;
                   }
                 } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven + 1.5) > 0)) {
                     team.filterAtsStats.shootingPct.wins++;
                     team.filterAtsUnderdogStats.shootingPct.wins++;
                   } else {
@@ -1175,13 +1019,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           if (team.teamName === teamName) {
             team.games.forEach(game => {
               if (game.shootingPctGiven > this.shootingPctQuartile[1] && game.shootingPctGiven <= this.shootingPctQuartile[2]) {
-                if (game.points > game.pointsGiven) {
+                if (game.goals >= game.goalsGiven) {
                   team.filterStats.shootingPct.wins++;
                 } else {
                   team.filterStats.shootingPct.losses++;
                 }
                 if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven - 1.5) > 0)) {
                     team.filterAtsStats.shootingPct.wins++;
                     team.filterAtsFavoritesStats.shootingPct.wins++;
                   } else {
@@ -1189,7 +1033,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     team.filterAtsFavoritesStats.shootingPct.losses++;
                   }
                 } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven + 1.5) > 0)) {
                     team.filterAtsStats.shootingPct.wins++;
                     team.filterAtsUnderdogStats.shootingPct.wins++;
                   } else {
@@ -1208,13 +1052,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           if (team.teamName === teamName) {
             team.games.forEach(game => {
               if (game.shootingPctGiven > this.shootingPctQuartile[2]) {
-                if (game.points > game.pointsGiven) {
+                if (game.goals >= game.goalsGiven) {
                   team.filterStats.shootingPct.wins++;
                 } else {
                   team.filterStats.shootingPct.losses++;
                 }
                 if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven - 1.5) > 0)) {
                     team.filterAtsStats.shootingPct.wins++;
                     team.filterAtsFavoritesStats.shootingPct.wins++;
                   } else {
@@ -1222,7 +1066,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     team.filterAtsFavoritesStats.shootingPct.losses++;
                   }
                 } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                  if (((game.goals - game.goalsGiven + 1.5) > 0)) {
                     team.filterAtsStats.shootingPct.wins++;
                     team.filterAtsUnderdogStats.shootingPct.wins++;
                   } else {
@@ -1238,6 +1082,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
+
+
   defaultFormControls() {
     // this.applyFilter(row.teamName);
     // this.selectedTeam = row.teamName;
@@ -1523,25 +1369,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     return tmpVal;
   }
-
-  checkSaves(opponentName: string): string {
-    let tmpVal = '';
-    this.httpService.nhlAllTeams.forEach(team => {
-      if (team.teamName === opponentName) {
-        if (team.savesPctAvg < this.savePctQuartile[0]) {
-          tmpVal = 'crimson';
-        } else if (team.savesPctAvg >= this.savePctQuartile[0] && team.savesPctAvg < this.savePctQuartile[1]) {
-          tmpVal = 'orange';
-        } else if (team.savesPctAvg >= this.savePctQuartile[1] && team.savesPctAvg < this.savePctQuartile[2]) {
-          tmpVal = 'blueviolet';
-        } else {
-          tmpVal = 'green';
-        }
-      }
-    });
-    return tmpVal;
-  }
-
 
   checkDefensiveRebounds(opponentName: string): string {
     let tmpVal = '';
@@ -1912,15 +1739,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.httpService.nhlAllTeams.forEach(team => {
       if (team.teamName === opponentName) {
         tmpVal = (team.shootingPctAvg);
-      }
-    })
-    return tmpVal;
-  }
-  returnOpponentAvgSaves(opponentName: string) {
-    let tmpVal = 0;
-    this.httpService.nhlAllTeams.forEach(team => {
-      if (team.teamName === opponentName) {
-        tmpVal = (team.savesPctAvg);
       }
     })
     return tmpVal;
@@ -5981,14 +5799,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         break;
       }
-      case 'saves': {
-        if (event.direction === "asc") {
-          this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.filterStats.saves.wins < b.filterStats.saves.wins ? -1 : 1)));
-        } else if (event.direction === 'desc') {
-          this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.filterStats.saves.wins > b.filterStats.saves.wins ? -1 : 1)));
-        }
-        break;
-      }
       case 'shooting': {
         if (event.direction === "asc") {
           this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.filterStats.shootingPct.wins < b.filterStats.shootingPct.wins ? -1 : 1)));
@@ -6034,8 +5844,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.httpService.setNhlOpponentStats();
     this.httpService.setupNhlGivenData();
     this.runNhlQuartiles();
-    this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams);
-    this.nhlDataSource.sort = this.nhlSort;
     this.isNhlSetupFinished = true;
     this.isActiveTab = 1;
   }
@@ -6188,11 +5996,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   runNhlQuartiles() {
     let tmpTotalArr: number[] = [];
     this.httpService.nhlAllTeams.forEach(team => {
-      tmpTotalArr.push(team.pointsTotal / team.games.length);
-    })
-    this.nhlPointsQuartile = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.nhlAllTeams.forEach(team => {
       tmpTotalArr.push(team.goalsTotal / team.games.length);
     })
     this.goalsQuartile = this.calculateQuartiles(tmpTotalArr);
@@ -6206,11 +6009,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       tmpTotalArr.push(team.shootingPctAvg);
     })
     this.shootingPctQuartile = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.nhlAllTeams.forEach(team => {
-      tmpTotalArr.push(team.savesPctAvg);
-    })
-    this.savePctQuartile = this.calculateQuartiles(tmpTotalArr);
   }
 
   returnCellColor(inputVal: number, inputType: string) {
