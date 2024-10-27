@@ -11,7 +11,7 @@ import * as stats from 'simple-statistics';
 import { DateService } from './const/date';
 import { MaterialModule } from './material.module';
 import { KeyModalComponent } from './modal/key-modal/key-modal.component';
-import { NbaTeam, Team } from './model/interface';
+import { NbaTeam, NhlTeam, Team } from './model/interface';
 import { HttpService } from './services/http.service';
 
 @Component({
@@ -40,11 +40,18 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatSort) nbaSort: MatSort;
+  @ViewChild(MatSort) nhlSort: MatSort;
 
   nbaCrunchStatus = '';
+  nhlCrunchStatus = '';
+
   currentFilter = '';
+  currentNbaFilter = '';
+  currentNhlFilter = '';
   currentNbaDownloadCounter = 0;
+  currentNhlDownloadCounter = 0;
   currentNbaDownloadCounterPostMsg = ' - DOWNLOAD REQUIRED';
+  currentNhlDownloadCounterPostMsg = ' - DOWNLOAD REQUIRED';
   isActiveTab = 0;
   isActiveTab2 = 2;
   passAttemptsPanelColor = 'grey';
@@ -69,12 +76,15 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
   displayedColumns3 = ['teamName', 'blocks', 'defensiveRebounds', 'steals', 'assists', 'fieldGoals', 'offensiveRebounds', 'turnovers', 'threePoints', 'points',
   ];
+  displayedColumns4 = ['teamName', 'goals', 'assists', 'saves', 'assists', 'shooting',
+  ];
   basicStatsForm: FormGroup;
   crunchStatus = 'Initial';
   currentDownloadCounter = 0;
   currentDownloadCounterPostMsg = ' - DOWNLOAD REQUIRED';
   currentWeek: number = 0;
   nbaDataSource: MatTableDataSource<NbaTeam>;
+  nhlDataSource: MatTableDataSource<NhlTeam>;
   dataSource: MatTableDataSource<Team>;
   firstDownsQuartile: number[] = [];
   interceptionsQuartile: number[] = [];
@@ -97,10 +107,16 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   rushYardsQuartile: number[] = [];
   sacksQuartile: number[] = [];
   pointsQuartile: number[] = [];
+  nhlPointsQuartile: number[] = [];
+  goalsQuartile: number[] = [];
+  nhlAssistsQuartile: number[] = [];
+  shootingPctQuartile: number[] = [];
+  savePctQuartile: number[] = [];
   selectedTeam = '';
   thirdDownQuartile: number[] = [];
   totalAvgToggle = 'Total';
   isNbaSetupFinished = false;
+  isNhlSetupFinished = false;
   readonly dialog = inject(MatDialog);
 
   constructor(
@@ -147,6 +163,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       return true;
     }
   }
+  checkNhlTabStatus() {
+    if (this.nhlCrunchStatus === 'Processed' && this.currentNhlDownloadCounterPostMsg === '') {
+      return false;
+    } else {
+      return true;
+    }
+  }
   downloadNbaLastYear() {
     this.currentNbaDownloadCounter++;
     this.currentNbaDownloadCounterPostMsg = ' ...Currently Downloading...';
@@ -158,7 +181,17 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.currentNbaDownloadCounterPostMsg = ' ...Currently Downloading...';
     this.httpService.executeNbaDataHydrationThisYear();
   }
+  downloadNhlLastYear() {
+    this.currentNhlDownloadCounter++;
+    this.currentNhlDownloadCounterPostMsg = ' ...Currently Downloading...';
+    this.httpService.executeNhlDataHydrationLastYear();
+  }
 
+  downloadNhlLastYear2() {
+    this.currentNhlDownloadCounter++;
+    this.currentNhlDownloadCounterPostMsg = ' ...Currently Downloading...';
+    this.httpService.executeNhlDataHydrationThisYear();
+  }
   setWeek() {
     this.dateService.currentWeek = +this.weekCtrl.value!;
   }
@@ -212,6 +245,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     this.dataSource = new MatTableDataSource(this.httpService.allTeams);
     this.dataSource.sort = this.sort;
+    this.nbaDataSource = new MatTableDataSource(this.httpService.nbaAllTeams);
+    this.nbaDataSource.sort = this.nbaSort;
   }
 
   toggleInterUnion() {
@@ -418,6 +453,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     let tmpEvent = {
       value: ''
     }
+    console.log('nba teams: ', this.httpService.nbaAllTeams);
     this.httpService.nbaAllTeams.forEach(team0 => {
       this.httpService.nbaAllTeams.forEach(team => {
         if (team.teamName === team0.nextOpponent) {
@@ -539,6 +575,668 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     });
     this.nbaDataSource = new MatTableDataSource(this.httpService.nbaAllTeams);
+  }
+
+  defaultNhlFormControls() {
+    // this.applyFilter(row.teamName);
+    // this.selectedTeam = row.teamName;
+    let tmpEvent = {
+      value: ''
+    }
+    console.log('nhl teams: ', this.httpService.nhlAllTeams);
+    this.httpService.nhlAllTeams.forEach(team0 => {
+      this.httpService.nhlAllTeams.forEach(team => {
+        if (team.teamName === team0.nextOpponent) {
+          tmpEvent.value = '';
+          if ((team.goalsTotal / team.games.length) < this.goalsQuartile[0]) {
+            tmpEvent.value = 'quart1';
+          } else if (((team.goalsTotal / team.games.length) >= this.goalsQuartile[0] && (team.goalsTotal / team.games.length) < this.goalsQuartile[1])) {
+            tmpEvent.value = 'quart2';
+          } else if (((team.goalsTotal / team.games.length) >= this.goalsQuartile[1] && (team.goalsTotal / team.games.length) < this.goalsQuartile[2])) {
+            tmpEvent.value = 'quart3';
+          } else if ((team.goalsTotal / team.games.length) >= this.goalsQuartile[2]) {
+            tmpEvent.value = 'quart4';
+          }
+          if (tmpEvent.value !== '') {
+            this.goalsChange(tmpEvent, team0.teamName);
+          }
+          tmpEvent.value = '';
+          if ((team.assistsTotal / team.games.length) < this.nhlAssistsQuartile[0]) {
+            tmpEvent.value = 'quart1';
+          } else if (((team.assistsTotal / team.games.length) >= this.nhlAssistsQuartile[0] && (team.assistsTotal / team.games.length) < this.nhlAssistsQuartile[1])) {
+            tmpEvent.value = 'quart2';
+          } else if (((team.assistsTotal / team.games.length) >= this.nhlAssistsQuartile[1] && (team.assistsTotal / team.games.length) < this.nhlAssistsQuartile[2])) {
+            tmpEvent.value = 'quart3';
+          } else if ((team.assistsTotal / team.games.length) >= this.nhlAssistsQuartile[2]) {
+            tmpEvent.value = 'quart4';
+          }
+          if (tmpEvent.value !== '') {
+            this.nhlAssistsChange(tmpEvent, team0.teamName);
+          }
+          tmpEvent.value = '';
+          if ((team.shootingPctAvg) < this.shootingPctQuartile[0]) {
+            tmpEvent.value = 'quart1';
+          } else if (team.shootingPctAvg >= this.assistsQuartile[0] && team.shootingPctAvg < this.assistsQuartile[1]) {
+            tmpEvent.value = 'quart2';
+          } else if (team.shootingPctAvg >= this.assistsQuartile[1] && team.shootingPctAvg < this.assistsQuartile[2]) {
+            tmpEvent.value = 'quart3';
+          } else if (team.shootingPctAvg >= this.assistsQuartile[2]) {
+            tmpEvent.value = 'quart4';
+          }
+          if (tmpEvent.value !== '') {
+            this.shootingChange(tmpEvent, team0.teamName);
+          }
+          tmpEvent.value = '';
+          if ((team.savesPctAvg) < this.savePctQuartile[0]) {
+            tmpEvent.value = 'quart1';
+          } else if (team.savesPctAvg >= this.savePctQuartile[0] && team.savesPctAvg < this.savePctQuartile[1]) {
+            tmpEvent.value = 'quart2';
+          } else if (team.savesPctAvg >= this.savePctQuartile[1] && team.savesPctAvg < this.savePctQuartile[2]) {
+            tmpEvent.value = 'quart3';
+          } else if (team.savesPctAvg >= this.savePctQuartile[2]) {
+            tmpEvent.value = 'quart4';
+          }
+          if (tmpEvent.value !== '') {
+            this.saveChange(tmpEvent, team0.teamName);
+          }
+        }
+      });
+    });
+    this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams);
+  }
+
+  goalsChange(event: any, teamName: string) {
+    this.httpService.nhlAllTeams.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.goals.wins = 0;
+        team.filterStats.goals.losses = 0;
+        team.filterAtsStats.goals.wins = 0;
+        team.filterAtsStats.goals.losses = 0;
+        team.filterAtsFavoritesStats.goals.wins = 0;
+        team.filterAtsFavoritesStats.goals.losses = 0;
+        team.filterAtsUnderdogStats.goals.wins = 0;
+        team.filterAtsUnderdogStats.goals.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.goalsGiven <= this.goalsQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.goals.wins++;
+                } else {
+                  team.filterStats.goals.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.goals.wins++;
+                    team.filterAtsFavoritesStats.goals.wins++;
+                  } else {
+                    team.filterAtsStats.goals.losses++;
+                    team.filterAtsFavoritesStats.goals.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.goals.wins++;
+                    team.filterAtsUnderdogStats.goals.wins++;
+                  } else {
+                    team.filterAtsStats.goals.losses++;
+                    team.filterAtsUnderdogStats.goals.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.goalsGiven > this.nhlPointsQuartile[0]) && (game.goalsGiven <= this.nhlPointsQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.goals.wins++;
+                } else {
+                  team.filterStats.goals.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.goals.wins++;
+                    team.filterAtsFavoritesStats.goals.wins++;
+                  } else {
+                    team.filterAtsStats.goals.losses++;
+                    team.filterAtsFavoritesStats.goals.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.goals.wins++;
+                    team.filterAtsUnderdogStats.goals.wins++;
+                  } else {
+                    team.filterAtsStats.goals.losses++;
+                    team.filterAtsUnderdogStats.goals.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.goalsGiven > this.nhlPointsQuartile[1] && game.goalsGiven <= this.nhlPointsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.goals.wins++;
+                } else {
+                  team.filterStats.goals.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.goals.wins++;
+                    team.filterAtsFavoritesStats.goals.wins++;
+                  } else {
+                    team.filterAtsStats.goals.losses++;
+                    team.filterAtsFavoritesStats.goals.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.goals.wins++;
+                    team.filterAtsUnderdogStats.goals.wins++;
+                  } else {
+                    team.filterAtsStats.goals.losses++;
+                    team.filterAtsUnderdogStats.goals.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.goalsGiven > this.nhlPointsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.goals.wins++;
+                } else {
+                  team.filterStats.goals.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.goals.wins++;
+                    team.filterAtsFavoritesStats.goals.wins++;
+                  } else {
+                    team.filterAtsStats.goals.losses++;
+                    team.filterAtsFavoritesStats.goals.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.goals.wins++;
+                    team.filterAtsUnderdogStats.goals.wins++;
+                  } else {
+                    team.filterAtsStats.goals.losses++;
+                    team.filterAtsUnderdogStats.goals.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+    }
+  }
+
+  nhlAssistsChange(event: any, teamName: string) {
+    this.httpService.nhlAllTeams.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.assists.wins = 0;
+        team.filterStats.assists.losses = 0;
+        team.filterAtsStats.assists.wins = 0;
+        team.filterAtsStats.assists.losses = 0;
+        team.filterAtsFavoritesStats.assists.wins = 0;
+        team.filterAtsFavoritesStats.assists.losses = 0;
+        team.filterAtsUnderdogStats.assists.wins = 0;
+        team.filterAtsUnderdogStats.assists.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.assistsGiven <= this.nhlAssistsQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.assists.wins++;
+                } else {
+                  team.filterStats.assists.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.assists.wins++;
+                    team.filterAtsFavoritesStats.assists.wins++;
+                  } else {
+                    team.filterAtsStats.assists.losses++;
+                    team.filterAtsFavoritesStats.assists.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.assists.wins++;
+                    team.filterAtsUnderdogStats.assists.wins++;
+                  } else {
+                    team.filterAtsStats.assists.losses++;
+                    team.filterAtsUnderdogStats.assists.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.assistsGiven > this.nhlPointsQuartile[0]) && (game.assistsGiven <= this.nhlPointsQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.assists.wins++;
+                } else {
+                  team.filterStats.assists.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.assists.wins++;
+                    team.filterAtsFavoritesStats.assists.wins++;
+                  } else {
+                    team.filterAtsStats.assists.losses++;
+                    team.filterAtsFavoritesStats.assists.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.assists.wins++;
+                    team.filterAtsUnderdogStats.assists.wins++;
+                  } else {
+                    team.filterAtsStats.assists.losses++;
+                    team.filterAtsUnderdogStats.assists.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.assistsGiven > this.nhlAssistsQuartile[1] && game.assistsGiven <= this.nhlAssistsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.assists.wins++;
+                } else {
+                  team.filterStats.assists.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.assists.wins++;
+                    team.filterAtsFavoritesStats.assists.wins++;
+                  } else {
+                    team.filterAtsStats.assists.losses++;
+                    team.filterAtsFavoritesStats.assists.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.assists.wins++;
+                    team.filterAtsUnderdogStats.assists.wins++;
+                  } else {
+                    team.filterAtsStats.assists.losses++;
+                    team.filterAtsUnderdogStats.assists.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.assistsGiven > this.nhlAssistsQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.assists.wins++;
+                } else {
+                  team.filterStats.assists.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.assists.wins++;
+                    team.filterAtsFavoritesStats.assists.wins++;
+                  } else {
+                    team.filterAtsStats.assists.losses++;
+                    team.filterAtsFavoritesStats.assists.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.assists.wins++;
+                    team.filterAtsUnderdogStats.assists.wins++;
+                  } else {
+                    team.filterAtsStats.assists.losses++;
+                    team.filterAtsUnderdogStats.assists.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+    }
+  }
+  saveChange(event: any, teamName: string) {
+    this.httpService.nhlAllTeams.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.saves.wins = 0;
+        team.filterStats.saves.losses = 0;
+        team.filterAtsStats.saves.wins = 0;
+        team.filterAtsStats.saves.losses = 0;
+        team.filterAtsFavoritesStats.saves.wins = 0;
+        team.filterAtsFavoritesStats.saves.losses = 0;
+        team.filterAtsUnderdogStats.saves.wins = 0;
+        team.filterAtsUnderdogStats.saves.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.savesPctGiven <= this.savePctQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.saves.wins++;
+                } else {
+                  team.filterStats.saves.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.saves.wins++;
+                    team.filterAtsFavoritesStats.saves.wins++;
+                  } else {
+                    team.filterAtsStats.saves.losses++;
+                    team.filterAtsFavoritesStats.saves.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.saves.wins++;
+                    team.filterAtsUnderdogStats.saves.wins++;
+                  } else {
+                    team.filterAtsStats.saves.losses++;
+                    team.filterAtsUnderdogStats.saves.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.savesPctGiven > this.savePctQuartile[0]) && (game.savesPctGiven <= this.savePctQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.saves.wins++;
+                } else {
+                  team.filterStats.saves.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.saves.wins++;
+                    team.filterAtsFavoritesStats.saves.wins++;
+                  } else {
+                    team.filterAtsStats.saves.losses++;
+                    team.filterAtsFavoritesStats.saves.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.saves.wins++;
+                    team.filterAtsUnderdogStats.saves.wins++;
+                  } else {
+                    team.filterAtsStats.saves.losses++;
+                    team.filterAtsUnderdogStats.saves.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.savesPctGiven > this.savePctQuartile[1] && game.savesPctGiven <= this.savePctQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.saves.wins++;
+                } else {
+                  team.filterStats.saves.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.saves.wins++;
+                    team.filterAtsFavoritesStats.saves.wins++;
+                  } else {
+                    team.filterAtsStats.saves.losses++;
+                    team.filterAtsFavoritesStats.saves.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.saves.wins++;
+                    team.filterAtsUnderdogStats.saves.wins++;
+                  } else {
+                    team.filterAtsStats.saves.losses++;
+                    team.filterAtsUnderdogStats.saves.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.savesPctGiven > this.savePctQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.saves.wins++;
+                } else {
+                  team.filterStats.saves.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.saves.wins++;
+                    team.filterAtsFavoritesStats.saves.wins++;
+                  } else {
+                    team.filterAtsStats.saves.losses++;
+                    team.filterAtsFavoritesStats.saves.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.saves.wins++;
+                    team.filterAtsUnderdogStats.saves.wins++;
+                  } else {
+                    team.filterAtsStats.saves.losses++;
+                    team.filterAtsUnderdogStats.saves.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+    }
+  }
+  shootingChange(event: any, teamName: string) {
+    this.httpService.nhlAllTeams.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.shootingPct.wins = 0;
+        team.filterStats.shootingPct.losses = 0;
+        team.filterAtsStats.shootingPct.wins = 0;
+        team.filterAtsStats.shootingPct.losses = 0;
+        team.filterAtsFavoritesStats.shootingPct.wins = 0;
+        team.filterAtsFavoritesStats.shootingPct.losses = 0;
+        team.filterAtsUnderdogStats.shootingPct.wins = 0;
+        team.filterAtsUnderdogStats.shootingPct.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.shootingPctGiven <= this.shootingPctQuartile[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.shootingPct.wins++;
+                } else {
+                  team.filterStats.shootingPct.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.shootingPct.wins++;
+                    team.filterAtsFavoritesStats.shootingPct.wins++;
+                  } else {
+                    team.filterAtsStats.shootingPct.losses++;
+                    team.filterAtsFavoritesStats.shootingPct.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.shootingPct.wins++;
+                    team.filterAtsUnderdogStats.shootingPct.wins++;
+                  } else {
+                    team.filterAtsStats.shootingPct.losses++;
+                    team.filterAtsUnderdogStats.shootingPct.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.shootingPctGiven > this.shootingPctQuartile[0]) && (game.shootingPctGiven <= this.shootingPctQuartile[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.shootingPct.wins++;
+                } else {
+                  team.filterStats.shootingPct.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.shootingPct.wins++;
+                    team.filterAtsFavoritesStats.shootingPct.wins++;
+                  } else {
+                    team.filterAtsStats.shootingPct.losses++;
+                    team.filterAtsFavoritesStats.shootingPct.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.shootingPct.wins++;
+                    team.filterAtsUnderdogStats.shootingPct.wins++;
+                  } else {
+                    team.filterAtsStats.shootingPct.losses++;
+                    team.filterAtsUnderdogStats.shootingPct.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.shootingPctGiven > this.shootingPctQuartile[1] && game.shootingPctGiven <= this.shootingPctQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.shootingPct.wins++;
+                } else {
+                  team.filterStats.shootingPct.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.shootingPct.wins++;
+                    team.filterAtsFavoritesStats.shootingPct.wins++;
+                  } else {
+                    team.filterAtsStats.shootingPct.losses++;
+                    team.filterAtsFavoritesStats.shootingPct.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.shootingPct.wins++;
+                    team.filterAtsUnderdogStats.shootingPct.wins++;
+                  } else {
+                    team.filterAtsStats.shootingPct.losses++;
+                    team.filterAtsUnderdogStats.shootingPct.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.httpService.nhlAllTeams.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.shootingPctGiven > this.shootingPctQuartile[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.shootingPct.wins++;
+                } else {
+                  team.filterStats.shootingPct.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.shootingPct.wins++;
+                    team.filterAtsFavoritesStats.shootingPct.wins++;
+                  } else {
+                    team.filterAtsStats.shootingPct.losses++;
+                    team.filterAtsFavoritesStats.shootingPct.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.shootingPct.wins++;
+                    team.filterAtsUnderdogStats.shootingPct.wins++;
+                  } else {
+                    team.filterAtsStats.shootingPct.losses++;
+                    team.filterAtsUnderdogStats.shootingPct.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+    }
   }
   defaultFormControls() {
     // this.applyFilter(row.teamName);
@@ -714,8 +1412,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     })
     // this.applyFilter(this.currentFilter);
-
-
     this.calculateStd();
   }
 
@@ -773,6 +1469,80 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     return tmpVal;
   }
+
+  checkGoals(opponentName: string): string {
+    let tmpVal = '';
+    this.httpService.nhlAllTeams.forEach(team => {
+      if (team.teamName === opponentName) {
+        if ((team.goalsTotal / team.games.length) < this.goalsQuartile[0]) {
+          tmpVal = 'crimson';
+        } else if (((team.goalsTotal / team.games.length) >= this.goalsQuartile[0] && (team.goalsTotal / team.games.length) < this.goalsQuartile[1])) {
+          tmpVal = 'orange';
+        } else if (((team.goalsTotal / team.games.length) >= this.goalsQuartile[1] && (team.goalsTotal / team.games.length) < this.goalsQuartile[2])) {
+          tmpVal = 'blueviolet';
+        } else {
+          tmpVal = 'green';
+        }
+      }
+    });
+    return tmpVal;
+  }
+
+  checkNhlAssists(opponentName: string): string {
+    let tmpVal = '';
+    this.httpService.nhlAllTeams.forEach(team => {
+      if (team.teamName === opponentName) {
+        if ((team.assistsTotal / team.games.length) < this.nhlAssistsQuartile[0]) {
+          tmpVal = 'crimson';
+        } else if (((team.assistsTotal / team.games.length) >= this.nhlAssistsQuartile[0] && (team.assistsTotal / team.games.length) < this.nhlAssistsQuartile[1])) {
+          tmpVal = 'orange';
+        } else if (((team.assistsTotal / team.games.length) >= this.nhlAssistsQuartile[1] && (team.assistsTotal / team.games.length) < this.nhlAssistsQuartile[2])) {
+          tmpVal = 'blueviolet';
+        } else {
+          tmpVal = 'green';
+        }
+      }
+    });
+    return tmpVal;
+  }
+
+  checkShootingPct(opponentName: string): string {
+    let tmpVal = '';
+    this.httpService.nhlAllTeams.forEach(team => {
+      if (team.teamName === opponentName) {
+        if (team.shootingPctAvg < this.shootingPctQuartile[0]) {
+          tmpVal = 'crimson';
+        } else if (team.shootingPctAvg >= this.shootingPctQuartile[0] && team.shootingPctAvg < this.shootingPctQuartile[1]) {
+          tmpVal = 'orange';
+        } else if (team.shootingPctAvg >= this.shootingPctQuartile[1] && team.shootingPctAvg < this.shootingPctQuartile[2]) {
+          tmpVal = 'blueviolet';
+        } else {
+          tmpVal = 'green';
+        }
+      }
+    });
+    return tmpVal;
+  }
+
+  checkSaves(opponentName: string): string {
+    let tmpVal = '';
+    this.httpService.nhlAllTeams.forEach(team => {
+      if (team.teamName === opponentName) {
+        if (team.savesPctAvg < this.savePctQuartile[0]) {
+          tmpVal = 'crimson';
+        } else if (team.savesPctAvg >= this.savePctQuartile[0] && team.savesPctAvg < this.savePctQuartile[1]) {
+          tmpVal = 'orange';
+        } else if (team.savesPctAvg >= this.savePctQuartile[1] && team.savesPctAvg < this.savePctQuartile[2]) {
+          tmpVal = 'blueviolet';
+        } else {
+          tmpVal = 'green';
+        }
+      }
+    });
+    return tmpVal;
+  }
+
+
   checkDefensiveRebounds(opponentName: string): string {
     let tmpVal = '';
     this.httpService.nbaAllTeams.forEach(team => {
@@ -1114,6 +1884,43 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.httpService.allTeams.forEach(team => {
       if (team.teamName === opponentName) {
         tmpVal = (team.passingYardsTotal / team.games.length);
+      }
+    })
+    return tmpVal;
+  }
+
+  returnOpponentAvgGoals(opponentName: string) {
+    let tmpVal = 0;
+    this.httpService.nhlAllTeams.forEach(team => {
+      if (team.teamName === opponentName) {
+        tmpVal = (team.goalsTotal / team.games.length);
+      }
+    })
+    return tmpVal;
+  }
+  returnNhlOpponentAvgAssists(opponentName: string) {
+    let tmpVal = 0;
+    this.httpService.nhlAllTeams.forEach(team => {
+      if (team.teamName === opponentName) {
+        tmpVal = (team.assistsTotal / team.games.length);
+      }
+    })
+    return tmpVal;
+  }
+  returnOpponentAvgShootingPct(opponentName: string) {
+    let tmpVal = 0;
+    this.httpService.nhlAllTeams.forEach(team => {
+      if (team.teamName === opponentName) {
+        tmpVal = (team.shootingPctAvg);
+      }
+    })
+    return tmpVal;
+  }
+  returnOpponentAvgSaves(opponentName: string) {
+    let tmpVal = 0;
+    this.httpService.nhlAllTeams.forEach(team => {
+      if (team.teamName === opponentName) {
+        tmpVal = (team.savesPctAvg);
       }
     })
     return tmpVal;
@@ -5148,6 +5955,50 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  sortColumn5(event: any) {
+    switch (event.active) {
+      case 'teamName': {
+        if (event.direction === "asc") {
+          this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.netSpread < b.netSpread ? -1 : 1)));
+        } else if (event.direction === 'desc') {
+          this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.netSpread > b.netSpread ? -1 : 1)));
+        }
+        break;
+      }
+      case 'goals': {
+        if (event.direction === "asc") {
+          this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.filterStats.goals.wins < b.filterStats.goals.wins ? -1 : 1)));
+        } else if (event.direction === 'desc') {
+          this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.filterStats.goals.wins > b.filterStats.goals.wins ? -1 : 1)));
+        }
+        break;
+      }
+      case 'assists': {
+        if (event.direction === "asc") {
+          this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.filterStats.assists.wins < b.filterStats.assists.wins ? -1 : 1)));
+        } else if (event.direction === 'desc') {
+          this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.filterStats.assists.wins > b.filterStats.assists.wins ? -1 : 1)));
+        }
+        break;
+      }
+      case 'saves': {
+        if (event.direction === "asc") {
+          this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.filterStats.saves.wins < b.filterStats.saves.wins ? -1 : 1)));
+        } else if (event.direction === 'desc') {
+          this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.filterStats.saves.wins > b.filterStats.saves.wins ? -1 : 1)));
+        }
+        break;
+      }
+      case 'shooting': {
+        if (event.direction === "asc") {
+          this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.filterStats.shootingPct.wins < b.filterStats.shootingPct.wins ? -1 : 1)));
+        } else if (event.direction === 'desc') {
+          this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams.sort((a, b) => (a.filterStats.shootingPct.wins > b.filterStats.shootingPct.wins ? -1 : 1)));
+        }
+        break;
+      }
+    }
+  }
   crunchNumbers() {
     this.crunchStatus = 'Pending';
     this.httpService.getNextOpponentInfo();
@@ -5159,7 +6010,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dataSource = new MatTableDataSource(this.httpService.allTeams);
     this.dataSource.sort = this.sort;
     this.isSetupFinished = true;
-    this.isActiveTab = 2;
+    this.isActiveTab = 3;
   }
 
   crunchNbaNumbers() {
@@ -5172,6 +6023,20 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.nbaDataSource = new MatTableDataSource(this.httpService.nbaAllTeams);
     this.nbaDataSource.sort = this.nbaSort;
     this.isNbaSetupFinished = true;
+    this.isActiveTab = 1;
+  }
+
+  crunchNhlNumbers() {
+    this.nhlCrunchStatus = 'Pending';
+    this.httpService.getNhlNextOpponentInfo();
+    this.httpService.crunchNhlTotals();
+    this.httpService.calculateNhlWinLossRecord();
+    this.httpService.setNhlOpponentStats();
+    this.httpService.setupNhlGivenData();
+    this.runNhlQuartiles();
+    this.nhlDataSource = new MatTableDataSource(this.httpService.nhlAllTeams);
+    this.nhlDataSource.sort = this.nhlSort;
+    this.isNhlSetupFinished = true;
     this.isActiveTab = 1;
   }
 
@@ -5192,6 +6057,20 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
     this.dataSource.filter = filterValue;
+  }
+
+  applyNbaFilter(filterValue: string) {
+    this.currentNbaFilter = filterValue;
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.nbaDataSource.filter = filterValue;
+  }
+
+  applyNhlFilter(filterValue: string) {
+    this.currentNhlFilter = filterValue;
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.nhlDataSource.filter = filterValue;
   }
 
   runNbaQuartiles() {
@@ -5241,6 +6120,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.threePointsQuartile = this.calculateQuartiles(tmpTotalArr);
   }
+
 
   runQuartiles() {
     let tmpTotalArr: number[] = [];
@@ -5303,6 +6183,34 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       tmpTotalArr.push(team.redzoneScoringPctAvg);
     })
     this.redzoneQuartile = this.calculateQuartiles(tmpTotalArr);
+  }
+
+  runNhlQuartiles() {
+    let tmpTotalArr: number[] = [];
+    this.httpService.nhlAllTeams.forEach(team => {
+      tmpTotalArr.push(team.pointsTotal / team.games.length);
+    })
+    this.nhlPointsQuartile = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.nhlAllTeams.forEach(team => {
+      tmpTotalArr.push(team.goalsTotal / team.games.length);
+    })
+    this.goalsQuartile = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.nhlAllTeams.forEach(team => {
+      tmpTotalArr.push(team.assistsTotal / team.games.length);
+    })
+    this.nhlAssistsQuartile = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.nhlAllTeams.forEach(team => {
+      tmpTotalArr.push(team.shootingPctAvg);
+    })
+    this.shootingPctQuartile = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.nhlAllTeams.forEach(team => {
+      tmpTotalArr.push(team.savesPctAvg);
+    })
+    this.savePctQuartile = this.calculateQuartiles(tmpTotalArr);
   }
 
   returnCellColor(inputVal: number, inputType: string) {

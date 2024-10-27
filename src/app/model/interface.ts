@@ -10,6 +10,13 @@ export interface FilterNbaStats {
   threePoints: WinLoss;
 }
 
+export interface FilterNhlStats {
+  goals: WinLoss;
+  assists: WinLoss;
+  saves: WinLoss;
+  shootingPct: WinLoss;
+}
+
 export interface FilterStats {
   passAttempts: WinLoss;
   passYards: WinLoss;
@@ -142,6 +149,65 @@ export interface NbaTeam {
   customAtsLosses: number;
 }
 
+export interface NhlTeam {
+  netSpread: number;
+  filterStats: FilterNhlStats;
+  filterAtsStats: FilterNhlStats;
+  filterAtsFavoritesStats: FilterNhlStats;
+  filterAtsUnderdogStats: FilterNhlStats;
+  nextGameDate: Date;
+  nextGameSpread: string;
+  nextGameDetails: string;
+  teamInitials: string;
+  isNextGameFavorite: boolean;
+  nextOpponent: string;
+  nextOpponentWins: number;
+  nextOpponentLosses: number;
+  nextOpponentAtsWins: number;
+  nextOpponentAtsLosses: number;
+  teamIndex: number;
+  teamId: string;
+  teamName: string;
+  games: NhlGame[];
+  pointsTotal: number;
+  pointsGivenTotal: number;
+  goalsTotal: number;
+  goalsGivenTotal: number;
+  savesPctAvg: number;
+  savesPctTotal: number[];
+  savesPctGivenPctAvg: number;
+  savesPctGivenTotal: number[];
+  assistsTotal: number;
+  assistsGivenTotal: number;
+  shootingPctAvg: number;
+  shootingPctTotal: number[];
+  shootingPctGivenAvg: number;
+  shootingPctGivenTotal: number[];
+  wins: number;
+  losses: number;
+  atsWins: number;
+  atsLosses: number;
+  customAtsWins: number;
+  customAtsLosses: number;
+}
+export interface NhlGame {
+  date: any;
+  opponentId: string;
+  homeOrAway: string;
+  isFavorite?: boolean;
+  gameId: number;
+  points: number;
+  goals: number;
+  assists: number;
+  savesPct: number;
+  shootingPct: number;
+  goalsGiven: number;
+  assistsGiven: number;
+  savesPctGiven: number;
+  shootingPctGiven: number;
+  pointsGiven: number;
+  spread: number;
+}
 export interface NbaGame {
   date: any;
   opponentId: string;
