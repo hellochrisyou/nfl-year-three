@@ -137,7 +137,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.dateService.initializeStaticDates();
     // this.currentWeek = this.dateService.currentWeek;
-    this.currentWeek = 8;
+    this.currentWeek = 9;
     console.log("🚀 ~ this.currentWeek:", this.currentWeek);
     this.httpService.updateDownloadStatus.subscribe(payload => {
       this.currentDownloadCounter = payload;
@@ -1096,6 +1096,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     let tmpEvent = {
       value: ''
     }
+    console.log("🚀 ~ this.httpService.allTeams:", this.httpService.allTeams)
+
     this.httpService.allTeams.forEach(team0 => {
       this.httpService.allTeams.forEach(team => {
         if (team.teamName === team0.nextOpponent) {
@@ -1263,7 +1265,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     })
     // this.applyFilter(this.currentFilter);
-    this.calculateStd();
+    // this.calculateStd();
     let tmpAllTeam: Team[] = [];
     this.httpService.allTeams.forEach(team1 => {
         this.httpService.allTeams.forEach(team2 => {

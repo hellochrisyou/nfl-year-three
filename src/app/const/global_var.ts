@@ -7361,7 +7361,7 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
     thirdDownStd: 0,
     redzoneStd: 0,
     pointsStd: 0,
-    teamInitials: 'WAS',
+    teamInitials: 'WSH',
     nextGameDetails: '',
     isNextGameFavorite: false,
     nextGameSpread: '',

@@ -24,7 +24,7 @@ export class DateService {
   week18 = new Date('2025-01-01');
   endOfSeason = new Date('2025-01-08');
 
-  private _currentWeek = 8;
+  private _currentWeek = 9;
 
   public get currentWeek() {
     return this._currentWeek;
