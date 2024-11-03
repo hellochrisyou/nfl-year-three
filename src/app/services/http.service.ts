@@ -475,6 +475,8 @@ export class HttpService {
   }
 
   getNextOpponentInfo() {
+    console.log("🚀 ~ this.dateService.currentWeek:", this.dateService.currentWeek)
+
     const tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2024/types/2/weeks/' + (this.dateService.currentWeek) + '/events?lang=en&region=us';
     this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
       console.log("🚀 ~ element:", element)
@@ -482,6 +484,7 @@ export class HttpService {
       this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
         const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
         this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
+          console.log("🚀 ~ payload3:", payload3)
           this.allTeams.forEach(team => {
             if (team.teamId === payload2.competitions[0].competitors[0].id) {
               this.allTeams.forEach(team2 => {
@@ -502,7 +505,6 @@ export class HttpService {
                   team2.nextOpponentAtsLosses = team.atsLosses;
                   team2.nextGameDetails = payload3.items[0].details;
                   if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim()) {
-                      console.log('teamId', team.teamId);
                     team.isNextGameFavorite = true;
                   } else {
                     team.isNextGameFavorite = false;

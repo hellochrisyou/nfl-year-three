@@ -79,7 +79,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   basicStatsForm: FormGroup;
   currentDownloadCounter = 0;
   currentDownloadCounterPostMsg = ' - DOWNLOAD REQUIRED';
-  currentWeek: number = 0;
+  currentWeek: number = 10;
   nbaDataSource: MatTableDataSource<NbaTeam>;
   nhlDataSource: MatTableDataSource<NhlTeam>;
   dataSource: MatTableDataSource<Team>;
@@ -137,7 +137,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.dateService.initializeStaticDates();
     // this.currentWeek = this.dateService.currentWeek;
-    this.currentWeek = 9;
+    this.currentWeek = 10;
     console.log("🚀 ~ this.currentWeek:", this.currentWeek);
     this.httpService.updateDownloadStatus.subscribe(payload => {
       this.currentDownloadCounter = payload;
@@ -430,7 +430,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     let tmpEvent = {
       value: ''
     }
-    console.log('nba teams: ', this.httpService.nbaAllTeams);
     this.httpService.nbaAllTeams.forEach(team0 => {
       this.httpService.nbaAllTeams.forEach(team => {
         if (team.teamName === team0.nextOpponent) {
@@ -1096,7 +1095,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     let tmpEvent = {
       value: ''
     }
-    console.log("🚀 ~ this.httpService.allTeams:", this.httpService.allTeams)
 
     this.httpService.allTeams.forEach(team0 => {
       this.httpService.allTeams.forEach(team => {
@@ -1279,7 +1277,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         });
     });
-    console.log("🚀 ~ tmpAllTeam:", tmpAllTeam)
     this.dataSource = new MatTableDataSource(tmpAllTeam);
     this.dataSource.sort = this.sort;
   }

@@ -13,18 +13,18 @@ export class DateService {
   week7 = new Date('2024-10-15');
   week8 = new Date('2024-10-22');
   week9 = new Date('2024-10-29');
-  week10 = new Date('2024-11-05');
-  week11 = new Date('2024-11-12');
-  week12 = new Date('2024-11-19');
-  week13 = new Date('2024-11-26');
-  week14 = new Date('2024-12-03');
-  week15 = new Date('2024-12-10');
-  week16 = new Date('2024-12-17');
-  week17 = new Date('2024-12-24');
+  week10 = new Date('2024-11-04');
+  week11 = new Date('2024-11-11');
+  week12 = new Date('2024-11-18');
+  week13 = new Date('2024-11-25');
+  week14 = new Date('2024-12-02');
+  week15 = new Date('2024-12-09');
+  week16 = new Date('2024-12-16');
+  week17 = new Date('2024-12-23');
   week18 = new Date('2025-01-01');
   endOfSeason = new Date('2025-01-08');
 
-  private _currentWeek = 9;
+  private _currentWeek = 10;
 
   public get currentWeek() {
     return this._currentWeek;
