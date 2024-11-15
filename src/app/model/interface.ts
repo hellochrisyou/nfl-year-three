@@ -53,6 +53,7 @@ export interface Team {
   filterAtsStats: FilterStats;
   filterAtsFavoritesStats: FilterStats;
   filterAtsUnderdogStats: FilterStats;
+  nextGameDate: Date;
   nextGameSpread: string;
   nextGameDetails: string;
   teamInitials: string;

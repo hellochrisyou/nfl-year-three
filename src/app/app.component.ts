@@ -72,7 +72,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     // 'sacks',
     // 'interceptions',
   ];
-  displayedColumns3 = ['teamName', 'blocks', 'defensiveRebounds', 'steals', 'assists', 'fieldGoals', 'offensiveRebounds', 'turnovers', 'threePoints', 'points',
+  // displayedColumns3 = ['teamName', 'blocks', 'defensiveRebounds', 'steals', 'assists', 'fieldGoals', 'offensiveRebounds', 'turnovers', 'threePoints', 'points']
+  displayedColumns3 = ['teamName', 'fieldGoals', 'assists', 'threePoints', 'points'
   ];
   displayedColumns4 = ['teamName', 'goals', 'assists', 'shooting',
   ];
@@ -83,6 +84,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   nbaDataSource: MatTableDataSource<NbaTeam>;
   nhlDataSource: MatTableDataSource<NhlTeam>;
   dataSource: MatTableDataSource<Team>;
+  dataSourceNcaaf: MatTableDataSource<Team>;
   firstDownsQuartile: number[] = [];
   interceptionsQuartile: number[] = [];
   blocksQuartile: number[] = [];
@@ -103,6 +105,18 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   rushYardsQuartile: number[] = [];
   sacksQuartile: number[] = [];
   pointsQuartile: number[] = [];
+  passAttemptsQuartileNcaaf: number[] = [];
+  passTdsQuartileNcaaf: number[] = [];
+  passYardsQuartileNcaaf: number[] = [];
+  redzoneQuartileNcaaf: number[] = [];
+  rushAttemptsQuartileNcaaf: number[] = [];
+  rushTdsQuartileNcaaf: number[] = [];
+  rushYardsQuartileNcaaf: number[] = [];
+  interceptionsQuartileNcaaf: number[] = [];
+  sacksQuartileNcaaf: number[] = [];
+  thirdDownQuartileNcaaf: number[] = [];
+  firstDownsQuartileNcaaf: number[] = [];
+  pointsQuartileNcaaf: number[] = [];
   goalsQuartile: number[] = [];
   nhlAssistsQuartile: number[] = [];
   shootingPctQuartile: number[] = [];
@@ -224,14 +238,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-  }
-
-  toggleInterUnion() {
-    if (this.toggleInterUnionMsg === 'Standalone Logic') {
-      this.toggleInterUnionMsg = 'Intersection Logic';
-    } else {
-      this.toggleInterUnionMsg = 'Standalone Logic'
-    }
   }
 
   returnFilterColorPassAttempts(): string {
@@ -1266,21 +1272,207 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.calculateStd();
     let tmpAllTeam: Team[] = [];
     this.httpService.allTeams.forEach(team1 => {
-        this.httpService.allTeams.forEach(team2 => {
-          if (team2.teamName === team1.nextOpponent) {
-            if (!tmpAllTeam.includes(team1)) {
-              tmpAllTeam.push(team1);
-            }
-            if (!tmpAllTeam.includes(team2)) {
-              tmpAllTeam.push(team2);
-            }
+      this.httpService.allTeams.forEach(team2 => {
+        if (team2.teamName === team1.nextOpponent) {
+          if (!tmpAllTeam.includes(team1)) {
+            tmpAllTeam.push(team1);
           }
-        });
+          if (!tmpAllTeam.includes(team2)) {
+            tmpAllTeam.push(team2);
+          }
+        }
+      });
     });
     this.dataSource = new MatTableDataSource(tmpAllTeam);
     this.dataSource.sort = this.sort;
   }
 
+  defaultFormControlsNcaaf() {
+    // this.applyFilter(row.teamName);
+    // this.selectedTeam = row.teamName;
+    console.log("🚀 ~ this.httpService.allTeamsNcaaf:", this.httpService.allTeamsNcaaf)
+    let tmpVal = '';
+    let tmpEvent = {
+      value: ''
+    }
+
+    this.httpService.allTeamsNcaaf.forEach(team0 => {
+      this.httpService.allTeamsNcaaf.forEach(team => {
+        if (team.teamName === team0.nextOpponent) {
+          if ((team.passingAttemptsTotal / team.games.length) < this.passAttemptsQuartile[0]) {
+            tmpVal = 'quart1';
+            tmpEvent.value = 'quart1';
+            this.passAttemptsPanelColor = 'crimson';
+          } else if (((team.passingAttemptsTotal / team.games.length) >= this.passAttemptsQuartile[0] && (team.passingAttemptsTotal / team.games.length) < this.passAttemptsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.passAttemptsPanelColor = 'orange';
+          } else if (((team.passingAttemptsTotal / team.games.length) >= this.passAttemptsQuartile[1] && (team.passingAttemptsTotal / team.games.length) < this.passAttemptsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.passAttemptsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.passAttemptsPanelColor = 'green';
+          }
+          this.passAttemptChangeNcaaf(tmpEvent, team0.teamName);
+
+          if ((team.passingYardsTotal / team.games.length) < this.passYardsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.passYardsPanelColor = 'crimson';
+          } else if (((team.passingYardsTotal / team.games.length) >= this.passYardsQuartile[0] && (team.passingYardsTotal / team.games.length) < this.passYardsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.passYardsPanelColor = 'orange';
+          } else if (((team.passingYardsTotal / team.games.length) >= this.passYardsQuartile[1] && (team.passingYardsTotal / team.games.length) < this.passYardsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.passYardsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.passYardsPanelColor = 'green';
+          }
+          this.passYardsChangeNcaaf(tmpEvent, team0.teamName);
+
+          if ((team.passingTdsTotal / team.games.length) < this.passTdsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.passTdsPanelColor = 'crimson';
+          } else if (((team.passingTdsTotal / team.games.length) >= this.passTdsQuartile[0] && (team.passingTdsTotal / team.games.length) < this.passTdsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.passTdsPanelColor = 'orange';
+          } else if (((team.passingTdsTotal / team.games.length) >= this.passTdsQuartile[1] && (team.passingTdsTotal / team.games.length) < this.passTdsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.passTdsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.passTdsPanelColor = 'green';
+          }
+          this.passTdsChangeNcaaf(tmpEvent, team0.teamName);
+
+          if ((team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.rushAttemptsPanelColor = 'crimson';
+          } else if (((team.rushingAttemptsTotal / team.games.length) >= this.rushAttemptsQuartile[0] && (team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.rushAttemptsPanelColor = 'orange';
+          } else if (((team.rushingAttemptsTotal / team.games.length) >= this.rushAttemptsQuartile[1] && (team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.rushAttemptsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.rushAttemptsPanelColor = 'green';
+          }
+          this.rushAttemptsChangeNcaaf(tmpEvent, team0.teamName);
+
+          if ((team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.rushYardsPanelColor = 'crimson';
+          } else if (((team.rushingYardsTotal / team.games.length) >= this.rushYardsQuartile[0] && (team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.rushYardsPanelColor = 'orange';
+          } else if (((team.rushingYardsTotal / team.games.length) >= this.rushYardsQuartile[1] && (team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.rushYardsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.rushYardsPanelColor = 'green';
+          }
+          this.rushYardsChangeNcaaf(tmpEvent, team0.teamName);
+
+          if ((team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.rushTdsPanelColor = 'crimson';
+          } else if (((team.rushingTdsTotal / team.games.length) >= this.rushTdsQuartile[0] && (team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.rushTdsPanelColor = 'orange';
+          } else if (((team.rushingTdsTotal / team.games.length) >= this.rushTdsQuartile[1] && (team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.rushTdsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.rushTdsPanelColor = 'green';
+          }
+          this.rushTdsChangeNcaaf(tmpEvent, team0.teamName);
+
+          if ((team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.firstDownsPanelColor = 'crimson';
+          } else if (((team.firstDownsTotal / team.games.length) >= this.firstDownsQuartile[0] && (team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.firstDownsPanelColor = 'orange';
+          } else if (((team.firstDownsTotal / team.games.length) >= this.firstDownsQuartile[1] && (team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.firstDownsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.firstDownsPanelColor = 'green';
+          }
+          this.firstDownsChangeNcaaf(tmpEvent, team0.teamName);
+
+          if (team.thirdDownPctAvg < this.thirdDownQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.thirdDownPanelColor = 'crimson';
+          } else if (team.thirdDownPctAvg >= this.thirdDownQuartile[0] && team.thirdDownPctAvg < this.thirdDownQuartile[1]) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.thirdDownPanelColor = 'orange';
+          } else if (team.thirdDownPctAvg >= this.thirdDownQuartile[1] && team.thirdDownPctAvg < this.thirdDownQuartile[2]) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.thirdDownPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.thirdDownPanelColor = 'green';
+          }
+          this.basicStatsForm.get('thirdDownPctCtrl')?.patchValue(tmpVal);
+          this.thirdDownChangeNcaaf(tmpEvent, team0.teamName);
+
+          if (team.redzoneScoringPctAvg < this.redzoneQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.redzonePanelColor = 'crimson';
+          } else if (team.redzoneScoringPctAvg >= this.redzoneQuartile[0] && team.redzoneScoringPctAvg < this.redzoneQuartile[1]) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.redzonePanelColor = 'orange';
+          } else if (team.redzoneScoringPctAvg >= this.redzoneQuartile[1] && team.redzoneScoringPctAvg < this.redzoneQuartile[2]) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.redzonePanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.redzonePanelColor = 'green';
+          }
+          this.redzoneChangeNcaaf(tmpEvent, team0.teamName);
+
+          if ((team.pointsTotal / team.games.length) < this.pointsQuartile[0]) {
+            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
+            this.pointsPanelColor = 'crimson';
+          } else if (((team.pointsTotal / team.games.length) >= this.pointsQuartile[0] && (team.pointsTotal / team.games.length) < this.pointsQuartile[1])) {
+            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
+            this.pointsPanelColor = 'orange';
+          } else if (((team.pointsTotal / team.games.length) >= this.pointsQuartile[1] && (team.pointsTotal / team.games.length) < this.pointsQuartile[2])) {
+            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
+            this.pointsPanelColor = 'blueviolet';
+          } else {
+            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
+            this.pointsPanelColor = 'green';
+          }
+          this.pointsChangeNcaaf(tmpEvent, team0.teamName);
+        }
+      })
+    })
+    // this.applyFilter(this.currentFilter);
+    // this.calculateStd();
+    let tmpAllTeam: Team[] = [];
+    this.httpService.allTeamsNcaaf.forEach(team1 => {
+      this.httpService.allTeamsNcaaf.forEach(team2 => {
+        console.log("🚀 ~ team1.nextOpponent:", team1.nextOpponent)
+
+        if (team2.teamName === team1.nextOpponent) {
+          if (!tmpAllTeam.includes(team1)) {
+            tmpAllTeam.push(team1);
+          }
+          if (!tmpAllTeam.includes(team2)) {
+            tmpAllTeam.push(team2);
+          }
+        }
+      });
+    });
+    this.dataSourceNcaaf = new MatTableDataSource(tmpAllTeam);
+    this.dataSourceNcaaf.sort = this.sort;
+  }
 
   openKeyDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
     this.dialog.open(KeyModalComponent, {
@@ -1945,7 +2137,158 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     })
     return tmpVal;
   }
-
+  passAttemptChangeNcaaf(event: any, teamName: string) {
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.passAttempts.wins = 0;
+        team.filterStats.passAttempts.losses = 0;
+        team.filterAtsStats.passAttempts.wins = 0;
+        team.filterAtsStats.passAttempts.losses = 0;
+        team.filterAtsFavoritesStats.passAttempts.wins = 0;
+        team.filterAtsFavoritesStats.passAttempts.losses = 0;
+        team.filterAtsUnderdogStats.passAttempts.wins = 0;
+        team.filterAtsUnderdogStats.passAttempts.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.passAttemptsPanelColor = 'crimson';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.passingAttemptsGiven < this.passAttemptsQuartileNcaaf[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passAttempts.wins++;
+                } else {
+                  team.filterStats.passAttempts.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsFavoritesStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsFavoritesStats.passAttempts.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsUnderdogStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsUnderdogStats.passAttempts.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.passAttemptsPanelColor = 'orange';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.passingAttemptsGiven >= this.passAttemptsQuartileNcaaf[0]) && (game.passingAttemptsGiven <= this.passAttemptsQuartileNcaaf[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passAttempts.wins++;
+                } else {
+                  team.filterStats.passAttempts.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsFavoritesStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsFavoritesStats.passAttempts.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsUnderdogStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsUnderdogStats.passAttempts.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.passAttemptsPanelColor = 'blueviolet';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.passingAttemptsGiven > this.passAttemptsQuartileNcaaf[1] && game.passingAttemptsGiven <= this.passAttemptsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passAttempts.wins++;
+                } else {
+                  team.filterStats.passAttempts.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsFavoritesStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsFavoritesStats.passAttempts.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsUnderdogStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsUnderdogStats.passAttempts.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.passAttemptsPanelColor = 'green';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.passingAttemptsGiven > this.passAttemptsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passAttempts.wins++;
+                } else {
+                  team.filterStats.passAttempts.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsFavoritesStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsFavoritesStats.passAttempts.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passAttempts.wins++;
+                    team.filterAtsUnderdogStats.passAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.passAttempts.losses++;
+                    team.filterAtsUnderdogStats.passAttempts.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+    }
+  }
   passAttemptChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -2100,6 +2443,158 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
+  passYardsChangeNcaaf(event: any, teamName: string) {
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.passYards.wins = 0;
+        team.filterStats.passYards.losses = 0;
+        team.filterAtsStats.passYards.wins = 0;
+        team.filterAtsStats.passYards.losses = 0;
+        team.filterAtsFavoritesStats.passYards.wins = 0;
+        team.filterAtsFavoritesStats.passYards.losses = 0;
+        team.filterAtsUnderdogStats.passYards.wins = 0;
+        team.filterAtsUnderdogStats.passYards.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.passYardsPanelColor = 'crimson';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.passingYardsGiven < this.passYardsQuartileNcaaf[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passYards.wins++;
+                } else {
+                  team.filterStats.passYards.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsFavoritesStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsFavoritesStats.passYards.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsUnderdogStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsUnderdogStats.passYards.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.passYardsPanelColor = 'orange';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.passingYardsGiven >= this.passYardsQuartileNcaaf[0]) && (game.passingYardsGiven <= this.passYardsQuartileNcaaf[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passYards.wins++;
+                } else {
+                  team.filterStats.passYards.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsFavoritesStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsFavoritesStats.passYards.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsUnderdogStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsUnderdogStats.passYards.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.passYardsPanelColor = 'blueviolet';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.passingYardsGiven > this.passYardsQuartileNcaaf[1] && game.passingYardsGiven <= this.passYardsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passYards.wins++;
+                } else {
+                  team.filterStats.passYards.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsFavoritesStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsFavoritesStats.passYards.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsUnderdogStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsUnderdogStats.passYards.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.passYardsPanelColor = 'green';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.passingYardsGiven > this.passYardsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passYards.wins++;
+                } else {
+                  team.filterStats.passYards.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsFavoritesStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsFavoritesStats.passYards.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passYards.wins++;
+                    team.filterAtsUnderdogStats.passYards.wins++;
+                  } else {
+                    team.filterAtsStats.passYards.losses++;
+                    team.filterAtsUnderdogStats.passYards.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+    }
+  }
   passYardsChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -2251,6 +2746,158 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           })
           break;
         }
+      }
+    }
+  }
+  passTdsChangeNcaaf(event: any, teamName: string) {
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.passTds.wins = 0;
+        team.filterStats.passTds.losses = 0;
+        team.filterAtsStats.passTds.wins = 0;
+        team.filterAtsStats.passTds.losses = 0;
+        team.filterAtsFavoritesStats.passTds.wins = 0;
+        team.filterAtsFavoritesStats.passTds.losses = 0;
+        team.filterAtsUnderdogStats.passTds.wins = 0;
+        team.filterAtsUnderdogStats.passTds.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.passTdsPanelColor = 'crimson';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.passingTdsGiven < this.passTdsQuartileNcaaf[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passTds.wins++;
+                } else {
+                  team.filterStats.passTds.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsFavoritesStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsFavoritesStats.passTds.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsUnderdogStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsUnderdogStats.passTds.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.passTdsPanelColor = 'orange';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.passingTdsGiven >= this.passTdsQuartileNcaaf[0]) && (game.passingTdsGiven <= this.passTdsQuartileNcaaf[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passTds.wins++;
+                } else {
+                  team.filterStats.passTds.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsFavoritesStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsFavoritesStats.passTds.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsUnderdogStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsUnderdogStats.passTds.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.passTdsPanelColor = 'blueviolet';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.passingTdsGiven > this.passTdsQuartileNcaaf[1] && game.passingTdsGiven <= this.passTdsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passTds.wins++;
+                } else {
+                  team.filterStats.passTds.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsFavoritesStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsFavoritesStats.passTds.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsUnderdogStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsUnderdogStats.passTds.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.passTdsPanelColor = 'green';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.passingTdsGiven > this.passTdsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.passTds.wins++;
+                } else {
+                  team.filterStats.passTds.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsFavoritesStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsFavoritesStats.passTds.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.passTds.wins++;
+                    team.filterAtsUnderdogStats.passTds.wins++;
+                  } else {
+                    team.filterAtsStats.passTds.losses++;
+                    team.filterAtsUnderdogStats.passTds.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
       }
     }
   }
@@ -2409,6 +3056,158 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
 
     }
   }
+  rushAttemptsChangeNcaaf(event: any, teamName) {
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.rushAttempts.wins = 0;
+        team.filterStats.rushAttempts.losses = 0;
+        team.filterAtsStats.rushAttempts.wins = 0;
+        team.filterAtsStats.rushAttempts.losses = 0;
+        team.filterAtsFavoritesStats.rushAttempts.wins = 0;
+        team.filterAtsFavoritesStats.rushAttempts.losses = 0;
+        team.filterAtsUnderdogStats.rushAttempts.wins = 0;
+        team.filterAtsUnderdogStats.rushAttempts.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.rushAttemptsPanelColor = 'crimson';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.rushingAttemptsGiven < this.rushAttemptsQuartileNcaaf[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushAttempts.wins++;
+                } else {
+                  team.filterStats.rushAttempts.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsFavoritesStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsFavoritesStats.rushAttempts.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsUnderdogStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsUnderdogStats.rushAttempts.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.rushAttemptsPanelColor = 'orange';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.rushingAttemptsGiven >= this.rushAttemptsQuartileNcaaf[0]) && (game.rushingAttemptsGiven <= this.rushAttemptsQuartileNcaaf[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushAttempts.wins++;
+                } else {
+                  team.filterStats.rushAttempts.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsFavoritesStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsFavoritesStats.rushAttempts.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsUnderdogStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsUnderdogStats.rushAttempts.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.rushAttemptsPanelColor = 'blueviolet';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.rushingAttemptsGiven > this.rushAttemptsQuartileNcaaf[1] && game.rushingAttemptsGiven <= this.rushAttemptsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushAttempts.wins++;
+                } else {
+                  team.filterStats.rushAttempts.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsFavoritesStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsFavoritesStats.rushAttempts.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsUnderdogStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsUnderdogStats.rushAttempts.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.rushAttemptsPanelColor = 'green';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.rushingAttemptsGiven > this.rushAttemptsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushAttempts.wins++;
+                } else {
+                  team.filterStats.rushAttempts.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsFavoritesStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsFavoritesStats.rushAttempts.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushAttempts.wins++;
+                    team.filterAtsUnderdogStats.rushAttempts.wins++;
+                  } else {
+                    team.filterAtsStats.rushAttempts.losses++;
+                    team.filterAtsUnderdogStats.rushAttempts.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+    }
+  }
   rushAttemptsChange(event: any, teamName) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -2560,6 +3359,158 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           })
           break;
         }
+      }
+    }
+  }
+  rushYardsChangeNcaaf(event: any, teamName: string) {
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.rushYards.wins = 0;
+        team.filterStats.rushYards.losses = 0;
+        team.filterAtsStats.rushYards.wins = 0;
+        team.filterAtsStats.rushYards.losses = 0;
+        team.filterAtsFavoritesStats.rushYards.wins = 0;
+        team.filterAtsFavoritesStats.rushYards.losses = 0;
+        team.filterAtsUnderdogStats.rushYards.wins = 0;
+        team.filterAtsUnderdogStats.rushYards.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.rushYardsPanelColor = 'crimson';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.rushingYardsGiven < this.rushYardsQuartileNcaaf[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushYards.wins++;
+                } else {
+                  team.filterStats.rushYards.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsFavoritesStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsFavoritesStats.rushYards.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsUnderdogStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsUnderdogStats.rushYards.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.rushYardsPanelColor = 'orange';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.rushingYardsGiven >= this.rushYardsQuartileNcaaf[0]) && (game.rushingYardsGiven <= this.rushYardsQuartileNcaaf[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushYards.wins++;
+                } else {
+                  team.filterStats.rushYards.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsFavoritesStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsFavoritesStats.rushYards.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsUnderdogStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsUnderdogStats.rushYards.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.rushYardsPanelColor = 'blueviolet';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.rushingYardsGiven > this.rushYardsQuartileNcaaf[1] && game.rushingYardsGiven <= this.rushYardsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushYards.wins++;
+                } else {
+                  team.filterStats.rushYards.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsFavoritesStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsFavoritesStats.rushYards.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsUnderdogStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsUnderdogStats.rushYards.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.rushYardsPanelColor = 'green';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.rushingYardsGiven > this.rushYardsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushYards.wins++;
+                } else {
+                  team.filterStats.rushYards.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsFavoritesStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsFavoritesStats.rushYards.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushYards.wins++;
+                    team.filterAtsUnderdogStats.rushYards.wins++;
+                  } else {
+                    team.filterAtsStats.rushYards.losses++;
+                    team.filterAtsUnderdogStats.rushYards.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
       }
     }
   }
@@ -2716,7 +3667,158 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     }
-
+  }
+  rushTdsChangeNcaaf(event: any, teamName: string) {
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.rushTds.wins = 0;
+        team.filterStats.rushTds.losses = 0;
+        team.filterAtsStats.rushTds.wins = 0;
+        team.filterAtsStats.rushTds.losses = 0;
+        team.filterAtsFavoritesStats.rushTds.wins = 0;
+        team.filterAtsFavoritesStats.rushTds.losses = 0;
+        team.filterAtsUnderdogStats.rushTds.wins = 0;
+        team.filterAtsUnderdogStats.rushTds.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.rushTdsPanelColor = 'crimson';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.rushingTdsGiven < this.rushTdsQuartileNcaaf[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushTds.wins++;
+                } else {
+                  team.filterStats.rushTds.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsFavoritesStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsFavoritesStats.rushTds.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsUnderdogStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsUnderdogStats.rushTds.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.rushTdsPanelColor = 'orange';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.rushingTdsGiven >= this.rushTdsQuartileNcaaf[0]) && (game.rushingTdsGiven <= this.rushTdsQuartileNcaaf[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushTds.wins++;
+                } else {
+                  team.filterStats.rushTds.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsFavoritesStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsFavoritesStats.rushTds.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsUnderdogStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsUnderdogStats.rushTds.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.rushTdsPanelColor = 'blueviolet';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.rushingTdsGiven > this.rushTdsQuartileNcaaf[1] && game.rushingTdsGiven <= this.rushTdsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushTds.wins++;
+                } else {
+                  team.filterStats.rushTds.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsFavoritesStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsFavoritesStats.rushTds.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsUnderdogStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsUnderdogStats.rushTds.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.rushTdsPanelColor = 'green';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.rushingTdsGiven > this.rushTdsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.rushTds.wins++;
+                } else {
+                  team.filterStats.rushTds.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsFavoritesStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsFavoritesStats.rushTds.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.rushTds.wins++;
+                    team.filterAtsUnderdogStats.rushTds.wins++;
+                  } else {
+                    team.filterAtsStats.rushTds.losses++;
+                    team.filterAtsUnderdogStats.rushTds.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+    }
   }
   rushTdsChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
@@ -3168,6 +4270,158 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
+  firstDownsChangeNcaaf(event: any, teamName: string) {
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.firstDowns.wins = 0;
+        team.filterStats.firstDowns.losses = 0;
+        team.filterAtsStats.firstDowns.wins = 0;
+        team.filterAtsStats.firstDowns.losses = 0;
+        team.filterAtsFavoritesStats.firstDowns.wins = 0;
+        team.filterAtsFavoritesStats.firstDowns.losses = 0;
+        team.filterAtsUnderdogStats.firstDowns.wins = 0;
+        team.filterAtsUnderdogStats.firstDowns.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.firstDownsPanelColor = 'crimson';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.firstDownsGiven < this.firstDownsQuartileNcaaf[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.firstDowns.wins++;
+                } else {
+                  team.filterStats.firstDowns.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsFavoritesStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsFavoritesStats.firstDowns.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsUnderdogStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsUnderdogStats.firstDowns.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.firstDownsPanelColor = 'orange';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.firstDownsGiven >= this.firstDownsQuartileNcaaf[0]) && (game.firstDownsGiven <= this.firstDownsQuartileNcaaf[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.firstDowns.wins++;
+                } else {
+                  team.filterStats.firstDowns.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsFavoritesStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsFavoritesStats.firstDowns.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsUnderdogStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsUnderdogStats.firstDowns.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.firstDownsPanelColor = 'blueviolet';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.firstDownsGiven > this.firstDownsQuartileNcaaf[1] && game.firstDownsGiven <= this.firstDownsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.firstDowns.wins++;
+                } else {
+                  team.filterStats.firstDowns.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsFavoritesStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsFavoritesStats.firstDowns.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsUnderdogStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsUnderdogStats.firstDowns.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.firstDownsPanelColor = 'green';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.firstDownsGiven > this.firstDownsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.firstDowns.wins++;
+                } else {
+                  team.filterStats.firstDowns.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsFavoritesStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsFavoritesStats.firstDowns.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.firstDowns.wins++;
+                    team.filterAtsUnderdogStats.firstDowns.wins++;
+                  } else {
+                    team.filterAtsStats.firstDowns.losses++;
+                    team.filterAtsUnderdogStats.firstDowns.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+    }
+  }
   firstDownsChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -3322,7 +4576,158 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
-
+  thirdDownChangeNcaaf(event: any, teamName: string) {
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.thirdDown.wins = 0;
+        team.filterStats.thirdDown.losses = 0;
+        team.filterAtsStats.thirdDown.wins = 0;
+        team.filterAtsStats.thirdDown.losses = 0;
+        team.filterAtsFavoritesStats.thirdDown.wins = 0;
+        team.filterAtsFavoritesStats.thirdDown.losses = 0;
+        team.filterAtsUnderdogStats.thirdDown.wins = 0;
+        team.filterAtsUnderdogStats.thirdDown.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.thirdDownPanelColor = 'crimson';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.thirdDownConvPctGiven < this.thirdDownQuartileNcaaf[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.thirdDown.wins++;
+                } else {
+                  team.filterStats.thirdDown.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsFavoritesStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsFavoritesStats.thirdDown.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsUnderdogStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsUnderdogStats.thirdDown.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.thirdDownPanelColor = 'orange';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.thirdDownConvPctGiven >= this.thirdDownQuartileNcaaf[0]) && (game.thirdDownConvPctGiven <= this.thirdDownQuartileNcaaf[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.thirdDown.wins++;
+                } else {
+                  team.filterStats.thirdDown.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsFavoritesStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsFavoritesStats.thirdDown.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsUnderdogStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsUnderdogStats.thirdDown.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.thirdDownPanelColor = 'blueviolet';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.thirdDownConvPctGiven > this.thirdDownQuartileNcaaf[1] && game.thirdDownConvPctGiven <= this.thirdDownQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.thirdDown.wins++;
+                } else {
+                  team.filterStats.thirdDown.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsFavoritesStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsFavoritesStats.thirdDown.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsUnderdogStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsUnderdogStats.thirdDown.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.thirdDownPanelColor = 'green';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.thirdDownConvPctGiven > this.thirdDownQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.thirdDown.wins++;
+                } else {
+                  team.filterStats.thirdDown.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsFavoritesStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsFavoritesStats.thirdDown.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.thirdDown.wins++;
+                    team.filterAtsUnderdogStats.thirdDown.wins++;
+                  } else {
+                    team.filterAtsStats.thirdDown.losses++;
+                    team.filterAtsUnderdogStats.thirdDown.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+    }
+  }
   thirdDownChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -3477,6 +4882,159 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
+  redzoneChangeNcaaf(event: any, teamName: string) {
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.redzone.wins = 0;
+        team.filterStats.redzone.losses = 0;
+        team.filterAtsStats.redzone.wins = 0;
+        team.filterAtsStats.redzone.losses = 0;
+        team.filterAtsFavoritesStats.redzone.wins = 0;
+        team.filterAtsFavoritesStats.redzone.losses = 0;
+        team.filterAtsUnderdogStats.redzone.wins = 0;
+        team.filterAtsUnderdogStats.redzone.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.redzonePanelColor = 'crimson';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.redzoneScoringPctGiven < this.redzoneQuartileNcaaf[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.redzone.wins++;
+                } else {
+                  team.filterStats.redzone.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsFavoritesStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsFavoritesStats.redzone.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsUnderdogStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsUnderdogStats.redzone.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.redzonePanelColor = 'orange';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.redzoneScoringPctGiven >= this.redzoneQuartileNcaaf[0]) && (game.redzoneScoringPctGiven <= this.redzoneQuartileNcaaf[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.redzone.wins++;
+                } else {
+                  team.filterStats.redzone.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsFavoritesStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsFavoritesStats.redzone.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsUnderdogStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsUnderdogStats.redzone.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.redzonePanelColor = 'blueviolet';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.redzoneScoringPctGiven > this.redzoneQuartileNcaaf[1] && game.redzoneScoringPctGiven <= this.redzoneQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.redzone.wins++;
+                } else {
+                  team.filterStats.redzone.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsFavoritesStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsFavoritesStats.redzone.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsUnderdogStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsUnderdogStats.redzone.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.redzonePanelColor = 'green';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.redzoneScoringPctGiven > this.redzoneQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.redzone.wins++;
+                } else {
+                  team.filterStats.redzone.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsFavoritesStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsFavoritesStats.redzone.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.redzone.wins++;
+                    team.filterAtsUnderdogStats.redzone.wins++;
+                  } else {
+                    team.filterAtsStats.redzone.losses++;
+                    team.filterAtsUnderdogStats.redzone.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+    }
+  }
+
   redzoneChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -3628,6 +5186,158 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           })
           break;
         }
+      }
+    }
+  }
+  pointsChangeNcaaf(event: any, teamName: string) {
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      if (team.teamName === teamName) {
+        team.filterStats.points.wins = 0;
+        team.filterStats.points.losses = 0;
+        team.filterAtsStats.points.wins = 0;
+        team.filterAtsStats.points.losses = 0;
+        team.filterAtsFavoritesStats.points.wins = 0;
+        team.filterAtsFavoritesStats.points.losses = 0;
+        team.filterAtsUnderdogStats.points.wins = 0;
+        team.filterAtsUnderdogStats.points.losses = 0;
+      }
+    });
+    switch (event.value) {
+      case 'quart1': {
+        this.pointsPanelColor = 'crimson';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.pointsGiven < this.pointsQuartileNcaaf[0]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.points.wins++;
+                } else {
+                  team.filterStats.points.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsFavoritesStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsFavoritesStats.points.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsUnderdogStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsUnderdogStats.points.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart2': {
+        this.pointsPanelColor = 'orange';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if ((game.pointsGiven >= this.pointsQuartileNcaaf[0]) && (game.pointsGiven <= this.pointsQuartileNcaaf[1])) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.points.wins++;
+                } else {
+                  team.filterStats.points.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsFavoritesStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsFavoritesStats.points.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsUnderdogStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsUnderdogStats.points.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart3': {
+        this.pointsPanelColor = 'blueviolet';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.pointsGiven > this.pointsQuartileNcaaf[1] && game.pointsGiven <= this.pointsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.points.wins++;
+                } else {
+                  team.filterStats.points.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsFavoritesStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsFavoritesStats.points.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsUnderdogStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsUnderdogStats.points.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
+      }
+      case 'quart4': {
+        this.pointsPanelColor = 'green';
+        this.httpService.allTeamsNcaaf.forEach(team => {
+          if (team.teamName === teamName) {
+            team.games.forEach(game => {
+              if (game.pointsGiven > this.pointsQuartileNcaaf[2]) {
+                if (game.points > game.pointsGiven) {
+                  team.filterStats.points.wins++;
+                } else {
+                  team.filterStats.points.losses++;
+                }
+                if (game.isFavorite) {
+                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsFavoritesStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsFavoritesStats.points.losses++;
+                  }
+                } else {
+                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                    team.filterAtsStats.points.wins++;
+                    team.filterAtsUnderdogStats.points.wins++;
+                  } else {
+                    team.filterAtsStats.points.losses++;
+                    team.filterAtsUnderdogStats.points.losses++;
+                  }
+                }
+              }
+            })
+          }
+        })
+        break;
       }
     }
   }
@@ -5828,9 +7538,15 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.httpService.setOpponentStats();
     this.httpService.setupGivenData();
     this.runQuartiles();
-    this.isActiveTab = 5;
   }
-
+  crunchNumbersNcaaf() {
+    this.httpService.getNextOpponentInfoNcaaf();
+    this.httpService.crunchTotalsNcaaf();
+    this.httpService.calculateWinLossRecordNcaaf();
+    this.httpService.setOpponentStatsNcaaf();
+    this.httpService.setupGivenDataNcaaf();
+    this.runQuartilesNcaaf();
+  }
   crunchNbaNumbers() {
     this.httpService.getNbaNextOpponentInfo();
     this.httpService.crunchNbaTotals();
@@ -5855,6 +7571,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.currentDownloadCounter++;
     this.currentDownloadCounterPostMsg = ' ...Currently Downloading...';
     this.httpService.executeDataHydrationLastYear();
+  }
+
+  downloadThisYearNCAAF() {
+    this.currentDownloadCounter++;
+    this.currentDownloadCounterPostMsg = ' ...Currently Downloading...';
+    this.httpService.executeDataHydrationLastYearNcaaf();
   }
 
   downloadLastYear2() {
@@ -5932,7 +7654,68 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.threePointsQuartile = this.calculateQuartiles(tmpTotalArr);
   }
 
-
+  runQuartilesNcaaf() {
+    let tmpTotalArr: number[] = [];
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      tmpTotalArr.push(team.pointsTotal / team.games.length);
+    })
+    this.pointsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      tmpTotalArr.push(team.passingAttemptsTotal / team.games.length);
+    })
+    this.passAttemptsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      tmpTotalArr.push(team.passingYardsTotal / team.games.length);
+    })
+    this.passYardsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      tmpTotalArr.push(team.passingTdsTotal / team.games.length);
+    })
+    this.passTdsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      tmpTotalArr.push(team.rushingAttemptsTotal / team.games.length);
+    })
+    this.rushAttemptsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      tmpTotalArr.push(team.rushingYardsTotal / team.games.length);
+    })
+    this.rushYardsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      tmpTotalArr.push(team.rushingTdsTotal / team.games.length);
+    })
+    this.rushTdsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      tmpTotalArr.push(team.interceptionsTotal / team.games.length);
+    })
+    this.interceptionsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      tmpTotalArr.push(team.sacksTotal / team.games.length);
+    })
+    this.sacksQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      tmpTotalArr.push(team.firstDownsTotal / team.games.length);
+    })
+    this.firstDownsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      tmpTotalArr.push(team.thirdDownPctAvg);
+    })
+    this.thirdDownQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
+    tmpTotalArr = [];
+    this.httpService.allTeamsNcaaf.forEach(team => {
+      tmpTotalArr.push(team.redzoneScoringPctAvg);
+    })
+    this.redzoneQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
+  }
   runQuartiles() {
     let tmpTotalArr: number[] = [];
     this.httpService.allTeams.forEach(team => {

@@ -2,7 +2,7 @@ import { EventEmitter, Injectable, Output } from '@angular/core';
 import * as XLSX from 'xlsx';
 
 import { DateService } from '../const/date';
-import { INITIALIZE_NBA_TEAMS, INITIALIZE_NHL_TEAMS, INITIALIZE_TEAMS } from '../const/global_var';
+import { INITIALIZE_NBA_TEAMS, INITIALIZE_NCAAF_TEAMS, INITIALIZE_NHL_TEAMS, INITIALIZE_TEAMS } from '../const/global_var';
 import { Game, NbaGame, NbaTeam, NhlGame, NhlTeam, Team } from '../model/interface';
 import { ApiService } from './api.service';
 
@@ -13,6 +13,7 @@ const EXCEL_EXTENSION = '.xlsx';
 })
 export class HttpService {
   allTeams: Team[] = [];
+  allTeamsNcaaf: Team[] = [];
   nbaAllTeams: NbaTeam[] = [];
   nhlAllTeams: NhlTeam[] = [];
 
@@ -25,6 +26,7 @@ export class HttpService {
     this.allTeams = INITIALIZE_TEAMS(this.allTeams);
     this.nbaAllTeams = INITIALIZE_NBA_TEAMS(this.nbaAllTeams);
     this.nhlAllTeams = INITIALIZE_NHL_TEAMS(this.nhlAllTeams);
+    this.allTeamsNcaaf = INITIALIZE_NCAAF_TEAMS(this.allTeamsNcaaf);
   }
 
   getNhlLastYearStats(year: string) {
@@ -198,6 +200,92 @@ export class HttpService {
       }));
     })
   }
+  getLastYearStatsNcaaf(year: string) {
+    this.allTeamsNcaaf.forEach(team => {
+      const tmpHttpAddy = 'https://sports.core.api.espn.com/v2/sports/football/leagues/college-football/seasons/' + year + '/teams/' + team.teamId + '/events';
+      this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
+        let tmpGame = this.initializeTmpGame();
+        const tmpEventAddy = element.$ref;
+        this.apiService.httpGet(tmpEventAddy).subscribe((payload2: any) => {
+          tmpGame.gameId = payload2.id;
+          tmpGame.date = payload2.date;
+          let tmpDate: Date = new Date();
+          if (year === '2023') {
+            tmpDate = new Date('08/25/2023');
+          } else if (year === '2024') {
+            tmpDate = new Date('08/24/2024');
+          }
+
+          if (new Date(payload2.date) > tmpDate) {
+            let tmpCompetitorIndex = 0;
+            if (payload2.competitions[0].competitors[0].id === team.teamId) {
+              tmpGame.opponentId = payload2.competitions[0].competitors[1].id;
+              if (payload2.competitions[0].competitors[tmpCompetitorIndex].homeAway === 'home') {
+                tmpGame.homeOrAway = 'home';
+              } else {
+                tmpGame.homeOrAway = 'away';
+              }
+            } else {
+              tmpCompetitorIndex = 1;
+              tmpGame.opponentId = payload2.competitions[0].competitors[0].id;
+              if (payload2.competitions[0].competitors[tmpCompetitorIndex].homeAway === 'home') {
+                tmpGame.homeOrAway = 'home';
+              } else {
+                tmpGame.homeOrAway = 'away';
+              }
+            }
+
+            const tmpStatsAddy = payload2.competitions[0].competitors[tmpCompetitorIndex].statistics.$ref;
+            const tmpOddsAddy = payload2.competitions[0].odds.$ref;
+            this.apiService.httpGet(tmpOddsAddy).subscribe((payload3: any) => {
+              tmpGame.spread = payload3.items[0].spread;
+              if (tmpGame.homeOrAway === 'home') {
+                tmpGame.isFavorite = payload3.items[0].homeTeamOdds.favorite;
+              } else {
+                tmpGame.isFavorite = payload3.items[0].awayTeamOdds.favorite;
+              }
+              this.apiService.httpGet(tmpStatsAddy).subscribe((payload4: any) => {
+                if (payload4.splits.categories[9] !== undefined && payload4.splits.categories[10] !== undefined) {
+                  tmpGame.points = payload4.splits.categories[9].stats[8].value;
+                  tmpGame.passingAttempts = payload4.splits.categories[1].stats[12].value;
+                  tmpGame.pointsGiven = payload4.splits.categories[4].stats[28].value;
+                  tmpGame.passingYards = payload4.splits.categories[1].stats[19].value;
+                  tmpGame.passingTds = payload4.splits.categories[1].stats[18].value;
+                  tmpGame.rushingAttempts = payload4.splits.categories[2].stats[6].value;
+                  tmpGame.rushingYards = payload4.splits.categories[2].stats[12].value;
+                  tmpGame.rushingTds = payload4.splits.categories[2].stats[11].value;
+                  tmpGame.sacks = payload4.splits.categories[4].stats[15].value;
+                  tmpGame.interceptions = payload4.splits.categories[5].stats[0].value;
+                  tmpGame.firstDowns = payload4.splits.categories[10].stats[0].value;
+                  tmpGame.thirdDownConvPct = payload4.splits.categories[10].stats[30].value;
+                  tmpGame.redzoneScoringPct = payload4.splits.categories[10].stats[22].value;
+                  this.allTeams.forEach(team2 => {
+                    if (team2.teamId === tmpGame.opponentId) {
+                      team2.pointsGivenTotal += tmpGame.points;
+                      team2.passingAttemptsGivenTotal += tmpGame.passingAttempts;
+                      team2.passingYardsGivenTotal += tmpGame.passingYards;
+                      team2.passingTdsGivenTotal += tmpGame.passingTds;
+                      team2.rushingAttemptsGivenTotal += tmpGame.rushingAttempts;
+                      team2.rushingYardsGivenTotal += tmpGame.rushingYards;
+                      team2.rushingTdsGivenTotal += tmpGame.rushingTds;
+                      team2.sacksGivenTotal += tmpGame.sacks;
+                      team2.interceptionsGivenTotal += tmpGame.interceptions;
+                      team2.firstDownsGivenTotal += tmpGame.firstDowns;
+                      team2.thirdDownConvPctGivenTotal.push(tmpGame.thirdDownConvPct);
+                      team2.redzoneScoringPctGivenTotal.push(tmpGame.redzoneScoringPct);
+                    }
+                  });
+                  team.games.push(tmpGame);
+                  this.downloadedGamesNum++;
+                  this.updateDownloadStatus.emit(this.downloadedGamesNum);
+                };
+              });
+            });
+          }
+        });
+      }));
+    })
+  }
 
   getLastYearStats(year: string) {
     this.allTeams.forEach(team => {
@@ -284,7 +372,30 @@ export class HttpService {
       }));
     })
   }
-
+  setupGivenDataNcaaf() {
+    this.allTeamsNcaaf.forEach(team => team.games.forEach(game => {
+      this.allTeamsNcaaf.forEach(team2 => {
+        if (game.opponentId === team2.teamId) {
+          team2.games.forEach(game2 => {
+            if (game.gameId === game2.gameId) {
+              game.passingAttemptsGiven = game2.passingAttempts;
+              game.passingYardsGiven = game2.passingYards;
+              game.passingTdsGiven = game2.passingTds;
+              game.rushingAttemptsGiven = game2.rushingAttempts;
+              game.rushingYardsGiven = game2.rushingYards;
+              game.rushingTdsGiven = game2.rushingTds;
+              game.sacksGiven = game2.sacks;
+              game.interceptionsGiven = game2.interceptions;
+              game.firstDownsGiven = game2.firstDowns;
+              game.thirdDownConvPctGiven = game2.thirdDownConvPct;
+              game.redzoneScoringPctGiven = game2.redzoneScoringPct;
+              game.pointsGiven = game2.points;
+            }
+          })
+        }
+      });
+    }));
+  }
   setupGivenData() {
     this.allTeams.forEach(team => team.games.forEach(game => {
       this.allTeams.forEach(team2 => {
@@ -315,10 +426,32 @@ export class HttpService {
     this.getLastYearStats('2024');
   }
 
+  executeDataHydrationLastYearNcaaf() {
+    this.getLastYearStatsNcaaf('2024');
+  }
+
   executeDataHydrationThisYear() {
     this.getLastYearStats('2024');
   }
 
+  crunchTotalsNcaaf() {
+    this.allTeamsNcaaf.forEach(team => team.games.forEach(game => {
+      team.pointsTotal += game.points;
+      team.passingAttemptsTotal += game.passingAttempts;
+      team.passingYardsTotal += game.passingYards;
+      team.passingTdsTotal += game.passingTds;
+      team.rushingAttemptsTotal += game.rushingAttempts;
+      team.rushingYardsTotal += game.rushingYards;
+      team.rushingTdsTotal += game.rushingTds;
+      team.sacksTotal += game.sacks;
+      team.interceptionsTotal += game.interceptions;
+      team.firstDownsTotal += game.firstDowns;
+      team.thirdDownPctTotal.push(game.thirdDownConvPct);
+      team.redzoneScoringPctTotal.push(game.redzoneScoringPct);
+    }));
+    this.updateTotalData.emit(true);
+    this.updateAggregatingData.emit(true);
+  }
 
   public crunchTotals() {
     this.allTeams.forEach(team => team.games.forEach(game => {
@@ -436,7 +569,30 @@ export class HttpService {
     };
     return tmpGame;
   }
-
+  calculateWinLossRecordNcaaf() {
+    this.allTeamsNcaaf.forEach(team => team.games.forEach(game => {
+      if ((game.points - game.pointsGiven) >= 0) {
+        team.wins++;
+      } else {
+        team.losses++;
+      }
+      if (game.isFavorite) {
+        team.netSpread += (game.points - game.pointsGiven - Math.abs(game.spread));
+        if ((game.points - game.pointsGiven - Math.abs(game.spread) >= 0)) {
+          team.atsWins++;
+        } else {
+          team.atsLosses++;
+        }
+      } else {
+        team.netSpread += (game.points - game.pointsGiven + Math.abs(game.spread));
+        if ((game.points - game.pointsGiven + Math.abs(game.spread) >= 0)) {
+          team.atsWins++;
+        } else {
+          team.atsLosses++;
+        }
+      }
+    }));
+  }
   calculateWinLossRecord() {
     this.allTeams.forEach(team => team.games.forEach(game => {
       if ((game.points - game.pointsGiven) >= 0) {
@@ -461,7 +617,12 @@ export class HttpService {
       }
     }));
   }
-
+  setOpponentStatsNcaaf() {
+    this.allTeamsNcaaf.forEach(team => team.thirdDownPctAvg = this.returnSumAvg(team.thirdDownPctTotal));
+    this.allTeamsNcaaf.forEach(team => team.thirdDownConvPctGivenAvg = this.returnSumAvg(team.thirdDownConvPctGivenTotal));
+    this.allTeamsNcaaf.forEach(team => team.redzoneScoringPctAvg = this.returnSumAvg(team.redzoneScoringPctTotal));
+    this.allTeamsNcaaf.forEach(team => team.redzoneScoringPctGivenAvg = this.returnSumAvg(team.redzoneScoringPctGivenTotal));
+  }
   setOpponentStats() {
     this.allTeams.forEach(team => team.thirdDownPctAvg = this.returnSumAvg(team.thirdDownPctTotal));
     this.allTeams.forEach(team => team.thirdDownConvPctGivenAvg = this.returnSumAvg(team.thirdDownConvPctGivenTotal));
@@ -473,7 +634,70 @@ export class HttpService {
     this.nhlAllTeams.forEach(team => team.shootingPctAvg = this.returnSumAvg(team.shootingPctTotal));
     this.nhlAllTeams.forEach(team => team.shootingPctGivenAvg = this.returnSumAvg(team.shootingPctGivenTotal));
   }
-
+  getNextOpponentInfoNcaaf() {
+    this.allTeamsNcaaf.forEach(team0 => {
+      const tmpHttpAddy = 'https://sports.core.api.espn.com/v2/sports/football/leagues/college-football/seasons/2024/teams/' + team0.teamId + '/events';
+      this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
+        const tmpHttpAddy2 = element.$ref;
+        this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
+          let tmpGameDate = new Date(payload2.date);
+          let today = new Date();
+          let diff = Math.abs(today.getTime() - tmpGameDate.getTime());
+          let diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+          console.log("🚀 ~ payload2.competitions[0].competitors[0].id:", payload2.competitions[0].competitors[0].id)
+                console.log("🚀 ~ payload2.competitions[0].competitors[1].id:", payload2.competitions[0].competitors[1].id)
+          if (diffDays <= 2) {
+            console.log("🚀 ~ tmpGameDate:", tmpGameDate)
+            const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
+            this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
+              // if (payload2.competitions[0].competitors[1].id.length > 2 || payload2.competitions[0].competitors[0].id.length > 2) {
+                console.log("🚀 ~ payload2.competitions[0].competitors[0].id:", payload2.competitions[0].competitors[0].id)
+                console.log("🚀 ~ payload2.competitions[0].competitors[1].id:", payload2.competitions[0].competitors[1].id)
+              // }
+              if (payload3.items.length > 0) {
+                if (team0.teamId === payload2.competitions[0].competitors[0].id) {
+                  this.allTeamsNcaaf.forEach(team2 => {
+                    if (team2.teamId === payload2.competitions[0].competitors[1].id) {
+                      team0.nextGameDetails = payload3.items[0].details;
+                      team0.nextGameDate = tmpGameDate;
+                      team0.nextOpponent = team2.teamName;
+                      team0.nextOpponentWins = team2.wins;
+                      team0.nextOpponentLosses = team2.losses;
+                      team0.nextOpponentAtsWins = team2.atsWins;
+                      team0.nextOpponentAtsLosses = team2.atsLosses;
+                      if (team0.teamInitials === this.determineFavoriteTeam(team0.nextGameDetails).trim()) {
+                        team0.isNextGameFavorite = true;
+                      } else {
+                        team0.isNextGameFavorite = false;
+                      }
+                    }
+                  })
+                }
+                if (team0.teamId === payload2.competitions[0].competitors[1].id) {
+                  this.allTeamsNcaaf.forEach(team2 => {
+                    if (team2.teamId === payload2.competitions[0].competitors[0].id) {
+                      team0.nextGameDetails = payload3.items[0].details;
+                      team0.nextGameDate = tmpGameDate;
+                      team0.nextOpponent = team2.teamName;
+                      team0.nextOpponentWins = team2.wins;
+                      team0.nextOpponentLosses = team2.losses;
+                      team0.nextOpponentAtsWins = team2.atsWins;
+                      team0.nextOpponentAtsLosses = team2.atsLosses;
+                      if (team0.teamInitials === this.determineFavoriteTeam(team0.nextGameDetails).trim()) {
+                        team0.isNextGameFavorite = true;
+                      } else {
+                        team0.isNextGameFavorite = false;
+                      }
+                    }
+                  });
+                }
+              }
+            });
+          }
+        });
+      }))
+    });
+  }
   getNextOpponentInfo() {
     console.log("🚀 ~ this.dateService.currentWeek:", this.dateService.currentWeek)
 
@@ -504,9 +728,14 @@ export class HttpService {
                   team2.nextOpponentAtsWins = team.atsWins;
                   team2.nextOpponentAtsLosses = team.atsLosses;
                   team2.nextGameDetails = payload3.items[0].details;
-                  if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim()) {
+                  if (team.teamId === '22' && team.nextGameDetails === 'EVEN') {
                     team.isNextGameFavorite = true;
-                  } else {
+                  } else if (team.teamId === '20' && team.nextGameDetails === 'EVEN') {
+                    team.isNextGameFavorite = false;
+                  }
+                  if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim() && team.nextGameDetails !== 'EVEN') {
+                    team.isNextGameFavorite = true;
+                  } else if (team.teamInitials !== this.determineFavoriteTeam(team.nextGameDetails).trim() && team.nextGameDetails !== 'EVEN') {
                     team.isNextGameFavorite = false;
                   }
                 }
