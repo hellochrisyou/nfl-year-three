@@ -80,7 +80,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   basicStatsForm: FormGroup;
   currentDownloadCounter = 0;
   currentDownloadCounterPostMsg = ' - DOWNLOAD REQUIRED';
-  currentWeek: number = 10;
+  currentWeek: number = 19;
   nbaDataSource: MatTableDataSource<NbaTeam>;
   nhlDataSource: MatTableDataSource<NhlTeam>;
   dataSource: MatTableDataSource<Team>;
@@ -151,7 +151,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.dateService.initializeStaticDates();
     // this.currentWeek = this.dateService.currentWeek;
-    this.currentWeek = 10;
+    this.currentWeek = 1;
     console.log("🚀 ~ this.currentWeek:", this.currentWeek);
     this.httpService.updateDownloadStatus.subscribe(payload => {
       this.currentDownloadCounter = payload;

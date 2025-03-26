@@ -4,27 +4,28 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class DateService {
-  week1 = new Date('2024-09-5');
-  week2 = new Date('2024-09-11');
-  week3 = new Date('2024-09-16');
-  week4 = new Date('2024-09-23');
-  week5 = new Date('2024-10-01');
-  week6 = new Date('2024-10-07');
-  week7 = new Date('2024-10-15');
-  week8 = new Date('2024-10-22');
-  week9 = new Date('2024-10-29');
-  week10 = new Date('2024-11-04');
-  week11 = new Date('2024-11-11');
-  week12 = new Date('2024-11-18');
-  week13 = new Date('2024-11-25');
-  week14 = new Date('2024-12-02');
-  week15 = new Date('2024-12-09');
-  week16 = new Date('2024-12-16');
-  week17 = new Date('2024-12-23');
-  week18 = new Date('2025-01-01');
-  endOfSeason = new Date('2025-01-08');
+  week1 = new Date('2025-09-4');
+  week2 = new Date('2025-09-9');
+  week3 = new Date('2025-09-16');
+  week4 = new Date('2025-09-23');
+  week5 = new Date('2025-09-30');
+  week6 = new Date('2025-10-07');
+  week7 = new Date('2025-10-14');
+  week8 = new Date('2025-10-21');
+  week9 = new Date('2025-10-28');
+  week10 = new Date('2025-11-04');
+  week11 = new Date('2025-11-11');
+  week12 = new Date('2025-11-18');
+  week13 = new Date('2025-11-25');
+  week14 = new Date('2025-12-02');
+  week15 = new Date('2025-12-09');
+  week16 = new Date('2025-12-16');
+  week17 = new Date('2025-12-23');
+  week18 = new Date('2026-01-01');
+  week19 = new Date('2026-01-06');
+  endOfSeason = new Date('2026-02-08');
 
-  private _currentWeek = 10;
+  private _currentWeek = 1;
 
   public get currentWeek() {
     return this._currentWeek;
@@ -160,8 +161,10 @@ export class DateService {
       this.currentWeek = 16;
     } else if (todayDate >= this.week17 && todayDate < this.week18) {
       this.currentWeek = 17;
-    } else if (todayDate >= this.week18 && todayDate < this.endOfSeason) {
+    } else if (todayDate >= this.week18 && todayDate < this.week19) {
       this.currentWeek = 18;
+    } else if (todayDate >= this.week19 && todayDate < this.endOfSeason) {
+      this.currentWeek = 19;
     }
   }
 }

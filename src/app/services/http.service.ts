@@ -52,6 +52,10 @@ export class HttpService {
               tmpDate = new Date('10/07/2024');
               break;
             }
+            case '2026': {
+              tmpDate = new Date('10/07/2025');
+              break;
+            }
           }
           let tmpCompetitorIndex = 0;
           let tmpOpponentIndex = 1;
@@ -125,11 +129,12 @@ export class HttpService {
           let tmpDate: Date = new Date();
           if (year === '2023') {
             tmpDate = new Date('08/25/2022');
-          }
-          if (year === '2024') {
+          } else if (year === '2024') {
             tmpDate = new Date('08/25/2023');
           } else if (year === '2025') {
             tmpDate = new Date('08/25/2024');
+          } else if (year === '2026') {
+            tmpDate = new Date('08/25/2025');
           }
           let tmpCompetitorIndex = 0;
           let tmpOpponentIndex = 1;
@@ -214,6 +219,8 @@ export class HttpService {
             tmpDate = new Date('08/25/2023');
           } else if (year === '2024') {
             tmpDate = new Date('08/24/2024');
+          } else if (year === '2026') {
+            tmpDate = new Date('08/24/2025');
           }
 
           if (new Date(payload2.date) > tmpDate) {
@@ -301,6 +308,8 @@ export class HttpService {
             tmpDate = new Date('08/25/2023');
           } else if (year === '2024') {
             tmpDate = new Date('08/25/2024');
+          } else if (year === '2025') {
+            tmpDate = new Date('08/25/2025');
           }
 
           if (new Date(payload2.date) > tmpDate) {
@@ -424,14 +433,17 @@ export class HttpService {
   executeDataHydrationLastYear() {
     this.getLastYearStats('2023');
     this.getLastYearStats('2024');
+    this.getLastYearStats('2025');
   }
 
   executeDataHydrationLastYearNcaaf() {
     this.getLastYearStatsNcaaf('2024');
+    this.getLastYearStatsNcaaf('2025');
   }
 
   executeDataHydrationThisYear() {
     this.getLastYearStats('2024');
+    this.getLastYearStats('2025');
   }
 
   crunchTotalsNcaaf() {
@@ -636,7 +648,7 @@ export class HttpService {
   }
   getNextOpponentInfoNcaaf() {
     this.allTeamsNcaaf.forEach(team0 => {
-      const tmpHttpAddy = 'https://sports.core.api.espn.com/v2/sports/football/leagues/college-football/seasons/2024/teams/' + team0.teamId + '/events';
+      const tmpHttpAddy = 'https://sports.core.api.espn.com/v2/sports/football/leagues/college-football/seasons/2025/teams/' + team0.teamId + '/events';
       this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
         const tmpHttpAddy2 = element.$ref;
         this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
@@ -700,69 +712,87 @@ export class HttpService {
   }
   getNextOpponentInfo() {
     console.log("🚀 ~ this.dateService.currentWeek:", this.dateService.currentWeek)
-
-    const tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2024/types/2/weeks/' + (this.dateService.currentWeek) + '/events?lang=en&region=us';
-    this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
-      console.log("🚀 ~ element:", element)
-      const tmpHttpAddy2 = element.$ref;
-      this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
-        const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
-        this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
-          console.log("🚀 ~ payload3:", payload3)
           this.allTeams.forEach(team => {
-            if (team.teamId === payload2.competitions[0].competitors[0].id) {
-              this.allTeams.forEach(team2 => {
-                if (team2.teamId === payload2.competitions[0].competitors[1].id) {
-                  team.nextGameSpread = payload3.items[0].spread;
-                  team.nextOpponent = team2.teamName;
-                  team.nextOpponentWins = team2.wins;
-                  team.nextOpponentLosses = team2.losses;
-                  team.nextOpponentAtsWins = team2.atsWins;
-                  team.nextOpponentAtsLosses = team2.atsLosses;
-                  team.nextGameDetails = payload3.items[0].details;
-                  console.log("🚀 ~ payload3.items[0].details:", payload3.items[0].details)
-                  team2.nextGameSpread = payload3.items[0].spread;
-                  team2.nextOpponent = team.teamName;
-                  team2.nextOpponentWins = team.wins;
-                  team2.nextOpponentLosses = team.losses;
-                  team2.nextOpponentAtsWins = team.atsWins;
-                  team2.nextOpponentAtsLosses = team.atsLosses;
-                  team2.nextGameDetails = payload3.items[0].details;
-                  if (team.teamId === '22' && team.nextGameDetails === 'EVEN') {
-                    team.isNextGameFavorite = true;
-                  } else if (team.teamId === '20' && team.nextGameDetails === 'EVEN') {
-                    team.isNextGameFavorite = false;
-                  }
-                  if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim() && team.nextGameDetails !== 'EVEN') {
-                    team.isNextGameFavorite = true;
-                  } else if (team.teamInitials !== this.determineFavoriteTeam(team.nextGameDetails).trim() && team.nextGameDetails !== 'EVEN') {
-                    team.isNextGameFavorite = false;
-                  }
-                }
-              })
+            if (team.teamName === 'Kansas City Chiefs') {
+              team.nextOpponent = 'Buffalo Bills';
+              team.isNextGameFavorite = true;
             }
-            if (team.teamId === payload2.competitions[0].competitors[1].id) {
-              this.allTeams.forEach(team2 => {
-                if (team2.teamId === payload2.competitions[0].competitors[0].id) {
-                  team.nextGameSpread = payload3.items[0].spread;
-                  team.nextOpponent = team2.teamName;
-                  team.nextOpponentWins = team2.wins;
-                  team.nextOpponentLosses = team2.losses;
-                  team.nextOpponentAtsWins = team2.atsWins;
-                  team.nextOpponentAtsLosses = team2.atsLosses;
-                  team.nextGameDetails = payload3.items[0].details;
-                  if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim()) {
-                    team.isNextGameFavorite = true;
-                  } else {
-                    team.isNextGameFavorite = false;
-                  }
-                }
-              })
+            if (team.teamName === 'Buffalo Bills') {
+              team.nextOpponent = 'Kansas City Chiefs';
+              team.isNextGameFavorite = false;
+            }
+            if (team.teamName === 'Philadelphia Eagles') {
+              team.nextOpponent = 'Washington Commanders';
+              team.isNextGameFavorite = true;
+            }
+            if (team.teamName === 'Washington Commanders') {
+              team.nextOpponent = 'Philadelphia Eagles';
+              team.isNextGameFavorite = false;
             }
           });
-        });
-      });
-    }))
+
+    // const tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/types/2/weeks/' + (this.dateService.currentWeek) + '/events?lang=en&region=us';
+    // this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
+    //   console.log("🚀 ~ element:", element)
+    //   const tmpHttpAddy2 = element.$ref;
+    //   this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
+    //     const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
+    //     this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
+    //       console.log("🚀 ~ payload3:", payload3)
+    //       this.allTeams.forEach(team => {
+    //         if (team.teamId === payload2.competitions[0].competitors[0].id) {
+    //           this.allTeams.forEach(team2 => {
+    //             if (team2.teamId === payload2.competitions[0].competitors[1].id) {
+    //               team.nextGameSpread = payload3.items[0].spread;
+    //               team.nextOpponent = team2.teamName;
+    //               team.nextOpponentWins = team2.wins;
+    //               team.nextOpponentLosses = team2.losses;
+    //               team.nextOpponentAtsWins = team2.atsWins;
+    //               team.nextOpponentAtsLosses = team2.atsLosses;
+    //               team.nextGameDetails = payload3.items[0].details;
+    //               console.log("🚀 ~ payload3.items[0].details:", payload3.items[0].details)
+    //               team2.nextGameSpread = payload3.items[0].spread;
+    //               team2.nextOpponent = team.teamName;
+    //               team2.nextOpponentWins = team.wins;
+    //               team2.nextOpponentLosses = team.losses;
+    //               team2.nextOpponentAtsWins = team.atsWins;
+    //               team2.nextOpponentAtsLosses = team.atsLosses;
+    //               team2.nextGameDetails = payload3.items[0].details;
+    //               if (team.teamId === '22' && team.nextGameDetails === 'EVEN') {
+    //                 team.isNextGameFavorite = true;
+    //               } else if (team.teamId === '20' && team.nextGameDetails === 'EVEN') {
+    //                 team.isNextGameFavorite = false;
+    //               }
+    //               if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim() && team.nextGameDetails !== 'EVEN') {
+    //                 team.isNextGameFavorite = true;
+    //               } else if (team.teamInitials !== this.determineFavoriteTeam(team.nextGameDetails).trim() && team.nextGameDetails !== 'EVEN') {
+    //                 team.isNextGameFavorite = false;
+    //               }
+    //             }
+    //           })
+    //         }
+    //         if (team.teamId === payload2.competitions[0].competitors[1].id) {
+    //           this.allTeams.forEach(team2 => {
+    //             if (team2.teamId === payload2.competitions[0].competitors[0].id) {
+    //               team.nextGameSpread = payload3.items[0].spread;
+    //               team.nextOpponent = team2.teamName;
+    //               team.nextOpponentWins = team2.wins;
+    //               team.nextOpponentLosses = team2.losses;
+    //               team.nextOpponentAtsWins = team2.atsWins;
+    //               team.nextOpponentAtsLosses = team2.atsLosses;
+    //               team.nextGameDetails = payload3.items[0].details;
+    //               if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim()) {
+    //                 team.isNextGameFavorite = true;
+    //               } else {
+    //                 team.isNextGameFavorite = false;
+    //               }
+    //             }
+    //           })
+    //         }
+    //       });
+    //     });
+    //   });
+    // }))
   }
   determineFavoriteTeam(inputVal: string) {
     let tmpStr = '';
@@ -839,13 +869,19 @@ export class HttpService {
   getNhlNextOpponentInfo() {
     this.nhlAllTeams.forEach(team0 => {
       const tmpHttpAddy = 'https://sports.core.api.espn.com/v2/sports/hockey/leagues/nhl/seasons/2025/teams/' + team0.teamId + '/events';
+      console.log("🚀 ~ tmpHttpAddy:", tmpHttpAddy)
+
       this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
         const tmpHttpAddy2 = element.$ref;
         this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
+          // console.log("🚀 ~ payload2:", payload2)
           let tmpGameDate = new Date(payload2.date);
+          // console.log("🚀 ~ tmpGameDate:", tmpGameDate)
           let today = new Date();
           let diff = Math.abs(today.getTime() - tmpGameDate.getTime());
           let diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+          // console.log("🚀 ~ diffDays:", diffDays)
+
           if (today <= tmpGameDate && diffDays <= 1) {
             const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
             this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
