@@ -1101,6 +1101,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     let tmpEvent = {
       value: ''
     }
+    console.log("🚀 ~ this.httpService.allTeams:", this.httpService.allTeams)
 
     this.httpService.allTeams.forEach(team0 => {
       this.httpService.allTeams.forEach(team => {

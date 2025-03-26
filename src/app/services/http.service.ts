@@ -711,88 +711,69 @@ export class HttpService {
     });
   }
   getNextOpponentInfo() {
-    console.log("🚀 ~ this.dateService.currentWeek:", this.dateService.currentWeek)
+    console.log('he')
+    const tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/types/2/weeks/' + (this.dateService.currentWeek) + '/events?lang=en&region=us';
+    this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
+      console.log("🚀 ~ element:", element)
+      const tmpHttpAddy2 = element.$ref;
+      this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
+        const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
+        this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
+          console.log("🚀 ~ payload3:", payload3)
           this.allTeams.forEach(team => {
-            if (team.teamName === 'Kansas City Chiefs') {
-              team.nextOpponent = 'Buffalo Bills';
-              team.isNextGameFavorite = true;
+            if (team.teamId === payload2.competitions[0].competitors[0].id) {
+              this.allTeams.forEach(team2 => {
+                if (team2.teamId === payload2.competitions[0].competitors[1].id) {
+                  team.nextGameSpread = payload3.items[0].spread;
+                  team.nextOpponent = team2.teamName;
+                  team.nextOpponentWins = team2.wins;
+                  team.nextOpponentLosses = team2.losses;
+                  team.nextOpponentAtsWins = team2.atsWins;
+                  team.nextOpponentAtsLosses = team2.atsLosses;
+                  team.nextGameDetails = payload3.items[0].details;
+                  console.log("🚀 ~ payload3.items[0].details:", payload3.items[0].details)
+                  team2.nextGameSpread = payload3.items[0].spread;
+                  team2.nextOpponent = team.teamName;
+                  team2.nextOpponentWins = team.wins;
+                  team2.nextOpponentLosses = team.losses;
+                  team2.nextOpponentAtsWins = team.atsWins;
+                  team2.nextOpponentAtsLosses = team.atsLosses;
+                  team2.nextGameDetails = payload3.items[0].details;
+                  if (team.teamId === '22' && team.nextGameDetails === 'EVEN') {
+                    team.isNextGameFavorite = true;
+                  } else if (team.teamId === '20' && team.nextGameDetails === 'EVEN') {
+                    team.isNextGameFavorite = false;
+                  }
+                  if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim() && team.nextGameDetails !== 'EVEN') {
+                    team.isNextGameFavorite = true;
+                  } else if (team.teamInitials !== this.determineFavoriteTeam(team.nextGameDetails).trim() && team.nextGameDetails !== 'EVEN') {
+                    team.isNextGameFavorite = false;
+                  }
+                }
+              })
             }
-            if (team.teamName === 'Buffalo Bills') {
-              team.nextOpponent = 'Kansas City Chiefs';
-              team.isNextGameFavorite = false;
-            }
-            if (team.teamName === 'Philadelphia Eagles') {
-              team.nextOpponent = 'Washington Commanders';
-              team.isNextGameFavorite = true;
-            }
-            if (team.teamName === 'Washington Commanders') {
-              team.nextOpponent = 'Philadelphia Eagles';
-              team.isNextGameFavorite = false;
+            if (team.teamId === payload2.competitions[0].competitors[1].id) {
+              this.allTeams.forEach(team2 => {
+                if (team2.teamId === payload2.competitions[0].competitors[0].id) {
+                  team.nextGameSpread = payload3.items[0].spread;
+                  team.nextOpponent = team2.teamName;
+                  team.nextOpponentWins = team2.wins;
+                  team.nextOpponentLosses = team2.losses;
+                  team.nextOpponentAtsWins = team2.atsWins;
+                  team.nextOpponentAtsLosses = team2.atsLosses;
+                  team.nextGameDetails = payload3.items[0].details;
+                  if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim()) {
+                    team.isNextGameFavorite = true;
+                  } else {
+                    team.isNextGameFavorite = false;
+                  }
+                }
+              })
             }
           });
-
-    // const tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/types/2/weeks/' + (this.dateService.currentWeek) + '/events?lang=en&region=us';
-    // this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
-    //   console.log("🚀 ~ element:", element)
-    //   const tmpHttpAddy2 = element.$ref;
-    //   this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
-    //     const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
-    //     this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
-    //       console.log("🚀 ~ payload3:", payload3)
-    //       this.allTeams.forEach(team => {
-    //         if (team.teamId === payload2.competitions[0].competitors[0].id) {
-    //           this.allTeams.forEach(team2 => {
-    //             if (team2.teamId === payload2.competitions[0].competitors[1].id) {
-    //               team.nextGameSpread = payload3.items[0].spread;
-    //               team.nextOpponent = team2.teamName;
-    //               team.nextOpponentWins = team2.wins;
-    //               team.nextOpponentLosses = team2.losses;
-    //               team.nextOpponentAtsWins = team2.atsWins;
-    //               team.nextOpponentAtsLosses = team2.atsLosses;
-    //               team.nextGameDetails = payload3.items[0].details;
-    //               console.log("🚀 ~ payload3.items[0].details:", payload3.items[0].details)
-    //               team2.nextGameSpread = payload3.items[0].spread;
-    //               team2.nextOpponent = team.teamName;
-    //               team2.nextOpponentWins = team.wins;
-    //               team2.nextOpponentLosses = team.losses;
-    //               team2.nextOpponentAtsWins = team.atsWins;
-    //               team2.nextOpponentAtsLosses = team.atsLosses;
-    //               team2.nextGameDetails = payload3.items[0].details;
-    //               if (team.teamId === '22' && team.nextGameDetails === 'EVEN') {
-    //                 team.isNextGameFavorite = true;
-    //               } else if (team.teamId === '20' && team.nextGameDetails === 'EVEN') {
-    //                 team.isNextGameFavorite = false;
-    //               }
-    //               if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim() && team.nextGameDetails !== 'EVEN') {
-    //                 team.isNextGameFavorite = true;
-    //               } else if (team.teamInitials !== this.determineFavoriteTeam(team.nextGameDetails).trim() && team.nextGameDetails !== 'EVEN') {
-    //                 team.isNextGameFavorite = false;
-    //               }
-    //             }
-    //           })
-    //         }
-    //         if (team.teamId === payload2.competitions[0].competitors[1].id) {
-    //           this.allTeams.forEach(team2 => {
-    //             if (team2.teamId === payload2.competitions[0].competitors[0].id) {
-    //               team.nextGameSpread = payload3.items[0].spread;
-    //               team.nextOpponent = team2.teamName;
-    //               team.nextOpponentWins = team2.wins;
-    //               team.nextOpponentLosses = team2.losses;
-    //               team.nextOpponentAtsWins = team2.atsWins;
-    //               team.nextOpponentAtsLosses = team2.atsLosses;
-    //               team.nextGameDetails = payload3.items[0].details;
-    //               if (team.teamInitials === this.determineFavoriteTeam(team.nextGameDetails).trim()) {
-    //                 team.isNextGameFavorite = true;
-    //               } else {
-    //                 team.isNextGameFavorite = false;
-    //               }
-    //             }
-    //           })
-    //         }
-    //       });
-    //     });
-    //   });
-    // }))
+        });
+      });
+    }))
   }
   determineFavoriteTeam(inputVal: string) {
     let tmpStr = '';
