@@ -253,7 +253,7 @@ export class HttpService {
               }
               this.apiService.httpGet(tmpStatsAddy).subscribe((payload4: any) => {
                 if (payload4.splits.categories[9] !== undefined && payload4.splits.categories[10] !== undefined) {
-                  tmpGame.points = payload4.splits.categories[9].stats[8].value;
+                  tmpGame.points = payload4.splits.categories[9].stats[9].value;
                   tmpGame.passingAttempts = payload4.splits.categories[1].stats[12].value;
                   tmpGame.pointsGiven = payload4.splits.categories[4].stats[28].value;
                   tmpGame.passingYards = payload4.splits.categories[1].stats[19].value;
@@ -341,7 +341,7 @@ export class HttpService {
                 tmpGame.isFavorite = payload3.items[0].awayTeamOdds.favorite;
               }
               this.apiService.httpGet(tmpStatsAddy).subscribe((payload4: any) => {
-                tmpGame.points = payload4.splits.categories[9].stats[8].value;
+                tmpGame.points = payload4.splits.categories[9].stats[9].value;
                 tmpGame.passingAttempts = payload4.splits.categories[1].stats[12].value;
                 tmpGame.pointsGiven = payload4.splits.categories[4].stats[28].value;
                 tmpGame.passingYards = payload4.splits.categories[1].stats[19].value;
@@ -433,7 +433,6 @@ export class HttpService {
   executeDataHydrationLastYear() {
     this.getLastYearStats('2024');
     this.getLastYearStats('2025');
-    this.getLastYearStats('2026');
   }
 
   executeDataHydrationLastYearNcaaf() {
@@ -443,7 +442,6 @@ export class HttpService {
 
   executeDataHydrationThisYear() {
     this.getLastYearStats('2025');
-    this.getLastYearStats('2026');
   }
 
   crunchTotalsNcaaf() {
@@ -607,6 +605,8 @@ export class HttpService {
   }
   calculateWinLossRecord() {
     this.allTeams.forEach(team => team.games.forEach(game => {
+      console.log("🚀 ~ game.pointsGiven:", game.pointsGiven)
+      console.log("🚀 ~ game.points:", game.points)
       if ((game.points - game.pointsGiven) >= 0) {
         team.wins++;
       } else {
@@ -711,7 +711,6 @@ export class HttpService {
     });
   }
   getNextOpponentInfo() {
-    console.log('he')
     const tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/types/2/weeks/' + (this.dateService.currentWeek) + '/events?lang=en&region=us';
     this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
       console.log("🚀 ~ element:", element)
@@ -731,7 +730,6 @@ export class HttpService {
                   team.nextOpponentAtsWins = team2.atsWins;
                   team.nextOpponentAtsLosses = team2.atsLosses;
                   team.nextGameDetails = payload3.items[0].details;
-                  console.log("🚀 ~ payload3.items[0].details:", payload3.items[0].details)
                   team2.nextGameSpread = payload3.items[0].spread;
                   team2.nextOpponent = team.teamName;
                   team2.nextOpponentWins = team.wins;
