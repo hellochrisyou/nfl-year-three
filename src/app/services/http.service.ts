@@ -431,9 +431,9 @@ export class HttpService {
   }
 
   executeDataHydrationLastYear() {
-    this.getLastYearStats('2023');
     this.getLastYearStats('2024');
     this.getLastYearStats('2025');
+    this.getLastYearStats('2026');
   }
 
   executeDataHydrationLastYearNcaaf() {
@@ -442,8 +442,8 @@ export class HttpService {
   }
 
   executeDataHydrationThisYear() {
-    this.getLastYearStats('2024');
     this.getLastYearStats('2025');
+    this.getLastYearStats('2026');
   }
 
   crunchTotalsNcaaf() {
@@ -791,7 +791,7 @@ export class HttpService {
   }
   getNbaNextOpponentInfo() {
     for (let i = 0; i < this.nbaAllTeams.length; i++) {
-      const tmpHttpAddy = 'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/2025/teams/' + this.nbaAllTeams[i].teamId + '/events';
+      const tmpHttpAddy = 'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/2024/teams/' + this.nbaAllTeams[i].teamId + '/events';
       this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
         const tmpHttpAddy2 = element.$ref;
         this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
@@ -850,13 +850,12 @@ export class HttpService {
   getNhlNextOpponentInfo() {
     this.nhlAllTeams.forEach(team0 => {
       const tmpHttpAddy = 'https://sports.core.api.espn.com/v2/sports/hockey/leagues/nhl/seasons/2025/teams/' + team0.teamId + '/events';
-      console.log("🚀 ~ tmpHttpAddy:", tmpHttpAddy)
-
       this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
         const tmpHttpAddy2 = element.$ref;
         this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
-          // console.log("🚀 ~ payload2:", payload2)
+          console.log("🚀 ~ payload2:", payload2)
           let tmpGameDate = new Date(payload2.date);
+          // console.log("🚀 ~ tmpGameDate:", tmpGameDate)
           // console.log("🚀 ~ tmpGameDate:", tmpGameDate)
           let today = new Date();
           let diff = Math.abs(today.getTime() - tmpGameDate.getTime());
