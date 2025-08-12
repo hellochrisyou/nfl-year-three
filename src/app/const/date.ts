@@ -24,8 +24,35 @@ export class DateService {
   week18 = new Date('2026-01-01');
   week19 = new Date('2026-01-06');
   endOfSeason = new Date('2026-02-08');
+  lastYearWeek1 = new Date('2024-09-4');
+  lastYearWeek2 = new Date('2024-09-11');
+  lastYearWeek3 = new Date('2024-09-18');
+  lastYearWeek4 = new Date('2024-09-25');
+  lastYearWeek5 = new Date('2024-10-02');
+  lastYearWeek6 = new Date('2024-10-09');
+  lastYearWeek7 = new Date('2024-10-16');
+  lastYearWeek8 = new Date('2024-10-23');
+  lastYearWeek9 = new Date('2024-10-30');
+  lastYearWeek10 = new Date('2024-11-06');
+  lastYearWeek11 = new Date('2024-11-13');
+  lastYearWeek12 = new Date('2024-11-20');
+  lastYearWeek13 = new Date('2024-11-27');
+  lastYearWeek14 = new Date('2024-12-04');
+  lastYearWeek15 = new Date('2024-12-11');
+  lastYearWeek16 = new Date('2024-12-18');
+  lastYearWeek17 = new Date('2024-12-25');
+  lastYearWeek18 = new Date('2025-01-01');
+  lastYearEndOfSeason = new Date('2025-02-08');
 
   private _currentWeek = 1;
+  private _currentLastYearWeek = new Date();
+
+  public get currentLastYearWeek() {
+    return this._currentLastYearWeek;
+  }
+  public set currentLastYearWeek(value) {
+    this._currentLastYearWeek = value;
+  }
 
   public get currentWeek() {
     return this._currentWeek;
@@ -36,6 +63,84 @@ export class DateService {
   constructor(
   ) {
   }
+
+  setLastYearWeek(lastYearWeek: number) {
+    switch (lastYearWeek) {
+      case 1: {
+        this.currentLastYearWeek = this.lastYearWeek1;
+        return;
+      }
+      case 2: {
+        this.currentLastYearWeek = this.lastYearWeek2;
+        return;
+      }
+      case 3: {
+        this.currentLastYearWeek = this.lastYearWeek3;
+        return;
+      }
+      case 4: {
+        this.currentLastYearWeek = this.lastYearWeek4;
+        return;
+      }
+      case 5: {
+        this.currentLastYearWeek = this.lastYearWeek5;
+        return;
+      }
+      case 6: {
+        this.currentLastYearWeek = this.lastYearWeek6;
+        return;
+      }
+      case 7: {
+        this.currentLastYearWeek = this.lastYearWeek7;
+        return;
+      }
+      case 8: {
+        this.currentLastYearWeek = this.lastYearWeek8;
+        return;
+      }
+      case 9: {
+        this.currentLastYearWeek = this.lastYearWeek9;
+        return;
+      }
+      case 10: {
+        this.currentLastYearWeek = this.lastYearWeek10;
+        return;
+      }
+      case 11: {
+        this.currentLastYearWeek = this.lastYearWeek11;
+        return;
+      }
+      case 12: {
+        this.currentLastYearWeek = this.lastYearWeek12;
+        return;
+      }
+      case 13: {
+        this.currentLastYearWeek = this.lastYearWeek13;
+        return;
+      }
+      case 14: {
+        this.currentLastYearWeek = this.lastYearWeek14;
+        return;
+      }
+      case 15: {
+        this.currentLastYearWeek = this.lastYearWeek15;
+        return;
+      }
+      case 16: {
+        this.currentLastYearWeek = this.lastYearWeek16;
+        return;
+      }
+      case 17: {
+        this.currentLastYearWeek = this.lastYearWeek17;
+        return;
+      }
+      case 18: {
+        this.currentLastYearWeek = this.lastYearWeek18;
+        return;
+      }
+    }
+  }
+
   isCurrentWeek(weekInput: Date): boolean {
     if (this.currentWeek === 5) {
       if (weekInput > this.week5 && weekInput < this.week6) {

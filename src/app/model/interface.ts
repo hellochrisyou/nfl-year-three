@@ -38,6 +38,8 @@ export interface WinLoss {
 
 
 export interface Team {
+  currentWeekWinLoss: string;
+  currentWeekAts: string;
   netSpread: number;
   passAttemptsStd: number;
   passYardsStd: number;
@@ -46,6 +48,8 @@ export interface Team {
   rushYardsStd: number;
   rushTdsStd: number;
   firstDownsStd: number;
+  currentWeekPoints: number;
+  currentWeekPointsAgainst: number;
   thirdDownStd: number;
   redzoneStd: number;
   pointsStd: number;

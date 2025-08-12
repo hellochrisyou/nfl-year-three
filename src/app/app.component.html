@@ -585,8 +585,19 @@
       <div class="margin-left-5rem-top-1rem">
         <b class="crimson">3. You can now access the other sections at the top of the page.</b>
       </div>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear()">1.0 Download as far as Last
-        Year</button>
+      <div class="lastYearWeek-wrapper">
+        <h4>Select 2014 Week</h4>
+        <mat-form-field appearance="fill">
+          <mat-label>Favorite Food</mat-label>
+          <mat-select [formControl]="lastYearWeekControl" name="food">
+            <mat-option>None</mat-option>
+            <mat-option *ngFor="let lastYearWeek of lastYearWeeks" [value]="lastYearWeek">
+              {{lastYearWeek}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear(lastYearWeekControl.value)">1.0 Download as far as 2014: Week- {{lastYearWeekControl.value}}</button>
       <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear2()">1.5 Download 2025</button>
       <div class="animate-wrapper">
         <h3 class="animate-charcter">Number of Games Downloaded: {{currentDownloadCounter}}
@@ -615,6 +626,9 @@
           <span class="animate-wrapper" *ngIf="selectedTeam !== ''">
             <h3 class="animate-charcter">{{selectedTeam}} (Selected)</h3>
           </span> -->
+    </div>
+    <div>
+      Current Date{{lastYearWeekControl.value}}
     </div>
     <form [formGroup]="basicStatsForm">
       <span>
@@ -762,9 +776,13 @@
           <div>Net Spread: {{row.netSpread}}</div>
           <span [ngClass]="returnCellColor(row.wins, 'score')">{{row.teamName}}</span>
           <div [ngClass]="returnCellColor(row.wins, 'score')">Score: {{row.wins}}-{{row.losses}}</div>
-          <div>Spread: {{row.nextGameSpread}}</div>
+          <div>Spread: {{returnGameSpread(row)}}</div>
           <div [ngClass]="{'bold-font': row.isNextGameFavorite, 'italic-font': !row.isNextGameFavorite}">
             {{returnIfFavorite(row.isNextGameFavorite)}}</div>
+            <div>Points For: {{row.currentWeekPoints}}</div>
+            <div>Points Against: {{row.currentWeekPointsAgainst}}</div>
+            <div [ngClass]="returnWinLossColor(row.currentWeekWinLoss)">Win or Loss: {{row.currentWeekWinLoss}}</div>
+            <div [ngClass]="returnWinLossColor(row.currentWeekAts)">Against Spread: {{row.currentWeekAts}}</div>
           <!-- <div><button mat-raised-button (click)="defaultFormControls(row)">Set</button></div> -->
         </mat-cell>
       </ng-container>
@@ -841,8 +859,6 @@
             <div [ngClass]="checkPassAttempts(row.nextOpponent)">{{row.nextOpponent}}:
               {{returnOpponentAvgPassAttempts(row.nextOpponent)| number
               : '1.1-1'}}</div>
-            <div>STD: {{row.passAttemptsStd| number :
-              '1.1-1'}}</div>
           </div>
         </mat-cell>
       </ng-container>
@@ -881,8 +897,6 @@
             <div [ngClass]="checkPassYards(row.nextOpponent)">{{row.nextOpponent}}:
               {{returnOpponentAvgPassYards(row.nextOpponent)| number
               : '1.1-1'}}</div>
-            <div>STD: {{row.passYardsStd| number :
-              '1.1-1'}}</div>
           </div>
         </mat-cell>
       </ng-container>
@@ -918,8 +932,6 @@
 
             <div [ngClass]="checkPassTds(row.nextOpponent)">{{row.nextOpponent}}:
               {{returnOpponentAvgPassTds(row.nextOpponent)| number :
-              '1.1-1'}}</div>
-            <div>STD: {{row.passTdsStd| number :
               '1.1-1'}}</div>
           </div>
 
@@ -962,8 +974,6 @@
             <div [ngClass]="checkRushAttempts(row.nextOpponent)">{{row.nextOpponent}}:
               {{returnOpponentAvgRushAttempts(row.nextOpponent)|
               number : '1.1-1'}}</div>
-            <div>STD: {{row.rushAttemptsStd| number :
-              '1.1-1'}}</div>
           </div>
         </mat-cell>
       </ng-container>
@@ -1002,8 +1012,6 @@
             <div [ngClass]="checkRushYards(row.nextOpponent)">{{row.nextOpponent}}:
               {{returnOpponentAvgRushYards(row.nextOpponent)| number
               : '1.1-1'}}</div>
-            <div>STD: {{row.rushYardsStd| number :
-              '1.1-1'}}</div>
           </div>
         </mat-cell>
       </ng-container>
@@ -1039,8 +1047,6 @@
 
             <div [ngClass]="checkRushTds(row.nextOpponent)">{{row.nextOpponent}}:
               {{returnOpponentAvgRushTds(row.nextOpponent)| number :
-              '1.1-1'}}</div>
-            <div>STD: {{row.rushTdsStd| number :
               '1.1-1'}}</div>
           </div>
         </mat-cell>
@@ -1196,8 +1202,6 @@
 
             <div [ngClass]="checkPoints(row.nextOpponent)">{{row.nextOpponent}}:
               {{returnOpponentAvgPoints(row.nextOpponent)| number :
-              '1.1-1'}}</div>
-            <div>STD: {{row.pointsStd| number :
               '1.1-1'}}</div>
           </div>
         </mat-cell>

@@ -226,6 +226,15 @@ hr {
   background-color: beige;
 }
 
+.win-bg {
+  background-color: greenyellow;
+}
+
+.loss-bg {
+  color: whitesmoke;
+  background-color: crimson;
+}
+
 form {
   text-align: center;
 }
@@ -328,6 +337,6 @@ div.top-wrapper {
   margin: 0 1rem;
 }
 
-// mat-row.mat-mdc-row, mat-header-row.mat-mdc-header-row, mat-footer-row.mat-mdc-footer-row {
-//   min-height: 10vw;
-// }
+.lastYearWeek-wrapper {
+  margin-left: 3vw;
+}

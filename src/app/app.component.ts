@@ -37,6 +37,27 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     { value: '17' },
   ];
   weekCtrl = new FormControl(6);
+  lastYearWeeks = [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18
+  ];
+  lastYearWeekControl = new FormControl(1);
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatSort) nbaSort: MatSort;
@@ -129,7 +150,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private fb: FormBuilder,
-    private dateService: DateService,
+    public dateService: DateService,
     private httpService: HttpService,
   ) {
     this.basicStatsForm = this.fb.group({
@@ -2343,11 +2364,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         case 'quart2': {
           this.passAttemptsPanelColor = 'orange';
           this.httpService.allTeams.forEach(team => {
-            console.log('quart2 team name', team.teamName);
-            if (team.teamName === 'New York Giants' && teamName === 'New York Giants') {
-              console.log('yo yo');
-            }
-
             if (team.teamName === teamName) {
               if (team.teamName === 'New York Giants') {
                 console.log('fuck gambling')
@@ -7612,10 +7628,28 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isActiveTab = 1;
   }
 
-  downloadLastYear() {
+  downloadLastYear(lastYearWeek: number | any) {
     this.currentDownloadCounter++;
     this.currentDownloadCounterPostMsg = ' ...Currently Downloading...';
-    this.httpService.executeDataHydrationLastYear();
+    this.dateService.setLastYearWeek(lastYearWeek);
+    this.httpService.executeDataHydrationLastYear(lastYearWeek);
+  }
+
+  returnWinLossColor(val: string) {
+    if (val === 'Win') {
+      return 'win-bg'
+    } else if (val === 'Loss') {
+      return 'loss-bg'
+    }
+  }
+
+  returnGameSpread(row: Team) {
+    let val = Math.abs(+row.nextGameSpread);
+    if (row.isNextGameFavorite) {
+      return (val * -1);
+    } else {
+      return val;
+    }
   }
 
   downloadThisYearNCAAF() {

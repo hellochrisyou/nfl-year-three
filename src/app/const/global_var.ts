@@ -4216,10 +4216,12 @@ export const INITIALIZE_NBA_TEAMS = (inputTeams: NbaTeam[]) => {
 };
 export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   let tmpTeam: Team = {
-
+    currentWeekWinLoss: '',
+    currentWeekAts: '',
     netSpread: 0,
     passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
-
+    currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0,
     passYardsStd: 0,
     passTdsStd: 0,
     rushAttemptsStd: 0,
@@ -4333,8 +4335,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -4449,8 +4453,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -4565,8 +4571,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -4681,8 +4689,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -4797,8 +4807,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -4913,8 +4925,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -5029,8 +5043,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -5145,8 +5161,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -5261,8 +5279,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -5377,8 +5397,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -5493,8 +5515,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -5609,8 +5633,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -5725,8 +5751,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -5841,8 +5869,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -5957,8 +5987,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -6073,8 +6105,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -6189,8 +6223,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -6305,8 +6341,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -6421,8 +6459,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -6537,8 +6577,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -6653,8 +6695,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -6769,8 +6813,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -6885,8 +6931,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -7001,9 +7049,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
-
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
     passYardsStd: 0,
     passTdsStd: 0,
     rushAttemptsStd: 0,
@@ -7116,9 +7165,11 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
     nextOpponentAtsLosses: 0,
   };
   inputTeams.push(tmpTeam);
-    tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+  tmpTeam = {
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
     passYardsStd: 0,
     passTdsStd: 0,
     rushAttemptsStd: 0,
@@ -7232,8 +7283,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -7348,8 +7401,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -7464,8 +7519,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -7580,8 +7637,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -7696,8 +7755,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -7812,8 +7873,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -7928,8 +7991,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -8044,8 +8109,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -8160,8 +8227,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -8276,8 +8345,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -8392,8 +8463,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -8508,8 +8581,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -8624,8 +8699,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -8740,8 +8817,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -8856,8 +8935,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -8972,8 +9053,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -9088,8 +9171,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -9204,8 +9289,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -9320,8 +9407,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
   };
   inputTeams.push(tmpTeam);
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -9435,9 +9524,11 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
     nextOpponentAtsLosses: 0,
   };
   inputTeams.push(tmpTeam);
-    tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+  tmpTeam = {
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -9557,7 +9648,10 @@ export const INITIALIZE_NCAAF_TEAMS = (inputTeams: Team[]) => {
 export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   let tmpTeam: Team = {
     netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -9673,8 +9767,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -9791,8 +9887,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -9908,8 +10006,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -10025,8 +10125,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -10142,8 +10244,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -10259,8 +10363,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -10376,8 +10482,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -10493,8 +10601,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -10610,8 +10720,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -10727,8 +10839,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -10844,8 +10958,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -10961,8 +11077,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -11078,8 +11196,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -11195,8 +11315,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -11312,8 +11434,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -11429,8 +11553,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -11546,8 +11672,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -11663,8 +11791,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -11780,8 +11910,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -11897,8 +12029,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -12014,8 +12148,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -12131,8 +12267,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -12248,8 +12386,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -12365,8 +12505,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -12482,8 +12624,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -12599,8 +12743,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -12716,8 +12862,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -12833,8 +12981,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -12950,8 +13100,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -13067,8 +13219,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
@@ -13184,8 +13338,10 @@ export const INITIALIZE_TEAMS = (inputTeams: Team[]) => {
   inputTeams.push(tmpTeam);
 
   tmpTeam = {
-    netSpread: 0,
-    passAttemptsStd: 0, nextGameDate: new Date('01/01/2999'),
+    netSpread: 0, currentWeekWinLoss: '',
+    currentWeekAts: '',
+    passAttemptsStd: 0, currentWeekPoints: 0,
+    currentWeekPointsAgainst: 0, nextGameDate: new Date('01/01/2999'),
 
     passYardsStd: 0,
     passTdsStd: 0,
