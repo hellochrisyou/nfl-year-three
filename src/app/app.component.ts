@@ -67,7 +67,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   displayedColumns = ['teamName', 'ats', 'nextOpponent', 'nextOpponentAts', 'passingAttempts', 'passingYards', 'passingTds', 'rushingAttempts', 'rushingYards',
     'rushingTds',
     'sacks', 'interceptions', 'firstDowns', 'thirdDownPct', 'redzoneScoringPct', 'points'];
-  displayedColumns2 = ['teamName', 'passAttempts', 'passYards', 'passTds', 'rushAttempts', 'rushYards', 'rushTds', 'firstDowns', 'thirdDown', 'redzone', 'points'
+  displayedColumns2 = ['teamName', 'passAttempts', 'passYards', 'passTds', 'rushAttempts', 'rushYards', 'rushTds', 'points', 'sumValues'
     // 'nextOpponent',
     // 'sacks',
     // 'interceptions',
@@ -125,6 +125,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   totalAvgToggle = 'Total';
   isNhlSetupFinished = false;
   readonly dialog = inject(MatDialog);
+  currentSortState = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -1217,7 +1218,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
             this.firstDownsPanelColor = 'green';
           }
           this.basicStatsForm.get('firstDownsCtrl')?.patchValue(tmpVal);
-          this.firstDownsChange(tmpEvent, team0.teamName);
+          this.firstDownsChange(tmpEvent, team.teamName);
 
           if (team.thirdDownPctAvg < this.thirdDownQuartile[0]) {
             tmpVal = 'quart1'; tmpEvent.value = 'quart1';
@@ -2342,7 +2343,15 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         case 'quart2': {
           this.passAttemptsPanelColor = 'orange';
           this.httpService.allTeams.forEach(team => {
+            console.log('quart2 team name', team.teamName);
+            if (team.teamName === 'New York Giants' && teamName === 'New York Giants') {
+              console.log('yo yo');
+            }
+
             if (team.teamName === teamName) {
+              if (team.teamName === 'New York Giants') {
+                console.log('fuck gambling')
+              }
               team.games.forEach(game => {
                 if ((game.passingAttemptsGiven >= this.passAttemptsQuartile[0]) && (game.passingAttemptsGiven <= this.passAttemptsQuartile[1])) {
                   if (game.points > game.pointsGiven) {
@@ -6854,8 +6863,42 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  returnSortStatusStr(num: number) {
+    switch (num) {
+      case 3: {
+        return 'ATS Losses';
+      }
+      case 2: {
+        return 'Wins';
+      }
+      case 1: {
+        return 'Losses';
+      }
+      case 0: {
+        return 'ATS Wins';
+      }
+    }
+  }
+
   sortColumn3(event: any) {
     switch (event.active) {
+      case 'sumValues': {
+        if (this.currentSortState === 3) {
+          this.currentSortState = 0;
+        } else {
+          this.currentSortState++;
+        }
+        if (this.currentSortState === 1) {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (this.calculateAverageWins(a) / (this.calculateAverageWins(a) + this.calculateAverageLosses(a)) < this.calculateAverageWins(b) / (this.calculateAverageWins(b) + this.calculateAverageLosses(b)) ? -1 : 1)));
+        } else if (this.currentSortState === 2) {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (this.calculateAverageWins(a) / (this.calculateAverageWins(a) + this.calculateAverageLosses(a)) > this.calculateAverageWins(b) / (this.calculateAverageWins(b) + this.calculateAverageLosses(b)) ? -1 : 1)));
+        } else if (this.currentSortState === 3) {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (this.calculateAverageAtsWins(a) / (this.calculateAverageAtsWins(a) + this.calculateAverageAtsLosses(a)) < this.calculateAverageAtsWins(b) / (this.calculateAverageAtsWins(b) + this.calculateAverageAtsLosses(b)) ? -1 : 1)));
+        } else if (this.currentSortState === 0) {
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (this.calculateAverageAtsWins(a) / (this.calculateAverageAtsWins(a) + this.calculateAverageAtsLosses(a)) > this.calculateAverageAtsWins(b) / (this.calculateAverageAtsWins(b) + this.calculateAverageAtsLosses(b)) ? -1 : 1)));
+        }
+        break;
+      }
       case 'teamName': {
         if (event.direction === "asc") {
           this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.netSpread < b.netSpread ? -1 : 1)));
@@ -6866,98 +6909,98 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       case 'passAttempts': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.passAttempts.wins < b.filterStats.passAttempts.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.passAttempts.wins < b.filterAtsStats.passAttempts.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.passAttempts.wins > b.filterStats.passAttempts.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.passAttempts.wins > b.filterAtsStats.passAttempts.wins ? -1 : 1)));
         }
         break;
       }
       case 'passYards': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.passYards.wins < b.filterStats.passYards.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.passYards.wins < b.filterAtsStats.passYards.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.passYards.wins > b.filterStats.passYards.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.passYards.wins > b.filterAtsStats.passYards.wins ? -1 : 1)));
         }
         break;
       }
       case 'passTds': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.passTds.wins < b.filterStats.passTds.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.passTds.wins < b.filterAtsStats.passTds.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.passTds.wins > b.filterStats.passTds.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.passTds.wins > b.filterAtsStats.passTds.wins ? -1 : 1)));
         }
         break;
       }
       case 'rushAttempts': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.rushAttempts.wins < b.filterStats.rushAttempts.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.rushAttempts.wins < b.filterAtsStats.rushAttempts.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.rushAttempts.wins > b.filterStats.rushAttempts.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.rushAttempts.wins > b.filterAtsStats.rushAttempts.wins ? -1 : 1)));
         }
         break;
       }
       case 'rushYards': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.rushYards.wins < b.filterStats.rushYards.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.rushYards.wins < b.filterAtsStats.rushYards.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.rushYards.wins > b.filterStats.rushYards.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.rushYards.wins > b.filterAtsStats.rushYards.wins ? -1 : 1)));
         }
         break;
       }
       case 'rushTds': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.rushTds.wins < b.filterStats.rushTds.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.rushTds.wins < b.filterAtsStats.rushTds.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.rushTds.wins > b.filterStats.rushTds.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.rushTds.wins > b.filterAtsStats.rushTds.wins ? -1 : 1)));
         }
         break;
       }
       case 'firstDowns': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.firstDowns.wins < b.filterStats.firstDowns.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.firstDowns.wins < b.filterAtsStats.firstDowns.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.firstDowns.wins > b.filterStats.firstDowns.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.firstDowns.wins > b.filterAtsStats.firstDowns.wins ? -1 : 1)));
         }
         break;
       }
 
       case 'sacks': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.sacks.wins < b.filterStats.sacks.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.sacks.wins < b.filterAtsStats.sacks.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.sacks.wins > b.filterStats.sacks.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.sacks.wins > b.filterAtsStats.sacks.wins ? -1 : 1)));
         }
         break;
       }
       case 'interceptions': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.interceptions.wins < b.filterStats.interceptions.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.interceptions.wins < b.filterAtsStats.interceptions.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.interceptions.wins > b.filterStats.interceptions.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.interceptions.wins > b.filterAtsStats.interceptions.wins ? -1 : 1)));
         }
         break;
       }
       case 'thirdDown': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.thirdDown.wins < b.filterStats.thirdDown.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.thirdDown.wins < b.filterAtsStats.thirdDown.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.thirdDown.wins > b.filterStats.thirdDown.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.thirdDown.wins > b.filterAtsStats.thirdDown.wins ? -1 : 1)));
         }
         break;
       }
       case 'redzone': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.redzone.wins < b.filterStats.redzone.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.redzone.wins < b.filterAtsStats.redzone.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.redzone.wins > b.filterStats.redzone.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.redzone.wins > b.filterAtsStats.redzone.wins ? -1 : 1)));
         }
         break;
       }
       case 'points': {
         if (event.direction === "asc") {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.points.wins < b.filterStats.points.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.points.wins < b.filterAtsStats.points.wins ? -1 : 1)));
         } else if (event.direction === 'desc') {
-          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterStats.points.wins > b.filterStats.points.wins ? -1 : 1)));
+          this.dataSource = new MatTableDataSource(this.httpService.allTeams.sort((a, b) => (a.filterAtsStats.points.wins > b.filterAtsStats.points.wins ? -1 : 1)));
         }
         break;
       }
@@ -7539,6 +7582,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.httpService.setOpponentStats();
     this.httpService.setupGivenData();
     this.runQuartiles();
+    setTimeout(() => this.isActiveTab = 1, 2500);
   }
   crunchNumbersNcaaf() {
     this.httpService.getNextOpponentInfoNcaaf();
@@ -8159,6 +8203,261 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       return 'crimson';
     }
+  }
+
+  processSumColor(value1: number, value2: number) {
+    if ((value1 / (value1 + value2)) >= 0.75) {
+      return 'bg-green';
+    } else if ((value1 / (value1 + value2)) >= 0.5) {
+      return 'bg-blueViolet';
+    } else if ((value1 / (value1 + value2)) >= 0.25) {
+      return 'bg-orange';
+    } else if ((value1 / (value1 + value2)) < 0.25) {
+      return 'bg-red';
+    } else {
+      return '';
+    }
+  }
+
+  calculateAverageWins(row: Team) {
+    let tmpVal = 0;
+    tmpVal += row.filterStats.passAttempts.wins;
+    tmpVal += row.filterStats.passYards.wins;
+    tmpVal += row.filterStats.passTds.wins;
+    tmpVal += row.filterStats.rushAttempts.wins;
+    tmpVal += row.filterStats.rushYards.wins;
+    tmpVal += row.filterStats.rushTds.wins;
+    // tmpVal += row.filterStats.firstDowns.wins;
+    // tmpVal += row.filterStats.thirdDown.wins;
+    // tmpVal += row.filterStats.redzone.wins;
+    tmpVal += row.filterStats.points.wins;
+    return tmpVal;
+  }
+
+  calculateOppAverageWins(row: Team) {
+    let tmpVal = 0;
+    this.httpService.allTeams.forEach(team => {
+      if (team.teamName === row.nextOpponent) {
+        tmpVal += team.filterStats.passAttempts.wins;
+        tmpVal += team.filterStats.passYards.wins;
+        tmpVal += team.filterStats.passTds.wins;
+        tmpVal += team.filterStats.rushAttempts.wins;
+        tmpVal += team.filterStats.rushYards.wins;
+        tmpVal += team.filterStats.rushTds.wins;
+        tmpVal += team.filterStats.points.wins;
+      }
+    });
+    return tmpVal;
+  }
+
+  calculateAverageLosses(row: Team) {
+    let tmpVal = 0;
+    tmpVal += row.filterStats.passAttempts.losses;
+    tmpVal += row.filterStats.passYards.losses;
+    tmpVal += row.filterStats.passTds.losses;
+    tmpVal += row.filterStats.rushAttempts.losses;
+    tmpVal += row.filterStats.rushYards.losses;
+    tmpVal += row.filterStats.rushTds.losses;
+    // tmpVal += row.filterStats.firstDowns.losses;
+    // tmpVal += row.filterStats.thirdDown.losses;
+    // tmpVal += row.filterStats.redzone.losses;
+    tmpVal += row.filterStats.points.losses;
+    return tmpVal;
+  }
+
+  calculateOppAverageLosses(row: Team) {
+    let tmpVal = 0;
+    this.httpService.allTeams.forEach(team => {
+      if (team.teamName === row.nextOpponent) {
+        tmpVal += team.filterStats.passAttempts.losses;
+        tmpVal += team.filterStats.passYards.losses;
+        tmpVal += team.filterStats.passTds.losses;
+        tmpVal += team.filterStats.rushAttempts.losses;
+        tmpVal += team.filterStats.rushYards.losses;
+        tmpVal += team.filterStats.rushTds.losses;
+        tmpVal += team.filterStats.points.losses;
+      }
+    });
+    return tmpVal;
+  }
+  calculateAverageAtsWins(row: Team) {
+    let tmpVal = 0;
+    tmpVal += row.filterAtsStats.passAttempts.wins;
+    tmpVal += row.filterAtsStats.passYards.wins;
+    tmpVal += row.filterAtsStats.passTds.wins;
+    tmpVal += row.filterAtsStats.rushAttempts.wins;
+    tmpVal += row.filterAtsStats.rushYards.wins;
+    tmpVal += row.filterAtsStats.rushTds.wins;
+    // tmpVal += row.filterAtsStats.firstDowns.wins;
+    // tmpVal += row.filterAtsStats.thirdDown.wins;
+    // tmpVal += row.filterAtsStats.redzone.wins;
+    tmpVal += row.filterAtsStats.points.wins;
+    return tmpVal;
+  }
+
+  calculateOppAverageAtsWins(row: Team) {
+    let tmpVal = 0;
+    this.httpService.allTeams.forEach(team => {
+      if (team.teamName === row.nextOpponent) {
+        tmpVal += team.filterAtsStats.passAttempts.wins;
+        tmpVal += team.filterAtsStats.passYards.wins;
+        tmpVal += team.filterAtsStats.passTds.wins;
+        tmpVal += team.filterAtsStats.rushAttempts.wins;
+        tmpVal += team.filterAtsStats.rushYards.wins;
+        tmpVal += team.filterAtsStats.rushTds.wins;
+        tmpVal += team.filterAtsStats.points.wins;
+      }
+    });
+    return tmpVal;
+  }
+
+  calculateAverageAtsLosses(row: Team) {
+    let tmpVal = 0;
+    tmpVal += row.filterAtsStats.passAttempts.losses;
+    tmpVal += row.filterAtsStats.passYards.losses;
+    tmpVal += row.filterAtsStats.passTds.losses;
+    tmpVal += row.filterAtsStats.rushAttempts.losses;
+    tmpVal += row.filterAtsStats.rushYards.losses;
+    tmpVal += row.filterAtsStats.rushTds.losses;
+    // tmpVal += row.filterAtsStats.firstDowns.losses;
+    // tmpVal += row.filterAtsStats.thirdDown.losses;
+    // tmpVal += row.filterAtsStats.redzone.losses;
+    tmpVal += row.filterAtsStats.points.losses;
+    return tmpVal;
+  }
+  calculateOppAverageAtsLosses(row: Team) {
+    let tmpVal = 0;
+    this.httpService.allTeams.forEach(team => {
+      if (team.teamName === row.nextOpponent) {
+        tmpVal += team.filterAtsStats.passAttempts.losses;
+        tmpVal += team.filterAtsStats.passYards.losses;
+        tmpVal += team.filterAtsStats.passTds.losses;
+        tmpVal += team.filterAtsStats.rushAttempts.losses;
+        tmpVal += team.filterAtsStats.rushYards.losses;
+        tmpVal += team.filterAtsStats.rushTds.losses;
+        tmpVal += team.filterAtsStats.points.losses;
+      }
+    });
+    return tmpVal;
+  }
+  calculateAverageFavAtsWins(row: Team) {
+    let tmpVal = 0;
+    tmpVal += row.filterAtsFavoritesStats.passAttempts.wins;
+    tmpVal += row.filterAtsFavoritesStats.passYards.wins;
+    tmpVal += row.filterAtsFavoritesStats.passTds.wins;
+    tmpVal += row.filterAtsFavoritesStats.rushAttempts.wins;
+    tmpVal += row.filterAtsFavoritesStats.rushYards.wins;
+    tmpVal += row.filterAtsFavoritesStats.rushTds.wins;
+    // tmpVal += row.filterAtsFavoritesStats.firstDowns.wins;
+    // tmpVal += row.filterAtsFavoritesStats.thirdDown.wins;
+    // tmpVal += row.filterAtsFavoritesStats.redzone.wins;
+    tmpVal += row.filterAtsFavoritesStats.points.wins;
+    return tmpVal;
+  }
+  calculateOppAverageFavAtsWins(row: Team) {
+    let tmpVal = 0;
+    this.httpService.allTeams.forEach(team => {
+      if (team.teamName === row.nextOpponent) {
+        tmpVal += team.filterAtsFavoritesStats.passAttempts.wins;
+        tmpVal += team.filterAtsFavoritesStats.passYards.wins;
+        tmpVal += team.filterAtsFavoritesStats.passTds.wins;
+        tmpVal += team.filterAtsFavoritesStats.rushAttempts.wins;
+        tmpVal += team.filterAtsFavoritesStats.rushYards.wins;
+        tmpVal += team.filterAtsFavoritesStats.rushTds.wins;
+        tmpVal += team.filterAtsFavoritesStats.points.wins;
+      }
+    });
+    return tmpVal;
+  }
+  calculateAverageFavAtsLosses(row: Team) {
+    let tmpVal = 0;
+    tmpVal += row.filterAtsFavoritesStats.passAttempts.losses;
+    tmpVal += row.filterAtsFavoritesStats.passYards.losses;
+    tmpVal += row.filterAtsFavoritesStats.passTds.losses;
+    tmpVal += row.filterAtsFavoritesStats.rushAttempts.losses;
+    tmpVal += row.filterAtsFavoritesStats.rushYards.losses;
+    tmpVal += row.filterAtsFavoritesStats.rushTds.losses;
+    // tmpVal += row.filterAtsFavoritesStats.firstDowns.losses;
+    // tmpVal += row.filterAtsFavoritesStats.thirdDown.losses;
+    // tmpVal += row.filterAtsFavoritesStats.redzone.losses;
+    tmpVal += row.filterAtsFavoritesStats.points.losses;
+    return tmpVal;
+  }
+  calculateOppAverageFavAtsLosses(row: Team) {
+    let tmpVal = 0;
+    this.httpService.allTeams.forEach(team => {
+      if (team.teamName === row.nextOpponent) {
+        tmpVal += team.filterAtsFavoritesStats.passAttempts.losses;
+        tmpVal += team.filterAtsFavoritesStats.passYards.losses;
+        tmpVal += team.filterAtsFavoritesStats.passTds.losses;
+        tmpVal += team.filterAtsFavoritesStats.rushAttempts.losses;
+        tmpVal += team.filterAtsFavoritesStats.rushYards.losses;
+        tmpVal += team.filterAtsFavoritesStats.rushTds.losses;
+        tmpVal += team.filterAtsFavoritesStats.points.losses;
+      }
+    });
+    return tmpVal;
+  }
+  calculateAverageUnderAtsWins(row: Team) {
+    let tmpVal = 0;
+    tmpVal += row.filterAtsUnderdogStats.passAttempts.wins;
+    tmpVal += row.filterAtsUnderdogStats.passYards.wins;
+    tmpVal += row.filterAtsUnderdogStats.passTds.wins;
+    tmpVal += row.filterAtsUnderdogStats.rushAttempts.wins;
+    tmpVal += row.filterAtsUnderdogStats.rushYards.wins;
+    tmpVal += row.filterAtsUnderdogStats.rushTds.wins;
+    // tmpVal += row.filterAtsUnderdogStats.firstDowns.wins;
+    // tmpVal += row.filterAtsUnderdogStats.thirdDown.wins;
+    // tmpVal += row.filterAtsUnderdogStats.redzone.wins;
+    tmpVal += row.filterAtsUnderdogStats.points.wins;
+    return tmpVal;
+  }
+
+  calculateOppAverageUnderAtsWins(row: Team) {
+    let tmpVal = 0;
+    this.httpService.allTeams.forEach(team => {
+      if (team.teamName === row.nextOpponent) {
+        tmpVal += team.filterAtsUnderdogStats.passAttempts.wins;
+        tmpVal += team.filterAtsUnderdogStats.passYards.wins;
+        tmpVal += team.filterAtsUnderdogStats.passTds.wins;
+        tmpVal += team.filterAtsUnderdogStats.rushAttempts.wins;
+        tmpVal += team.filterAtsUnderdogStats.rushYards.wins;
+        tmpVal += team.filterAtsUnderdogStats.rushTds.wins;
+        tmpVal += team.filterAtsUnderdogStats.points.wins;
+      }
+    });
+    return tmpVal;
+  }
+
+  calculateAverageUnderAtsLosses(row: Team) {
+    let tmpVal = 0;
+    tmpVal += row.filterAtsUnderdogStats.passAttempts.losses;
+    tmpVal += row.filterAtsUnderdogStats.passYards.losses;
+    tmpVal += row.filterAtsUnderdogStats.passTds.losses;
+    tmpVal += row.filterAtsUnderdogStats.rushAttempts.losses;
+    tmpVal += row.filterAtsUnderdogStats.rushYards.losses;
+    tmpVal += row.filterAtsUnderdogStats.rushTds.losses;
+    // tmpVal += row.filterAtsUnderdogStats.firstDowns.losses;
+    // tmpVal += row.filterAtsUnderdogStats.thirdDown.losses;
+    // tmpVal += row.filterAtsUnderdogStats.redzone.losses;
+    tmpVal += row.filterAtsUnderdogStats.points.losses;
+    return tmpVal;
+  }
+
+  calculateOppAverageUnderAtsLosses(row: Team) {
+    let tmpVal = 0;
+    this.httpService.allTeams.forEach(team => {
+      if (team.teamName === row.nextOpponent) {
+        tmpVal += team.filterAtsUnderdogStats.passAttempts.losses;
+        tmpVal += team.filterAtsUnderdogStats.passYards.losses;
+        tmpVal += team.filterAtsUnderdogStats.passTds.losses;
+        tmpVal += team.filterAtsUnderdogStats.rushAttempts.losses;
+        tmpVal += team.filterAtsUnderdogStats.rushYards.losses;
+        tmpVal += team.filterAtsUnderdogStats.rushTds.losses;
+        tmpVal += team.filterAtsUnderdogStats.points.losses;
+      }
+    });
+    return tmpVal;
   }
 
   processMatCellColor(value1: number, value2: number) {

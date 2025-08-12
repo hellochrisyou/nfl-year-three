@@ -83,7 +83,7 @@ export class HttpService {
             this.apiService.httpGet(tmpOddsAddy).subscribe((payload3: any) => {
               tmpGame.spread = payload3.items[0].spread;
               if (payload3.items[0].spread === undefined || payload3.items[0].spread === null || !payload3.items[0].spread) {
-                console.log('payload3.items[0]: ', payload3.items[0]);
+                // console.log('payload3.items[0]: ', payload3.items[0]);
               }
               if (tmpGame.homeOrAway === 'home') {
                 tmpGame.isFavorite = payload3.items[0].homeTeamOdds.favorite;
@@ -605,8 +605,8 @@ export class HttpService {
   }
   calculateWinLossRecord() {
     this.allTeams.forEach(team => team.games.forEach(game => {
-      console.log("🚀 ~ game.pointsGiven:", game.pointsGiven)
-      console.log("🚀 ~ game.points:", game.points)
+      // console.log("🚀 ~ game.pointsGiven:", game.pointsGiven)
+      // console.log("🚀 ~ game.points:", game.points)
       if ((game.points - game.pointsGiven) >= 0) {
         team.wins++;
       } else {
@@ -656,15 +656,15 @@ export class HttpService {
           let today = new Date();
           let diff = Math.abs(today.getTime() - tmpGameDate.getTime());
           let diffDays = Math.ceil(diff / (1000 * 3600 * 24));
-          console.log("🚀 ~ payload2.competitions[0].competitors[0].id:", payload2.competitions[0].competitors[0].id)
-                console.log("🚀 ~ payload2.competitions[0].competitors[1].id:", payload2.competitions[0].competitors[1].id)
+          // console.log("🚀 ~ payload2.competitions[0].competitors[0].id:", payload2.competitions[0].competitors[0].id)
+          //       console.log("🚀 ~ payload2.competitions[0].competitors[1].id:", payload2.competitions[0].competitors[1].id)
           if (diffDays <= 2) {
-            console.log("🚀 ~ tmpGameDate:", tmpGameDate)
+            // console.log("🚀 ~ tmpGameDate:", tmpGameDate)
             const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
             this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
               // if (payload2.competitions[0].competitors[1].id.length > 2 || payload2.competitions[0].competitors[0].id.length > 2) {
-                console.log("🚀 ~ payload2.competitions[0].competitors[0].id:", payload2.competitions[0].competitors[0].id)
-                console.log("🚀 ~ payload2.competitions[0].competitors[1].id:", payload2.competitions[0].competitors[1].id)
+                // console.log("🚀 ~ payload2.competitions[0].competitors[0].id:", payload2.competitions[0].competitors[0].id)
+                // console.log("🚀 ~ payload2.competitions[0].competitors[1].id:", payload2.competitions[0].competitors[1].id)
               // }
               if (payload3.items.length > 0) {
                 if (team0.teamId === payload2.competitions[0].competitors[0].id) {
@@ -713,12 +713,12 @@ export class HttpService {
   getNextOpponentInfo() {
     const tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/types/2/weeks/' + (this.dateService.currentWeek) + '/events?lang=en&region=us';
     this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
-      console.log("🚀 ~ element:", element)
+      // console.log("🚀 ~ element:", element)
       const tmpHttpAddy2 = element.$ref;
       this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
         const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
         this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
-          console.log("🚀 ~ payload3:", payload3)
+          // console.log("🚀 ~ payload3:", payload3)
           this.allTeams.forEach(team => {
             if (team.teamId === payload2.competitions[0].competitors[0].id) {
               this.allTeams.forEach(team2 => {
@@ -851,7 +851,7 @@ export class HttpService {
       this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
         const tmpHttpAddy2 = element.$ref;
         this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
-          console.log("🚀 ~ payload2:", payload2)
+          // console.log("🚀 ~ payload2:", payload2)
           let tmpGameDate = new Date(payload2.date);
           // console.log("🚀 ~ tmpGameDate:", tmpGameDate)
           // console.log("🚀 ~ tmpGameDate:", tmpGameDate)
