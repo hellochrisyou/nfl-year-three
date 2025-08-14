@@ -11,8 +11,9 @@ import * as stats from 'simple-statistics';
 import { DateService } from './const/date';
 import { MaterialModule } from './material.module';
 import { KeyModalComponent } from './modal/key-modal/key-modal.component';
-import { NbaTeam, NhlTeam, Team } from './model/interface';
+import { AggregateStats, NbaTeam, NhlTeam, Team } from './model/interface';
 import { HttpService } from './services/http.service';
+import { INITIALIZE_TEAMS } from './const/global_var';
 
 @Component({
   selector: 'app-root',
@@ -36,6 +37,30 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     { value: '16' },
     { value: '17' },
   ];
+  localMlDiffVal = 0.8;
+  localMlHighVal = 0.9;
+  localMlOppLowVal = 0.21;
+  localAtsDiffVal = 0.3;
+  localAtsHighVal = 0.85;
+  localAtsOppLowVal = 0.21;
+  localFavDiffVal = 0.6;
+  localFavHighVal = 0.79;
+  localFavOppLowVal = 0.21;
+  localUnderDiffVal = 0.5;
+  localUnderHighVal = 0.85;
+  localUnderOppLowVal = 0.21;
+  bestMlDiffVal = 0;
+  bestMlHighVal = 0;
+  bestMlOppLowVal = 0;
+  bestAtsDiffVal = 0;
+  bestAtsHighVal = 0;
+  bestAtsOppLowVal = 0;
+  bestFavDiffVal = 0;
+  bestFavHighVal = 0;
+  bestFavOppLowVal = 0;
+  bestUnderDiffVal = 0;
+  bestUnderHighVal = 0;
+  bestUnderOppLowVal = 0;
   weekCtrl = new FormControl(6);
   lastYearWeeks = [
     1,
@@ -147,7 +172,32 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   isNhlSetupFinished = false;
   readonly dialog = inject(MatDialog);
   currentSortState = 0;
-
+  aggregateStats: AggregateStats = {
+    mlDiffWins: 0,
+    mlDiffLosses: 0,
+    mlHighWins: 0,
+    mlHighLosses: 0,
+    mlOppLowWins: 0,
+    mlOppLowLosses: 0,
+    atsDiffWins: 0,
+    atsDiffLosses: 0,
+    atsHighWins: 0,
+    atsHighLosses: 0,
+    atsOppLowWins: 0,
+    atsOppLowLosses: 0,
+    favDiffWins: 0,
+    favDiffLosses: 0,
+    favHighWins: 0,
+    favHighLosses: 0,
+    favOppLowWins: 0,
+    favOppLowLosses: 0,
+    underDiffWins: 0,
+    underDiffLosses: 0,
+    underHighWins: 0,
+    underHighLosses: 0,
+    underOppLowWins: 0,
+    underOppLowLosses: 0,
+  }
   constructor(
     private fb: FormBuilder,
     public dateService: DateService,
@@ -1310,193 +1360,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
-  defaultFormControlsNcaaf() {
-    // this.applyFilter(row.teamName);
-    // this.selectedTeam = row.teamName;
-    console.log("🚀 ~ this.httpService.allTeamsNcaaf:", this.httpService.allTeamsNcaaf)
-    let tmpVal = '';
-    let tmpEvent = {
-      value: ''
-    }
-
-    this.httpService.allTeamsNcaaf.forEach(team0 => {
-      this.httpService.allTeamsNcaaf.forEach(team => {
-        if (team.teamName === team0.nextOpponent) {
-          if ((team.passingAttemptsTotal / team.games.length) < this.passAttemptsQuartile[0]) {
-            tmpVal = 'quart1';
-            tmpEvent.value = 'quart1';
-            this.passAttemptsPanelColor = 'crimson';
-          } else if (((team.passingAttemptsTotal / team.games.length) >= this.passAttemptsQuartile[0] && (team.passingAttemptsTotal / team.games.length) < this.passAttemptsQuartile[1])) {
-            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-            this.passAttemptsPanelColor = 'orange';
-          } else if (((team.passingAttemptsTotal / team.games.length) >= this.passAttemptsQuartile[1] && (team.passingAttemptsTotal / team.games.length) < this.passAttemptsQuartile[2])) {
-            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-            this.passAttemptsPanelColor = 'blueviolet';
-          } else {
-            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-            this.passAttemptsPanelColor = 'green';
-          }
-          this.passAttemptChangeNcaaf(tmpEvent, team0.teamName);
-
-          if ((team.passingYardsTotal / team.games.length) < this.passYardsQuartile[0]) {
-            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-            this.passYardsPanelColor = 'crimson';
-          } else if (((team.passingYardsTotal / team.games.length) >= this.passYardsQuartile[0] && (team.passingYardsTotal / team.games.length) < this.passYardsQuartile[1])) {
-            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-            this.passYardsPanelColor = 'orange';
-          } else if (((team.passingYardsTotal / team.games.length) >= this.passYardsQuartile[1] && (team.passingYardsTotal / team.games.length) < this.passYardsQuartile[2])) {
-            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-            this.passYardsPanelColor = 'blueviolet';
-          } else {
-            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-            this.passYardsPanelColor = 'green';
-          }
-          this.passYardsChangeNcaaf(tmpEvent, team0.teamName);
-
-          if ((team.passingTdsTotal / team.games.length) < this.passTdsQuartile[0]) {
-            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-            this.passTdsPanelColor = 'crimson';
-          } else if (((team.passingTdsTotal / team.games.length) >= this.passTdsQuartile[0] && (team.passingTdsTotal / team.games.length) < this.passTdsQuartile[1])) {
-            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-            this.passTdsPanelColor = 'orange';
-          } else if (((team.passingTdsTotal / team.games.length) >= this.passTdsQuartile[1] && (team.passingTdsTotal / team.games.length) < this.passTdsQuartile[2])) {
-            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-            this.passTdsPanelColor = 'blueviolet';
-          } else {
-            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-            this.passTdsPanelColor = 'green';
-          }
-          this.passTdsChangeNcaaf(tmpEvent, team0.teamName);
-
-          if ((team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[0]) {
-            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-            this.rushAttemptsPanelColor = 'crimson';
-          } else if (((team.rushingAttemptsTotal / team.games.length) >= this.rushAttemptsQuartile[0] && (team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[1])) {
-            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-            this.rushAttemptsPanelColor = 'orange';
-          } else if (((team.rushingAttemptsTotal / team.games.length) >= this.rushAttemptsQuartile[1] && (team.rushingAttemptsTotal / team.games.length) < this.rushAttemptsQuartile[2])) {
-            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-            this.rushAttemptsPanelColor = 'blueviolet';
-          } else {
-            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-            this.rushAttemptsPanelColor = 'green';
-          }
-          this.rushAttemptsChangeNcaaf(tmpEvent, team0.teamName);
-
-          if ((team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[0]) {
-            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-            this.rushYardsPanelColor = 'crimson';
-          } else if (((team.rushingYardsTotal / team.games.length) >= this.rushYardsQuartile[0] && (team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[1])) {
-            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-            this.rushYardsPanelColor = 'orange';
-          } else if (((team.rushingYardsTotal / team.games.length) >= this.rushYardsQuartile[1] && (team.rushingYardsTotal / team.games.length) < this.rushYardsQuartile[2])) {
-            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-            this.rushYardsPanelColor = 'blueviolet';
-          } else {
-            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-            this.rushYardsPanelColor = 'green';
-          }
-          this.rushYardsChangeNcaaf(tmpEvent, team0.teamName);
-
-          if ((team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[0]) {
-            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-            this.rushTdsPanelColor = 'crimson';
-          } else if (((team.rushingTdsTotal / team.games.length) >= this.rushTdsQuartile[0] && (team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[1])) {
-            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-            this.rushTdsPanelColor = 'orange';
-          } else if (((team.rushingTdsTotal / team.games.length) >= this.rushTdsQuartile[1] && (team.rushingTdsTotal / team.games.length) < this.rushTdsQuartile[2])) {
-            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-            this.rushTdsPanelColor = 'blueviolet';
-          } else {
-            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-            this.rushTdsPanelColor = 'green';
-          }
-          this.rushTdsChangeNcaaf(tmpEvent, team0.teamName);
-
-          if ((team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[0]) {
-            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-            this.firstDownsPanelColor = 'crimson';
-          } else if (((team.firstDownsTotal / team.games.length) >= this.firstDownsQuartile[0] && (team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[1])) {
-            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-            this.firstDownsPanelColor = 'orange';
-          } else if (((team.firstDownsTotal / team.games.length) >= this.firstDownsQuartile[1] && (team.firstDownsTotal / team.games.length) < this.firstDownsQuartile[2])) {
-            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-            this.firstDownsPanelColor = 'blueviolet';
-          } else {
-            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-            this.firstDownsPanelColor = 'green';
-          }
-          this.firstDownsChangeNcaaf(tmpEvent, team0.teamName);
-
-          if (team.thirdDownPctAvg < this.thirdDownQuartile[0]) {
-            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-            this.thirdDownPanelColor = 'crimson';
-          } else if (team.thirdDownPctAvg >= this.thirdDownQuartile[0] && team.thirdDownPctAvg < this.thirdDownQuartile[1]) {
-            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-            this.thirdDownPanelColor = 'orange';
-          } else if (team.thirdDownPctAvg >= this.thirdDownQuartile[1] && team.thirdDownPctAvg < this.thirdDownQuartile[2]) {
-            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-            this.thirdDownPanelColor = 'blueviolet';
-          } else {
-            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-            this.thirdDownPanelColor = 'green';
-          }
-          this.basicStatsForm.get('thirdDownPctCtrl')?.patchValue(tmpVal);
-          this.thirdDownChangeNcaaf(tmpEvent, team0.teamName);
-
-          if (team.redzoneScoringPctAvg < this.redzoneQuartile[0]) {
-            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-            this.redzonePanelColor = 'crimson';
-          } else if (team.redzoneScoringPctAvg >= this.redzoneQuartile[0] && team.redzoneScoringPctAvg < this.redzoneQuartile[1]) {
-            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-            this.redzonePanelColor = 'orange';
-          } else if (team.redzoneScoringPctAvg >= this.redzoneQuartile[1] && team.redzoneScoringPctAvg < this.redzoneQuartile[2]) {
-            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-            this.redzonePanelColor = 'blueviolet';
-          } else {
-            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-            this.redzonePanelColor = 'green';
-          }
-          this.redzoneChangeNcaaf(tmpEvent, team0.teamName);
-
-          if ((team.pointsTotal / team.games.length) < this.pointsQuartile[0]) {
-            tmpVal = 'quart1'; tmpEvent.value = 'quart1';
-            this.pointsPanelColor = 'crimson';
-          } else if (((team.pointsTotal / team.games.length) >= this.pointsQuartile[0] && (team.pointsTotal / team.games.length) < this.pointsQuartile[1])) {
-            tmpVal = 'quart2'; tmpEvent.value = 'quart2';
-            this.pointsPanelColor = 'orange';
-          } else if (((team.pointsTotal / team.games.length) >= this.pointsQuartile[1] && (team.pointsTotal / team.games.length) < this.pointsQuartile[2])) {
-            tmpVal = 'quart3'; tmpEvent.value = 'quart3';
-            this.pointsPanelColor = 'blueviolet';
-          } else {
-            tmpVal = 'quart4'; tmpEvent.value = 'quart4';
-            this.pointsPanelColor = 'green';
-          }
-          this.pointsChangeNcaaf(tmpEvent, team0.teamName);
-        }
-      })
-    })
-    // this.applyFilter(this.currentFilter);
-    // this.calculateStd();
-    let tmpAllTeam: Team[] = [];
-    this.httpService.allTeamsNcaaf.forEach(team1 => {
-      this.httpService.allTeamsNcaaf.forEach(team2 => {
-        console.log("🚀 ~ team1.nextOpponent:", team1.nextOpponent)
-
-        if (team2.teamName === team1.nextOpponent) {
-          if (!tmpAllTeam.includes(team1)) {
-            tmpAllTeam.push(team1);
-          }
-          if (!tmpAllTeam.includes(team2)) {
-            tmpAllTeam.push(team2);
-          }
-        }
-      });
-    });
-    this.dataSourceNcaaf = new MatTableDataSource(tmpAllTeam);
-    this.dataSourceNcaaf.sort = this.sort;
-  }
-
   openKeyDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
     this.dialog.open(KeyModalComponent, {
       width: '300px',
@@ -2160,158 +2023,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     })
     return tmpVal;
   }
-  passAttemptChangeNcaaf(event: any, teamName: string) {
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      if (team.teamName === teamName) {
-        team.filterStats.passAttempts.wins = 0;
-        team.filterStats.passAttempts.losses = 0;
-        team.filterAtsStats.passAttempts.wins = 0;
-        team.filterAtsStats.passAttempts.losses = 0;
-        team.filterAtsFavoritesStats.passAttempts.wins = 0;
-        team.filterAtsFavoritesStats.passAttempts.losses = 0;
-        team.filterAtsUnderdogStats.passAttempts.wins = 0;
-        team.filterAtsUnderdogStats.passAttempts.losses = 0;
-      }
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.passAttemptsPanelColor = 'crimson';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.passingAttemptsGiven < this.passAttemptsQuartileNcaaf[0]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.passAttempts.wins++;
-                } else {
-                  team.filterStats.passAttempts.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passAttempts.wins++;
-                    team.filterAtsFavoritesStats.passAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.passAttempts.losses++;
-                    team.filterAtsFavoritesStats.passAttempts.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passAttempts.wins++;
-                    team.filterAtsUnderdogStats.passAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.passAttempts.losses++;
-                    team.filterAtsUnderdogStats.passAttempts.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart2': {
-        this.passAttemptsPanelColor = 'orange';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if ((game.passingAttemptsGiven >= this.passAttemptsQuartileNcaaf[0]) && (game.passingAttemptsGiven <= this.passAttemptsQuartileNcaaf[1])) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.passAttempts.wins++;
-                } else {
-                  team.filterStats.passAttempts.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passAttempts.wins++;
-                    team.filterAtsFavoritesStats.passAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.passAttempts.losses++;
-                    team.filterAtsFavoritesStats.passAttempts.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passAttempts.wins++;
-                    team.filterAtsUnderdogStats.passAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.passAttempts.losses++;
-                    team.filterAtsUnderdogStats.passAttempts.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart3': {
-        this.passAttemptsPanelColor = 'blueviolet';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.passingAttemptsGiven > this.passAttemptsQuartileNcaaf[1] && game.passingAttemptsGiven <= this.passAttemptsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.passAttempts.wins++;
-                } else {
-                  team.filterStats.passAttempts.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passAttempts.wins++;
-                    team.filterAtsFavoritesStats.passAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.passAttempts.losses++;
-                    team.filterAtsFavoritesStats.passAttempts.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passAttempts.wins++;
-                    team.filterAtsUnderdogStats.passAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.passAttempts.losses++;
-                    team.filterAtsUnderdogStats.passAttempts.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart4': {
-        this.passAttemptsPanelColor = 'green';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.passingAttemptsGiven > this.passAttemptsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.passAttempts.wins++;
-                } else {
-                  team.filterStats.passAttempts.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passAttempts.wins++;
-                    team.filterAtsFavoritesStats.passAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.passAttempts.losses++;
-                    team.filterAtsFavoritesStats.passAttempts.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passAttempts.wins++;
-                    team.filterAtsUnderdogStats.passAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.passAttempts.losses++;
-                    team.filterAtsUnderdogStats.passAttempts.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-    }
-  }
+
   passAttemptChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -2332,67 +2044,252 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.passingAttemptsGiven < this.passAttemptsQuartile[0]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.passAttempts.wins++;
-                  } else {
-                    team.filterStats.passAttempts.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passAttempts.wins++;
-                      team.filterAtsFavoritesStats.passAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.passAttempts.losses++;
-                      team.filterAtsFavoritesStats.passAttempts.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.passingAttemptsGiven < this.passAttemptsQuartile[0]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) - (team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses))) > 0.67) {
+                          team.filterStats.passAttempts.winsArr.push(true);
+                        }
+                        if ((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) > 0.79) {
+                          team.filterStats.passAttempts.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses) > 0.67) {
+                          team.filterStats.passAttempts.winsArr3.push(true);
+                        }
+                        team.filterStats.passAttempts.wins++;
+                      } else {
+                        if ((((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) - (team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses))) > 0.67) {
+                          team.filterStats.passAttempts.winsArr.push(false);
+                        }
+                        if ((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) > 0.79) {
+                          team.filterStats.passAttempts.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses) > 0.67) {
+                          team.filterStats.passAttempts.winsArr3.push(false);
+                        }
+                        team.filterStats.passAttempts.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) - (team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsStats.passAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passAttempts.wins++;
+                          team.filterAtsFavoritesStats.passAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) - (team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsStats.passAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passAttempts.losses++;
+                          team.filterAtsFavoritesStats.passAttempts.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) - (team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsStats.passAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passAttempts.wins++;
+                          team.filterAtsUnderdogStats.passAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) - (team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsStats.passAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passAttempts.losses++;
+                          team.filterAtsUnderdogStats.passAttempts.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passAttempts.wins++;
-                      team.filterAtsUnderdogStats.passAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.passAttempts.losses++;
-                      team.filterAtsUnderdogStats.passAttempts.losses++;
-                    }
                   }
-                }
-              })
+                });
+              });
             }
-          })
+          });
           break;
         }
         case 'quart2': {
           this.passAttemptsPanelColor = 'orange';
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
-              if (team.teamName === 'New York Giants') {
-                console.log('fuck gambling')
-              }
               team.games.forEach(game => {
-                if ((game.passingAttemptsGiven >= this.passAttemptsQuartile[0]) && (game.passingAttemptsGiven <= this.passAttemptsQuartile[1])) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.passAttempts.wins++;
-                  } else {
-                    team.filterStats.passAttempts.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passAttempts.wins++;
-                      team.filterAtsFavoritesStats.passAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.passAttempts.losses++;
-                      team.filterAtsFavoritesStats.passAttempts.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if ((game.passingAttemptsGiven >= this.passAttemptsQuartile[0]) && (game.passingAttemptsGiven <= this.passAttemptsQuartile[1])) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) - (team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses))) > 0.67) {
+                          team.filterStats.passAttempts.winsArr.push(true);
+                        }
+                        if ((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) > 0.79) {
+                          team.filterStats.passAttempts.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses) > 0.67) {
+                          team.filterStats.passAttempts.winsArr3.push(true);
+                        }
+                        team.filterStats.passAttempts.wins++;
+                      } else {
+                        if ((((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) - (team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses))) > 0.67) {
+                          team.filterStats.passAttempts.winsArr.push(false);
+                        }
+                        if ((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) > 0.79) {
+                          team.filterStats.passAttempts.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses) > 0.67) {
+                          team.filterStats.passAttempts.winsArr3.push(false);
+                        }
+                        team.filterStats.passAttempts.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) - (team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsStats.passAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passAttempts.wins++;
+                          team.filterAtsFavoritesStats.passAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) - (team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsStats.passAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passAttempts.losses++;
+                          team.filterAtsFavoritesStats.passAttempts.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) - (team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsStats.passAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passAttempts.wins++;
+                          team.filterAtsUnderdogStats.passAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) - (team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsStats.passAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passAttempts.losses++;
+                          team.filterAtsUnderdogStats.passAttempts.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passAttempts.wins++;
-                      team.filterAtsUnderdogStats.passAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.passAttempts.losses++;
-                      team.filterAtsUnderdogStats.passAttempts.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -2403,30 +2300,134 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.passingAttemptsGiven > this.passAttemptsQuartile[1] && game.passingAttemptsGiven <= this.passAttemptsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.passAttempts.wins++;
-                  } else {
-                    team.filterStats.passAttempts.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passAttempts.wins++;
-                      team.filterAtsFavoritesStats.passAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.passAttempts.losses++;
-                      team.filterAtsFavoritesStats.passAttempts.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.passingAttemptsGiven > this.passAttemptsQuartile[1] && game.passingAttemptsGiven <= this.passAttemptsQuartile[2]) {
+                      if (team.teamName === teamName) {
+                        team.games.forEach(game => {
+                          this.httpService.allTeams.forEach(team2 => {
+                            if (team2.teamId === game.opponentId) {
+                              if ((game.passingAttemptsGiven >= this.passAttemptsQuartile[0]) && (game.passingAttemptsGiven <= this.passAttemptsQuartile[1])) {
+                                if (game.points > game.pointsGiven) {
+                                  if ((((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) - (team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses))) > 0.67) {
+                                    team.filterStats.passAttempts.winsArr.push(true);
+                                  }
+                                  if ((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) > 0.79) {
+                                    team.filterStats.passAttempts.winsArr2.push(true);
+                                  }
+                                  if ((team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses) > 0.67) {
+                                    team.filterStats.passAttempts.winsArr3.push(true);
+                                  }
+                                  team.filterStats.passAttempts.wins++;
+                                } else {
+                                  if ((((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) - (team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses))) > 0.67) {
+                                    team.filterStats.passAttempts.winsArr.push(false);
+                                  }
+                                  if ((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) > 0.79) {
+                                    team.filterStats.passAttempts.winsArr2.push(false);
+                                  }
+                                  if ((team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses) > 0.67) {
+                                    team.filterStats.passAttempts.winsArr3.push(false);
+                                  }
+                                  team.filterStats.passAttempts.losses++;
+                                }
+                                if (game.isFavorite) {
+                                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                                    if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                                      team.filterAtsStats.passAttempts.winsArr.push(true);
+                                    }
+                                    if ((((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) - (team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses))) > 0.67) {
+                                      team.filterAtsFavoritesStats.passAttempts.winsArr.push(true);
+                                    }
+                                    if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                                      team.filterAtsStats.passAttempts.winsArr2.push(true);
+                                    }
+                                    if ((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) > 0.79) {
+                                      team.filterAtsFavoritesStats.passAttempts.winsArr2.push(true);
+                                    }
+                                    if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                                      team.filterAtsStats.passAttempts.winsArr3.push(true);
+                                    }
+                                    if ((team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses) > 0.67) {
+                                      team.filterAtsFavoritesStats.passAttempts.winsArr3.push(true);
+                                    }
+                                    team.filterAtsStats.passAttempts.wins++;
+                                    team.filterAtsFavoritesStats.passAttempts.wins++;
+                                  } else {
+                                    if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                                      team.filterAtsStats.passAttempts.winsArr.push(false);
+                                    }
+                                    if ((((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) - (team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses))) > 0.67) {
+                                      team.filterAtsFavoritesStats.passAttempts.winsArr.push(false);
+                                    }
+                                    if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                                      team.filterAtsStats.passAttempts.winsArr2.push(false);
+                                    }
+                                    if ((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) > 0.79) {
+                                      team.filterAtsFavoritesStats.passAttempts.winsArr2.push(false);
+                                    }
+                                    if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                                      team.filterAtsStats.passAttempts.winsArr3.push(false);
+                                    }
+                                    if ((team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses) > 0.67) {
+                                      team.filterAtsFavoritesStats.passAttempts.winsArr3.push(false);
+                                    }
+                                    team.filterAtsStats.passAttempts.losses++;
+                                    team.filterAtsFavoritesStats.passAttempts.losses++;
+                                  }
+                                } else {
+                                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                                    if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                                      team.filterAtsStats.passAttempts.winsArr.push(true);
+                                    }
+                                    if ((((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) - (team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses))) > 0.67) {
+                                      team.filterAtsUnderdogStats.passAttempts.winsArr.push(true);
+                                    }
+                                    if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                                      team.filterAtsStats.passAttempts.winsArr2.push(true);
+                                    }
+                                    if ((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) > 0.79) {
+                                      team.filterAtsUnderdogStats.passAttempts.winsArr2.push(true);
+                                    }
+                                    if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                                      team.filterAtsStats.passAttempts.winsArr3.push(true);
+                                    }
+                                    if ((team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses) > 0.67) {
+                                      team.filterAtsUnderdogStats.passAttempts.winsArr3.push(true);
+                                    }
+                                    team.filterAtsStats.passAttempts.wins++;
+                                    team.filterAtsUnderdogStats.passAttempts.wins++;
+                                  } else {
+                                    if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                                      team.filterAtsStats.passAttempts.winsArr.push(false);
+                                    }
+                                    if ((((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) - (team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses))) > 0.67) {
+                                      team.filterAtsUnderdogStats.passAttempts.winsArr.push(false);
+                                    }
+                                    if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                                      team.filterAtsStats.passAttempts.winsArr2.push(false);
+                                    }
+                                    if ((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) > 0.79) {
+                                      team.filterAtsUnderdogStats.passAttempts.winsArr2.push(false);
+                                    }
+                                    if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                                      team.filterAtsStats.passAttempts.winsArr3.push(false);
+                                    }
+                                    if ((team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses) > 0.67) {
+                                      team.filterAtsUnderdogStats.passAttempts.winsArr3.push(false);
+                                    }
+                                    team.filterAtsStats.passAttempts.losses++;
+                                    team.filterAtsUnderdogStats.passAttempts.losses++;
+                                  }
+                                }
+                              }
+                            }
+                          })
+                        })
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passAttempts.wins++;
-                      team.filterAtsUnderdogStats.passAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.passAttempts.losses++;
-                      team.filterAtsUnderdogStats.passAttempts.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -2437,187 +2438,128 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.passingAttemptsGiven > this.passAttemptsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.passAttempts.wins++;
-                  } else {
-                    team.filterStats.passAttempts.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passAttempts.wins++;
-                      team.filterAtsFavoritesStats.passAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.passAttempts.losses++;
-                      team.filterAtsFavoritesStats.passAttempts.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.passingAttemptsGiven > this.passAttemptsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) - (team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses))) > 0.67) {
+                          team.filterStats.passAttempts.winsArr.push(true);
+                        }
+                        if ((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) > 0.79) {
+                          team.filterStats.passAttempts.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses) > 0.67) {
+                          team.filterStats.passAttempts.winsArr3.push(true);
+                        }
+                        team.filterStats.passAttempts.wins++;
+                      } else {
+                        if ((((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) - (team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses))) > 0.67) {
+                          team.filterStats.passAttempts.winsArr.push(false);
+                        }
+                        if ((team.filterStats.passAttempts.wins) / (team.filterStats.passAttempts.wins + team.filterStats.passAttempts.losses) > 0.79) {
+                          team.filterStats.passAttempts.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.passAttempts.wins) / (team2.filterStats.passAttempts.wins + team2.filterStats.passAttempts.losses) > 0.67) {
+                          team.filterStats.passAttempts.winsArr3.push(false);
+                        }
+                        team.filterStats.passAttempts.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) - (team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsStats.passAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passAttempts.wins++;
+                          team.filterAtsFavoritesStats.passAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) - (team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsStats.passAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.passAttempts.wins) / (team.filterAtsFavoritesStats.passAttempts.wins + team.filterAtsFavoritesStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passAttempts.wins) / (team2.filterAtsFavoritesStats.passAttempts.wins + team2.filterAtsFavoritesStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passAttempts.losses++;
+                          team.filterAtsFavoritesStats.passAttempts.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) - (team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsStats.passAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passAttempts.wins++;
+                          team.filterAtsUnderdogStats.passAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) - (team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) - (team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passAttempts.wins) / (team.filterAtsStats.passAttempts.wins + team.filterAtsStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsStats.passAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.passAttempts.wins) / (team.filterAtsUnderdogStats.passAttempts.wins + team.filterAtsUnderdogStats.passAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passAttempts.wins) / (team2.filterAtsStats.passAttempts.wins + team2.filterAtsStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsStats.passAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passAttempts.wins) / (team2.filterAtsUnderdogStats.passAttempts.wins + team2.filterAtsUnderdogStats.passAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passAttempts.losses++;
+                          team.filterAtsUnderdogStats.passAttempts.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passAttempts.wins++;
-                      team.filterAtsUnderdogStats.passAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.passAttempts.losses++;
-                      team.filterAtsUnderdogStats.passAttempts.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
-          break;
         }
-      }
-    }
-  }
-  passYardsChangeNcaaf(event: any, teamName: string) {
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      if (team.teamName === teamName) {
-        team.filterStats.passYards.wins = 0;
-        team.filterStats.passYards.losses = 0;
-        team.filterAtsStats.passYards.wins = 0;
-        team.filterAtsStats.passYards.losses = 0;
-        team.filterAtsFavoritesStats.passYards.wins = 0;
-        team.filterAtsFavoritesStats.passYards.losses = 0;
-        team.filterAtsUnderdogStats.passYards.wins = 0;
-        team.filterAtsUnderdogStats.passYards.losses = 0;
-      }
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.passYardsPanelColor = 'crimson';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.passingYardsGiven < this.passYardsQuartileNcaaf[0]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.passYards.wins++;
-                } else {
-                  team.filterStats.passYards.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passYards.wins++;
-                    team.filterAtsFavoritesStats.passYards.wins++;
-                  } else {
-                    team.filterAtsStats.passYards.losses++;
-                    team.filterAtsFavoritesStats.passYards.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passYards.wins++;
-                    team.filterAtsUnderdogStats.passYards.wins++;
-                  } else {
-                    team.filterAtsStats.passYards.losses++;
-                    team.filterAtsUnderdogStats.passYards.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart2': {
-        this.passYardsPanelColor = 'orange';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if ((game.passingYardsGiven >= this.passYardsQuartileNcaaf[0]) && (game.passingYardsGiven <= this.passYardsQuartileNcaaf[1])) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.passYards.wins++;
-                } else {
-                  team.filterStats.passYards.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passYards.wins++;
-                    team.filterAtsFavoritesStats.passYards.wins++;
-                  } else {
-                    team.filterAtsStats.passYards.losses++;
-                    team.filterAtsFavoritesStats.passYards.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passYards.wins++;
-                    team.filterAtsUnderdogStats.passYards.wins++;
-                  } else {
-                    team.filterAtsStats.passYards.losses++;
-                    team.filterAtsUnderdogStats.passYards.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart3': {
-        this.passYardsPanelColor = 'blueviolet';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.passingYardsGiven > this.passYardsQuartileNcaaf[1] && game.passingYardsGiven <= this.passYardsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.passYards.wins++;
-                } else {
-                  team.filterStats.passYards.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passYards.wins++;
-                    team.filterAtsFavoritesStats.passYards.wins++;
-                  } else {
-                    team.filterAtsStats.passYards.losses++;
-                    team.filterAtsFavoritesStats.passYards.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passYards.wins++;
-                    team.filterAtsUnderdogStats.passYards.wins++;
-                  } else {
-                    team.filterAtsStats.passYards.losses++;
-                    team.filterAtsUnderdogStats.passYards.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart4': {
-        this.passYardsPanelColor = 'green';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.passingYardsGiven > this.passYardsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.passYards.wins++;
-                } else {
-                  team.filterStats.passYards.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passYards.wins++;
-                    team.filterAtsFavoritesStats.passYards.wins++;
-                  } else {
-                    team.filterAtsStats.passYards.losses++;
-                    team.filterAtsFavoritesStats.passYards.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passYards.wins++;
-                    team.filterAtsUnderdogStats.passYards.wins++;
-                  } else {
-                    team.filterAtsStats.passYards.losses++;
-                    team.filterAtsUnderdogStats.passYards.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
       }
     }
   }
@@ -2641,30 +2583,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.passingYardsGiven < this.passYardsQuartile[0]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.passYards.wins++;
-                  } else {
-                    team.filterStats.passYards.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passYards.wins++;
-                      team.filterAtsFavoritesStats.passYards.wins++;
-                    } else {
-                      team.filterAtsStats.passYards.losses++;
-                      team.filterAtsFavoritesStats.passYards.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if ((game.passingYardsGiven >= this.passYardsQuartile[0]) && (game.passingYardsGiven <= this.passYardsQuartile[1])) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) - (team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses))) > 0.67) {
+                          team.filterStats.passYards.winsArr.push(true);
+                        }
+                        if ((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) > 0.79) {
+                          team.filterStats.passYards.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses) > 0.67) {
+                          team.filterStats.passYards.winsArr3.push(true);
+                        }
+                        team.filterStats.passYards.wins++;
+                      } else {
+                        if ((((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) - (team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses))) > 0.67) {
+                          team.filterStats.passYards.winsArr.push(false);
+                        }
+                        if ((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) > 0.79) {
+                          team.filterStats.passYards.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses) > 0.67) {
+                          team.filterStats.passYards.winsArr3.push(false);
+                        }
+                        team.filterStats.passYards.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) - (team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passYards.wins++;
+                          team.filterAtsFavoritesStats.passYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) - (team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passYards.losses++;
+                          team.filterAtsFavoritesStats.passYards.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) - (team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passYards.wins++;
+                          team.filterAtsUnderdogStats.passYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) - (team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passYards.losses++;
+                          team.filterAtsUnderdogStats.passYards.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passYards.wins++;
-                      team.filterAtsUnderdogStats.passYards.wins++;
-                    } else {
-                      team.filterAtsStats.passYards.losses++;
-                      team.filterAtsUnderdogStats.passYards.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -2675,30 +2711,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if ((game.passingYardsGiven >= this.passYardsQuartile[0]) && (game.passingYardsGiven <= this.passYardsQuartile[1])) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.passYards.wins++;
-                  } else {
-                    team.filterStats.passYards.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passYards.wins++;
-                      team.filterAtsFavoritesStats.passYards.wins++;
-                    } else {
-                      team.filterAtsStats.passYards.losses++;
-                      team.filterAtsFavoritesStats.passYards.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if ((game.passingYardsGiven >= this.passYardsQuartile[0]) && (game.passingYardsGiven <= this.passYardsQuartile[1])) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) - (team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses))) > 0.67) {
+                          team.filterStats.passYards.winsArr.push(true);
+                        }
+                        if ((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) > 0.79) {
+                          team.filterStats.passYards.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses) > 0.67) {
+                          team.filterStats.passYards.winsArr3.push(true);
+                        }
+                        team.filterStats.passYards.wins++;
+                      } else {
+                        if ((((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) - (team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses))) > 0.67) {
+                          team.filterStats.passYards.winsArr.push(false);
+                        }
+                        if ((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) > 0.79) {
+                          team.filterStats.passYards.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses) > 0.67) {
+                          team.filterStats.passYards.winsArr3.push(false);
+                        }
+                        team.filterStats.passYards.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) - (team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passYards.wins++;
+                          team.filterAtsFavoritesStats.passYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) - (team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passYards.losses++;
+                          team.filterAtsFavoritesStats.passYards.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) - (team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passYards.wins++;
+                          team.filterAtsUnderdogStats.passYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) - (team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passYards.losses++;
+                          team.filterAtsUnderdogStats.passYards.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passYards.wins++;
-                      team.filterAtsUnderdogStats.passYards.wins++;
-                    } else {
-                      team.filterAtsStats.passYards.losses++;
-                      team.filterAtsUnderdogStats.passYards.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -2709,31 +2839,126 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.passingYardsGiven > this.passYardsQuartile[1] && game.passingYardsGiven <= this.passYardsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.passYards.wins++;
-                  } else {
-                    team.filterStats.passYards.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passYards.wins++;
-                      team.filterAtsFavoritesStats.passYards.wins++;
-                    } else {
-                      team.filterAtsStats.passYards.losses++;
-                      team.filterAtsFavoritesStats.passYards.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.passingYardsGiven > this.passYardsQuartile[1] && game.passingYardsGiven <= this.passYardsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) - (team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses))) > 0.67) {
+                          team.filterStats.passYards.winsArr.push(true);
+                        }
+                        if ((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) > 0.79) {
+                          team.filterStats.passYards.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses) > 0.67) {
+                          team.filterStats.passYards.winsArr3.push(true);
+                        }
+                        team.filterStats.passYards.wins++;
+                      } else {
+                        if ((((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) - (team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses))) > 0.67) {
+                          team.filterStats.passYards.winsArr.push(false);
+                        }
+                        if ((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) > 0.79) {
+                          team.filterStats.passYards.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses) > 0.67) {
+                          team.filterStats.passYards.winsArr3.push(false);
+                        }
+                        team.filterStats.passYards.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) - (team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passYards.wins++;
+                          team.filterAtsFavoritesStats.passYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) - (team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passYards.losses++;
+                          team.filterAtsFavoritesStats.passYards.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) - (team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passYards.wins++;
+                          team.filterAtsUnderdogStats.passYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) - (team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passYards.losses++;
+                          team.filterAtsUnderdogStats.passYards.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passYards.wins++;
-                      team.filterAtsUnderdogStats.passYards.wins++;
-                    } else {
-                      team.filterAtsStats.passYards.losses++;
-                      team.filterAtsUnderdogStats.passYards.losses++;
-                    }
                   }
-                }
+                })
               })
+
             }
           })
           break;
@@ -2743,190 +2968,132 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.passingYardsGiven > this.passYardsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.passYards.wins++;
-                  } else {
-                    team.filterStats.passYards.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passYards.wins++;
-                      team.filterAtsFavoritesStats.passYards.wins++;
-                    } else {
-                      team.filterAtsStats.passYards.losses++;
-                      team.filterAtsFavoritesStats.passYards.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.passingYardsGiven > this.passYardsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) - (team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses))) > 0.67) {
+                          team.filterStats.passYards.winsArr.push(true);
+                        }
+                        if ((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) > 0.79) {
+                          team.filterStats.passYards.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses) > 0.67) {
+                          team.filterStats.passYards.winsArr3.push(true);
+                        }
+                        team.filterStats.passYards.wins++;
+                      } else {
+                        if ((((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) - (team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses))) > 0.67) {
+                          team.filterStats.passYards.winsArr.push(false);
+                        }
+                        if ((team.filterStats.passYards.wins) / (team.filterStats.passYards.wins + team.filterStats.passYards.losses) > 0.79) {
+                          team.filterStats.passYards.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.passYards.wins) / (team2.filterStats.passYards.wins + team2.filterStats.passYards.losses) > 0.67) {
+                          team.filterStats.passYards.winsArr3.push(false);
+                        }
+                        team.filterStats.passYards.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) - (team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passYards.wins++;
+                          team.filterAtsFavoritesStats.passYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) - (team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.passYards.wins) / (team.filterAtsFavoritesStats.passYards.wins + team.filterAtsFavoritesStats.passYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passYards.wins) / (team2.filterAtsFavoritesStats.passYards.wins + team2.filterAtsFavoritesStats.passYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passYards.losses++;
+                          team.filterAtsFavoritesStats.passYards.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) - (team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passYards.wins++;
+                          team.filterAtsUnderdogStats.passYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) - (team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses))) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) - (team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passYards.wins) / (team.filterAtsStats.passYards.wins + team.filterAtsStats.passYards.losses) > 0.79) {
+                            team.filterAtsStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.passYards.wins) / (team.filterAtsUnderdogStats.passYards.wins + team.filterAtsUnderdogStats.passYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passYards.wins) / (team2.filterAtsStats.passYards.wins + team2.filterAtsStats.passYards.losses) > 0.67) {
+                            team.filterAtsStats.passYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passYards.wins) / (team2.filterAtsUnderdogStats.passYards.wins + team2.filterAtsUnderdogStats.passYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passYards.losses++;
+                          team.filterAtsUnderdogStats.passYards.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passYards.wins++;
-                      team.filterAtsUnderdogStats.passYards.wins++;
-                    } else {
-                      team.filterAtsStats.passYards.losses++;
-                      team.filterAtsUnderdogStats.passYards.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
-          break;
         }
       }
     }
   }
-  passTdsChangeNcaaf(event: any, teamName: string) {
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      if (team.teamName === teamName) {
-        team.filterStats.passTds.wins = 0;
-        team.filterStats.passTds.losses = 0;
-        team.filterAtsStats.passTds.wins = 0;
-        team.filterAtsStats.passTds.losses = 0;
-        team.filterAtsFavoritesStats.passTds.wins = 0;
-        team.filterAtsFavoritesStats.passTds.losses = 0;
-        team.filterAtsUnderdogStats.passTds.wins = 0;
-        team.filterAtsUnderdogStats.passTds.losses = 0;
-      }
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.passTdsPanelColor = 'crimson';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.passingTdsGiven < this.passTdsQuartileNcaaf[0]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.passTds.wins++;
-                } else {
-                  team.filterStats.passTds.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passTds.wins++;
-                    team.filterAtsFavoritesStats.passTds.wins++;
-                  } else {
-                    team.filterAtsStats.passTds.losses++;
-                    team.filterAtsFavoritesStats.passTds.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passTds.wins++;
-                    team.filterAtsUnderdogStats.passTds.wins++;
-                  } else {
-                    team.filterAtsStats.passTds.losses++;
-                    team.filterAtsUnderdogStats.passTds.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart2': {
-        this.passTdsPanelColor = 'orange';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if ((game.passingTdsGiven >= this.passTdsQuartileNcaaf[0]) && (game.passingTdsGiven <= this.passTdsQuartileNcaaf[1])) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.passTds.wins++;
-                } else {
-                  team.filterStats.passTds.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passTds.wins++;
-                    team.filterAtsFavoritesStats.passTds.wins++;
-                  } else {
-                    team.filterAtsStats.passTds.losses++;
-                    team.filterAtsFavoritesStats.passTds.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passTds.wins++;
-                    team.filterAtsUnderdogStats.passTds.wins++;
-                  } else {
-                    team.filterAtsStats.passTds.losses++;
-                    team.filterAtsUnderdogStats.passTds.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart3': {
-        this.passTdsPanelColor = 'blueviolet';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.passingTdsGiven > this.passTdsQuartileNcaaf[1] && game.passingTdsGiven <= this.passTdsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.passTds.wins++;
-                } else {
-                  team.filterStats.passTds.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passTds.wins++;
-                    team.filterAtsFavoritesStats.passTds.wins++;
-                  } else {
-                    team.filterAtsStats.passTds.losses++;
-                    team.filterAtsFavoritesStats.passTds.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passTds.wins++;
-                    team.filterAtsUnderdogStats.passTds.wins++;
-                  } else {
-                    team.filterAtsStats.passTds.losses++;
-                    team.filterAtsUnderdogStats.passTds.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart4': {
-        this.passTdsPanelColor = 'green';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.passingTdsGiven > this.passTdsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.passTds.wins++;
-                } else {
-                  team.filterStats.passTds.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passTds.wins++;
-                    team.filterAtsFavoritesStats.passTds.wins++;
-                  } else {
-                    team.filterAtsStats.passTds.losses++;
-                    team.filterAtsFavoritesStats.passTds.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.passTds.wins++;
-                    team.filterAtsUnderdogStats.passTds.wins++;
-                  } else {
-                    team.filterAtsStats.passTds.losses++;
-                    team.filterAtsUnderdogStats.passTds.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-    }
-  }
+
   passTdsChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -2947,30 +3114,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.passingTdsGiven < this.passTdsQuartile[0]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.passTds.wins++;
-                  } else {
-                    team.filterStats.passTds.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passTds.wins++;
-                      team.filterAtsFavoritesStats.passTds.wins++;
-                    } else {
-                      team.filterAtsStats.passTds.losses++;
-                      team.filterAtsFavoritesStats.passTds.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.passingTdsGiven < this.passTdsQuartile[0]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) - (team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses))) > 0.67) {
+                          team.filterStats.passTds.winsArr.push(true);
+                        }
+                        if ((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) > 0.79) {
+                          team.filterStats.passTds.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses) > 0.67) {
+                          team.filterStats.passTds.winsArr3.push(true);
+                        }
+                        team.filterStats.passTds.wins++;
+                      } else {
+                        if ((((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) - (team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses))) > 0.67) {
+                          team.filterStats.passTds.winsArr.push(false);
+                        }
+                        if ((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) > 0.79) {
+                          team.filterStats.passTds.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses) > 0.67) {
+                          team.filterStats.passTds.winsArr3.push(false);
+                        }
+                        team.filterStats.passTds.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) - (team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passTds.wins++;
+                          team.filterAtsFavoritesStats.passTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) - (team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passTds.losses++;
+                          team.filterAtsFavoritesStats.passTds.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) - (team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passTds.wins++;
+                          team.filterAtsUnderdogStats.passTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) - (team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passTds.losses++;
+                          team.filterAtsUnderdogStats.passTds.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passTds.wins++;
-                      team.filterAtsUnderdogStats.passTds.wins++;
-                    } else {
-                      team.filterAtsStats.passTds.losses++;
-                      team.filterAtsUnderdogStats.passTds.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -2981,30 +3242,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if ((game.passingTdsGiven >= this.passTdsQuartile[0]) && (game.passingTdsGiven <= this.passTdsQuartile[1])) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.passTds.wins++;
-                  } else {
-                    team.filterStats.passTds.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passTds.wins++;
-                      team.filterAtsFavoritesStats.passTds.wins++;
-                    } else {
-                      team.filterAtsStats.passTds.losses++;
-                      team.filterAtsFavoritesStats.passTds.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if ((game.passingTdsGiven >= this.passTdsQuartile[0]) && (game.passingTdsGiven <= this.passTdsQuartile[1])) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) - (team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses))) > 0.67) {
+                          team.filterStats.passTds.winsArr.push(true);
+                        }
+                        if ((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) > 0.79) {
+                          team.filterStats.passTds.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses) > 0.67) {
+                          team.filterStats.passTds.winsArr3.push(true);
+                        }
+                        team.filterStats.passTds.wins++;
+                      } else {
+                        if ((((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) - (team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses))) > 0.67) {
+                          team.filterStats.passTds.winsArr.push(false);
+                        }
+                        if ((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) > 0.79) {
+                          team.filterStats.passTds.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses) > 0.67) {
+                          team.filterStats.passTds.winsArr3.push(false);
+                        }
+                        team.filterStats.passTds.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) - (team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passTds.wins++;
+                          team.filterAtsFavoritesStats.passTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) - (team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passTds.losses++;
+                          team.filterAtsFavoritesStats.passTds.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) - (team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passTds.wins++;
+                          team.filterAtsUnderdogStats.passTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) - (team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passTds.losses++;
+                          team.filterAtsUnderdogStats.passTds.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passTds.wins++;
-                      team.filterAtsUnderdogStats.passTds.wins++;
-                    } else {
-                      team.filterAtsStats.passTds.losses++;
-                      team.filterAtsUnderdogStats.passTds.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -3015,30 +3370,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.passingTdsGiven > this.passTdsQuartile[1] && game.passingTdsGiven <= this.passTdsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.passTds.wins++;
-                  } else {
-                    team.filterStats.passTds.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passTds.wins++;
-                      team.filterAtsFavoritesStats.passTds.wins++;
-                    } else {
-                      team.filterAtsStats.passTds.losses++;
-                      team.filterAtsFavoritesStats.passTds.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.passingTdsGiven > this.passTdsQuartile[1] && game.passingTdsGiven <= this.passTdsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) - (team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses))) > 0.67) {
+                          team.filterStats.passTds.winsArr.push(true);
+                        }
+                        if ((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) > 0.79) {
+                          team.filterStats.passTds.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses) > 0.67) {
+                          team.filterStats.passTds.winsArr3.push(true);
+                        }
+                        team.filterStats.passTds.wins++;
+                      } else {
+                        if ((((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) - (team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses))) > 0.67) {
+                          team.filterStats.passTds.winsArr.push(false);
+                        }
+                        if ((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) > 0.79) {
+                          team.filterStats.passTds.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses) > 0.67) {
+                          team.filterStats.passTds.winsArr3.push(false);
+                        }
+                        team.filterStats.passTds.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) - (team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passTds.wins++;
+                          team.filterAtsFavoritesStats.passTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) - (team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passTds.losses++;
+                          team.filterAtsFavoritesStats.passTds.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) - (team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passTds.wins++;
+                          team.filterAtsUnderdogStats.passTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) - (team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passTds.losses++;
+                          team.filterAtsUnderdogStats.passTds.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passTds.wins++;
-                      team.filterAtsUnderdogStats.passTds.wins++;
-                    } else {
-                      team.filterAtsStats.passTds.losses++;
-                      team.filterAtsUnderdogStats.passTds.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -3049,191 +3498,133 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.passingTdsGiven > this.passTdsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.passTds.wins++;
-                  } else {
-                    team.filterStats.passTds.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passTds.wins++;
-                      team.filterAtsFavoritesStats.passTds.wins++;
-                    } else {
-                      team.filterAtsStats.passTds.losses++;
-                      team.filterAtsFavoritesStats.passTds.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.passingTdsGiven > this.passTdsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) - (team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses))) > 0.67) {
+                          team.filterStats.passTds.winsArr.push(true);
+                        }
+                        if ((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) > 0.79) {
+                          team.filterStats.passTds.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses) > 0.67) {
+                          team.filterStats.passTds.winsArr3.push(true);
+                        }
+                        team.filterStats.passTds.wins++;
+                      } else {
+                        if ((((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) - (team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses))) > 0.67) {
+                          team.filterStats.passTds.winsArr.push(false);
+                        }
+                        if ((team.filterStats.passTds.wins) / (team.filterStats.passTds.wins + team.filterStats.passTds.losses) > 0.79) {
+                          team.filterStats.passTds.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.passTds.wins) / (team2.filterStats.passTds.wins + team2.filterStats.passTds.losses) > 0.67) {
+                          team.filterStats.passTds.winsArr3.push(false);
+                        }
+                        team.filterStats.passTds.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) - (team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passTds.wins++;
+                          team.filterAtsFavoritesStats.passTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) - (team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.passTds.wins) / (team.filterAtsFavoritesStats.passTds.wins + team.filterAtsFavoritesStats.passTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.passTds.wins) / (team2.filterAtsFavoritesStats.passTds.wins + team2.filterAtsFavoritesStats.passTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.passTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passTds.losses++;
+                          team.filterAtsFavoritesStats.passTds.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) - (team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.passTds.wins++;
+                          team.filterAtsUnderdogStats.passTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) - (team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses))) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) - (team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.passTds.wins) / (team.filterAtsStats.passTds.wins + team.filterAtsStats.passTds.losses) > 0.79) {
+                            team.filterAtsStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.passTds.wins) / (team.filterAtsUnderdogStats.passTds.wins + team.filterAtsUnderdogStats.passTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.passTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.passTds.wins) / (team2.filterAtsStats.passTds.wins + team2.filterAtsStats.passTds.losses) > 0.67) {
+                            team.filterAtsStats.passTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.passTds.wins) / (team2.filterAtsUnderdogStats.passTds.wins + team2.filterAtsUnderdogStats.passTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.passTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.passTds.losses++;
+                          team.filterAtsUnderdogStats.passTds.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.passTds.wins++;
-                      team.filterAtsUnderdogStats.passTds.wins++;
-                    } else {
-                      team.filterAtsStats.passTds.losses++;
-                      team.filterAtsUnderdogStats.passTds.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
           break;
         }
       }
+    }
+  }
 
-    }
-  }
-  rushAttemptsChangeNcaaf(event: any, teamName) {
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      if (team.teamName === teamName) {
-        team.filterStats.rushAttempts.wins = 0;
-        team.filterStats.rushAttempts.losses = 0;
-        team.filterAtsStats.rushAttempts.wins = 0;
-        team.filterAtsStats.rushAttempts.losses = 0;
-        team.filterAtsFavoritesStats.rushAttempts.wins = 0;
-        team.filterAtsFavoritesStats.rushAttempts.losses = 0;
-        team.filterAtsUnderdogStats.rushAttempts.wins = 0;
-        team.filterAtsUnderdogStats.rushAttempts.losses = 0;
-      }
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.rushAttemptsPanelColor = 'crimson';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.rushingAttemptsGiven < this.rushAttemptsQuartileNcaaf[0]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.rushAttempts.wins++;
-                } else {
-                  team.filterStats.rushAttempts.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushAttempts.wins++;
-                    team.filterAtsFavoritesStats.rushAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.rushAttempts.losses++;
-                    team.filterAtsFavoritesStats.rushAttempts.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushAttempts.wins++;
-                    team.filterAtsUnderdogStats.rushAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.rushAttempts.losses++;
-                    team.filterAtsUnderdogStats.rushAttempts.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart2': {
-        this.rushAttemptsPanelColor = 'orange';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if ((game.rushingAttemptsGiven >= this.rushAttemptsQuartileNcaaf[0]) && (game.rushingAttemptsGiven <= this.rushAttemptsQuartileNcaaf[1])) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.rushAttempts.wins++;
-                } else {
-                  team.filterStats.rushAttempts.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushAttempts.wins++;
-                    team.filterAtsFavoritesStats.rushAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.rushAttempts.losses++;
-                    team.filterAtsFavoritesStats.rushAttempts.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushAttempts.wins++;
-                    team.filterAtsUnderdogStats.rushAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.rushAttempts.losses++;
-                    team.filterAtsUnderdogStats.rushAttempts.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart3': {
-        this.rushAttemptsPanelColor = 'blueviolet';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.rushingAttemptsGiven > this.rushAttemptsQuartileNcaaf[1] && game.rushingAttemptsGiven <= this.rushAttemptsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.rushAttempts.wins++;
-                } else {
-                  team.filterStats.rushAttempts.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushAttempts.wins++;
-                    team.filterAtsFavoritesStats.rushAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.rushAttempts.losses++;
-                    team.filterAtsFavoritesStats.rushAttempts.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushAttempts.wins++;
-                    team.filterAtsUnderdogStats.rushAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.rushAttempts.losses++;
-                    team.filterAtsUnderdogStats.rushAttempts.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart4': {
-        this.rushAttemptsPanelColor = 'green';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.rushingAttemptsGiven > this.rushAttemptsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.rushAttempts.wins++;
-                } else {
-                  team.filterStats.rushAttempts.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushAttempts.wins++;
-                    team.filterAtsFavoritesStats.rushAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.rushAttempts.losses++;
-                    team.filterAtsFavoritesStats.rushAttempts.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushAttempts.wins++;
-                    team.filterAtsUnderdogStats.rushAttempts.wins++;
-                  } else {
-                    team.filterAtsStats.rushAttempts.losses++;
-                    team.filterAtsUnderdogStats.rushAttempts.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-    }
-  }
   rushAttemptsChange(event: any, teamName) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -3254,33 +3645,127 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.rushingAttemptsGiven < this.rushAttemptsQuartile[0]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.rushAttempts.wins++;
-                  } else {
-                    team.filterStats.rushAttempts.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushAttempts.wins++;
-                      team.filterAtsFavoritesStats.rushAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.rushAttempts.losses++;
-                      team.filterAtsFavoritesStats.rushAttempts.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.rushingAttemptsGiven < this.rushAttemptsQuartile[0]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) - (team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses))) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr.push(true);
+                        }
+                        if ((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) > 0.79) {
+                          team.filterStats.rushAttempts.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr3.push(true);
+                        }
+                        team.filterStats.rushAttempts.wins++;
+                      } else {
+                        if ((((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) - (team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses))) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr.push(false);
+                        }
+                        if ((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) > 0.79) {
+                          team.filterStats.rushAttempts.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr3.push(false);
+                        }
+                        team.filterStats.rushAttempts.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) - (team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushAttempts.wins++;
+                          team.filterAtsFavoritesStats.rushAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) - (team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushAttempts.losses++;
+                          team.filterAtsFavoritesStats.rushAttempts.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) - (team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushAttempts.wins++;
+                          team.filterAtsUnderdogStats.rushAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) - (team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushAttempts.losses++;
+                          team.filterAtsUnderdogStats.rushAttempts.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushAttempts.wins++;
-                      team.filterAtsUnderdogStats.rushAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.rushAttempts.losses++;
-                      team.filterAtsUnderdogStats.rushAttempts.losses++;
-                    }
                   }
-                }
+                })
               })
             }
-          })
+          });
           break;
         }
         case 'quart2': {
@@ -3288,30 +3773,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if ((game.rushingAttemptsGiven >= this.rushAttemptsQuartile[0]) && (game.rushingAttemptsGiven <= this.rushAttemptsQuartile[1])) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.rushAttempts.wins++;
-                  } else {
-                    team.filterStats.rushAttempts.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushAttempts.wins++;
-                      team.filterAtsFavoritesStats.rushAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.rushAttempts.losses++;
-                      team.filterAtsFavoritesStats.rushAttempts.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if ((game.rushingAttemptsGiven >= this.rushAttemptsQuartile[0]) && (game.rushingAttemptsGiven <= this.rushAttemptsQuartile[1])) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) - (team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses))) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr.push(true);
+                        }
+                        if ((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) > 0.79) {
+                          team.filterStats.rushAttempts.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr3.push(true);
+                        }
+                        team.filterStats.rushAttempts.wins++;
+                      } else {
+                        if ((((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) - (team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses))) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr.push(false);
+                        }
+                        if ((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) > 0.79) {
+                          team.filterStats.rushAttempts.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr3.push(false);
+                        }
+                        team.filterStats.rushAttempts.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) - (team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushAttempts.wins++;
+                          team.filterAtsFavoritesStats.rushAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) - (team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushAttempts.losses++;
+                          team.filterAtsFavoritesStats.rushAttempts.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) - (team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushAttempts.wins++;
+                          team.filterAtsUnderdogStats.rushAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) - (team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushAttempts.losses++;
+                          team.filterAtsUnderdogStats.rushAttempts.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushAttempts.wins++;
-                      team.filterAtsUnderdogStats.rushAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.rushAttempts.losses++;
-                      team.filterAtsUnderdogStats.rushAttempts.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -3322,30 +3901,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.rushingAttemptsGiven > this.rushAttemptsQuartile[1] && game.rushingAttemptsGiven <= this.rushAttemptsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.rushAttempts.wins++;
-                  } else {
-                    team.filterStats.rushAttempts.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushAttempts.wins++;
-                      team.filterAtsFavoritesStats.rushAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.rushAttempts.losses++;
-                      team.filterAtsFavoritesStats.rushAttempts.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.rushingAttemptsGiven > this.rushAttemptsQuartile[1] && game.rushingAttemptsGiven <= this.rushAttemptsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) - (team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses))) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr.push(true);
+                        }
+                        if ((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) > 0.79) {
+                          team.filterStats.rushAttempts.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr3.push(true);
+                        }
+                        team.filterStats.rushAttempts.wins++;
+                      } else {
+                        if ((((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) - (team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses))) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr.push(false);
+                        }
+                        if ((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) > 0.79) {
+                          team.filterStats.rushAttempts.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr3.push(false);
+                        }
+                        team.filterStats.rushAttempts.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) - (team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushAttempts.wins++;
+                          team.filterAtsFavoritesStats.rushAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) - (team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushAttempts.losses++;
+                          team.filterAtsFavoritesStats.rushAttempts.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) - (team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushAttempts.wins++;
+                          team.filterAtsUnderdogStats.rushAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) - (team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushAttempts.losses++;
+                          team.filterAtsUnderdogStats.rushAttempts.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushAttempts.wins++;
-                      team.filterAtsUnderdogStats.rushAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.rushAttempts.losses++;
-                      team.filterAtsUnderdogStats.rushAttempts.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -3356,30 +4029,125 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.rushingAttemptsGiven > this.rushAttemptsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.rushAttempts.wins++;
-                  } else {
-                    team.filterStats.rushAttempts.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushAttempts.wins++;
-                      team.filterAtsFavoritesStats.rushAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.rushAttempts.losses++;
-                      team.filterAtsFavoritesStats.rushAttempts.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.rushingAttemptsGiven > this.rushAttemptsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) - (team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses))) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr.push(true);
+                        }
+                        if ((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) > 0.79) {
+                          team.filterStats.rushAttempts.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr3.push(true);
+                        }
+                        team.filterStats.rushAttempts.wins++;
+                      } else {
+                        if ((((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) - (team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses))) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr.push(false);
+                        }
+                        if ((team.filterStats.rushAttempts.wins) / (team.filterStats.rushAttempts.wins + team.filterStats.rushAttempts.losses) > 0.79) {
+                          team.filterStats.rushAttempts.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.rushAttempts.wins) / (team2.filterStats.rushAttempts.wins + team2.filterStats.rushAttempts.losses) > 0.67) {
+                          team.filterStats.rushAttempts.winsArr3.push(false);
+                        }
+                        team.filterStats.rushAttempts.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) - (team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushAttempts.wins++;
+                          team.filterAtsFavoritesStats.rushAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) - (team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushAttempts.wins) / (team.filterAtsFavoritesStats.rushAttempts.wins + team.filterAtsFavoritesStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushAttempts.wins) / (team2.filterAtsFavoritesStats.rushAttempts.wins + team2.filterAtsFavoritesStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushAttempts.losses++;
+                          team.filterAtsFavoritesStats.rushAttempts.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) - (team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushAttempts.wins++;
+                          team.filterAtsUnderdogStats.rushAttempts.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) - (team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) - (team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushAttempts.wins) / (team.filterAtsStats.rushAttempts.wins + team.filterAtsStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushAttempts.wins) / (team.filterAtsUnderdogStats.rushAttempts.wins + team.filterAtsUnderdogStats.rushAttempts.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushAttempts.wins) / (team2.filterAtsStats.rushAttempts.wins + team2.filterAtsStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsStats.rushAttempts.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushAttempts.wins) / (team2.filterAtsUnderdogStats.rushAttempts.wins + team2.filterAtsUnderdogStats.rushAttempts.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushAttempts.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushAttempts.losses++;
+                          team.filterAtsUnderdogStats.rushAttempts.losses++;
+                          team.filterAtsUnderdogStats.rushAttempts.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushAttempts.wins++;
-                      team.filterAtsUnderdogStats.rushAttempts.wins++;
-                    } else {
-                      team.filterAtsStats.rushAttempts.losses++;
-                      team.filterAtsUnderdogStats.rushAttempts.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -3388,158 +4156,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
-  rushYardsChangeNcaaf(event: any, teamName: string) {
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      if (team.teamName === teamName) {
-        team.filterStats.rushYards.wins = 0;
-        team.filterStats.rushYards.losses = 0;
-        team.filterAtsStats.rushYards.wins = 0;
-        team.filterAtsStats.rushYards.losses = 0;
-        team.filterAtsFavoritesStats.rushYards.wins = 0;
-        team.filterAtsFavoritesStats.rushYards.losses = 0;
-        team.filterAtsUnderdogStats.rushYards.wins = 0;
-        team.filterAtsUnderdogStats.rushYards.losses = 0;
-      }
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.rushYardsPanelColor = 'crimson';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.rushingYardsGiven < this.rushYardsQuartileNcaaf[0]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.rushYards.wins++;
-                } else {
-                  team.filterStats.rushYards.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushYards.wins++;
-                    team.filterAtsFavoritesStats.rushYards.wins++;
-                  } else {
-                    team.filterAtsStats.rushYards.losses++;
-                    team.filterAtsFavoritesStats.rushYards.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushYards.wins++;
-                    team.filterAtsUnderdogStats.rushYards.wins++;
-                  } else {
-                    team.filterAtsStats.rushYards.losses++;
-                    team.filterAtsUnderdogStats.rushYards.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart2': {
-        this.rushYardsPanelColor = 'orange';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if ((game.rushingYardsGiven >= this.rushYardsQuartileNcaaf[0]) && (game.rushingYardsGiven <= this.rushYardsQuartileNcaaf[1])) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.rushYards.wins++;
-                } else {
-                  team.filterStats.rushYards.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushYards.wins++;
-                    team.filterAtsFavoritesStats.rushYards.wins++;
-                  } else {
-                    team.filterAtsStats.rushYards.losses++;
-                    team.filterAtsFavoritesStats.rushYards.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushYards.wins++;
-                    team.filterAtsUnderdogStats.rushYards.wins++;
-                  } else {
-                    team.filterAtsStats.rushYards.losses++;
-                    team.filterAtsUnderdogStats.rushYards.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart3': {
-        this.rushYardsPanelColor = 'blueviolet';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.rushingYardsGiven > this.rushYardsQuartileNcaaf[1] && game.rushingYardsGiven <= this.rushYardsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.rushYards.wins++;
-                } else {
-                  team.filterStats.rushYards.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushYards.wins++;
-                    team.filterAtsFavoritesStats.rushYards.wins++;
-                  } else {
-                    team.filterAtsStats.rushYards.losses++;
-                    team.filterAtsFavoritesStats.rushYards.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushYards.wins++;
-                    team.filterAtsUnderdogStats.rushYards.wins++;
-                  } else {
-                    team.filterAtsStats.rushYards.losses++;
-                    team.filterAtsUnderdogStats.rushYards.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart4': {
-        this.rushYardsPanelColor = 'green';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.rushingYardsGiven > this.rushYardsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.rushYards.wins++;
-                } else {
-                  team.filterStats.rushYards.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushYards.wins++;
-                    team.filterAtsFavoritesStats.rushYards.wins++;
-                  } else {
-                    team.filterAtsStats.rushYards.losses++;
-                    team.filterAtsFavoritesStats.rushYards.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushYards.wins++;
-                    team.filterAtsUnderdogStats.rushYards.wins++;
-                  } else {
-                    team.filterAtsStats.rushYards.losses++;
-                    team.filterAtsUnderdogStats.rushYards.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-    }
-  }
+
   rushYardsChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -3560,30 +4177,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.rushingYardsGiven < this.rushYardsQuartile[0]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.rushYards.wins++;
-                  } else {
-                    team.filterStats.rushYards.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushYards.wins++;
-                      team.filterAtsFavoritesStats.rushYards.wins++;
-                    } else {
-                      team.filterAtsStats.rushYards.losses++;
-                      team.filterAtsFavoritesStats.rushYards.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.rushingYardsGiven < this.rushYardsQuartile[0]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) - (team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses))) > 0.67) {
+                          team.filterStats.rushYards.winsArr.push(true);
+                        }
+                        if ((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) > 0.79) {
+                          team.filterStats.rushYards.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses) > 0.67) {
+                          team.filterStats.rushYards.winsArr3.push(true);
+                        }
+                        team.filterStats.rushYards.wins++;
+                      } else {
+                        if ((((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) - (team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses))) > 0.67) {
+                          team.filterStats.rushYards.winsArr.push(false);
+                        }
+                        if ((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) > 0.79) {
+                          team.filterStats.rushYards.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses) > 0.67) {
+                          team.filterStats.rushYards.winsArr3.push(false);
+                        }
+                        team.filterStats.rushYards.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) - (team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushYards.wins++;
+                          team.filterAtsFavoritesStats.rushYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) - (team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushYards.losses++;
+                          team.filterAtsFavoritesStats.rushYards.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) - (team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushYards.wins++;
+                          team.filterAtsUnderdogStats.rushYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) - (team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushYards.losses++;
+                          team.filterAtsUnderdogStats.rushYards.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushYards.wins++;
-                      team.filterAtsUnderdogStats.rushYards.wins++;
-                    } else {
-                      team.filterAtsStats.rushYards.losses++;
-                      team.filterAtsUnderdogStats.rushYards.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -3594,30 +4305,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if ((game.rushingYardsGiven >= this.rushYardsQuartile[0]) && (game.rushingYardsGiven <= this.rushYardsQuartile[1])) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.rushYards.wins++;
-                  } else {
-                    team.filterStats.rushYards.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushYards.wins++;
-                      team.filterAtsFavoritesStats.rushYards.wins++;
-                    } else {
-                      team.filterAtsStats.rushYards.losses++;
-                      team.filterAtsFavoritesStats.rushYards.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if ((game.rushingYardsGiven >= this.rushYardsQuartile[0]) && (game.rushingYardsGiven <= this.rushYardsQuartile[1])) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) - (team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses))) > 0.67) {
+                          team.filterStats.rushYards.winsArr.push(true);
+                        }
+                        if ((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) > 0.79) {
+                          team.filterStats.rushYards.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses) > 0.67) {
+                          team.filterStats.rushYards.winsArr3.push(true);
+                        }
+                        team.filterStats.rushYards.wins++;
+                      } else {
+                        if ((((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) - (team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses))) > 0.67) {
+                          team.filterStats.rushYards.winsArr.push(false);
+                        }
+                        if ((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) > 0.79) {
+                          team.filterStats.rushYards.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses) > 0.67) {
+                          team.filterStats.rushYards.winsArr3.push(false);
+                        }
+                        team.filterStats.rushYards.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) - (team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushYards.wins++;
+                          team.filterAtsFavoritesStats.rushYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) - (team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushYards.losses++;
+                          team.filterAtsFavoritesStats.rushYards.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) - (team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushYards.wins++;
+                          team.filterAtsUnderdogStats.rushYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) - (team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushYards.losses++;
+                          team.filterAtsUnderdogStats.rushYards.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushYards.wins++;
-                      team.filterAtsUnderdogStats.rushYards.wins++;
-                    } else {
-                      team.filterAtsStats.rushYards.losses++;
-                      team.filterAtsUnderdogStats.rushYards.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -3628,30 +4433,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.rushingYardsGiven > this.rushYardsQuartile[1] && game.rushingYardsGiven <= this.rushYardsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.rushYards.wins++;
-                  } else {
-                    team.filterStats.rushYards.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushYards.wins++;
-                      team.filterAtsFavoritesStats.rushYards.wins++;
-                    } else {
-                      team.filterAtsStats.rushYards.losses++;
-                      team.filterAtsFavoritesStats.rushYards.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.rushingYardsGiven > this.rushYardsQuartile[1] && game.rushingYardsGiven <= this.rushYardsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) - (team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses))) > 0.67) {
+                          team.filterStats.rushYards.winsArr.push(true);
+                        }
+                        if ((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) > 0.79) {
+                          team.filterStats.rushYards.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses) > 0.67) {
+                          team.filterStats.rushYards.winsArr3.push(true);
+                        }
+                        team.filterStats.rushYards.wins++;
+                      } else {
+                        if ((((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) - (team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses))) > 0.67) {
+                          team.filterStats.rushYards.winsArr.push(false);
+                        }
+                        if ((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) > 0.79) {
+                          team.filterStats.rushYards.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses) > 0.67) {
+                          team.filterStats.rushYards.winsArr3.push(false);
+                        }
+                        team.filterStats.rushYards.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) - (team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushYards.wins++;
+                          team.filterAtsFavoritesStats.rushYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) - (team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushYards.losses++;
+                          team.filterAtsFavoritesStats.rushYards.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) - (team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushYards.wins++;
+                          team.filterAtsUnderdogStats.rushYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) - (team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushYards.losses++;
+                          team.filterAtsUnderdogStats.rushYards.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushYards.wins++;
-                      team.filterAtsUnderdogStats.rushYards.wins++;
-                    } else {
-                      team.filterAtsStats.rushYards.losses++;
-                      team.filterAtsUnderdogStats.rushYards.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -3662,30 +4561,125 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.rushingYardsGiven > this.rushYardsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.rushYards.wins++;
-                  } else {
-                    team.filterStats.rushYards.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushYards.wins++;
-                      team.filterAtsFavoritesStats.rushYards.wins++;
-                    } else {
-                      team.filterAtsStats.rushYards.losses++;
-                      team.filterAtsFavoritesStats.rushYards.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.rushingYardsGiven > this.rushYardsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) - (team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses))) > 0.67) {
+                          team.filterStats.rushYards.winsArr.push(true);
+                        }
+                        if ((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) > 0.79) {
+                          team.filterStats.rushYards.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses) > 0.67) {
+                          team.filterStats.rushYards.winsArr3.push(true);
+                        }
+                        team.filterStats.rushYards.wins++;
+                      } else {
+                        if ((((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) - (team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses))) > 0.67) {
+                          team.filterStats.rushYards.winsArr.push(false);
+                        }
+                        if ((team.filterStats.rushYards.wins) / (team.filterStats.rushYards.wins + team.filterStats.rushYards.losses) > 0.79) {
+                          team.filterStats.rushYards.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.rushYards.wins) / (team2.filterStats.rushYards.wins + team2.filterStats.rushYards.losses) > 0.67) {
+                          team.filterStats.rushYards.winsArr3.push(false);
+                        }
+                        team.filterStats.rushYards.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) - (team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushYards.wins++;
+                          team.filterAtsFavoritesStats.rushYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) - (team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushYards.wins) / (team.filterAtsFavoritesStats.rushYards.wins + team.filterAtsFavoritesStats.rushYards.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushYards.wins) / (team2.filterAtsFavoritesStats.rushYards.wins + team2.filterAtsFavoritesStats.rushYards.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushYards.losses++;
+                          team.filterAtsFavoritesStats.rushYards.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) - (team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushYards.wins++;
+                          team.filterAtsUnderdogStats.rushYards.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) - (team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) - (team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushYards.wins) / (team.filterAtsStats.rushYards.wins + team.filterAtsStats.rushYards.losses) > 0.79) {
+                            team.filterAtsStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushYards.wins) / (team.filterAtsUnderdogStats.rushYards.wins + team.filterAtsUnderdogStats.rushYards.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushYards.wins) / (team2.filterAtsStats.rushYards.wins + team2.filterAtsStats.rushYards.losses) > 0.67) {
+                            team.filterAtsStats.rushYards.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushYards.wins) / (team2.filterAtsUnderdogStats.rushYards.wins + team2.filterAtsUnderdogStats.rushYards.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushYards.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushYards.losses++;
+                          team.filterAtsUnderdogStats.rushYards.losses++;
+                          team.filterAtsUnderdogStats.rushYards.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushYards.wins++;
-                      team.filterAtsUnderdogStats.rushYards.wins++;
-                    } else {
-                      team.filterAtsStats.rushYards.losses++;
-                      team.filterAtsUnderdogStats.rushYards.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -3694,158 +4688,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
-  rushTdsChangeNcaaf(event: any, teamName: string) {
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      if (team.teamName === teamName) {
-        team.filterStats.rushTds.wins = 0;
-        team.filterStats.rushTds.losses = 0;
-        team.filterAtsStats.rushTds.wins = 0;
-        team.filterAtsStats.rushTds.losses = 0;
-        team.filterAtsFavoritesStats.rushTds.wins = 0;
-        team.filterAtsFavoritesStats.rushTds.losses = 0;
-        team.filterAtsUnderdogStats.rushTds.wins = 0;
-        team.filterAtsUnderdogStats.rushTds.losses = 0;
-      }
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.rushTdsPanelColor = 'crimson';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.rushingTdsGiven < this.rushTdsQuartileNcaaf[0]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.rushTds.wins++;
-                } else {
-                  team.filterStats.rushTds.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushTds.wins++;
-                    team.filterAtsFavoritesStats.rushTds.wins++;
-                  } else {
-                    team.filterAtsStats.rushTds.losses++;
-                    team.filterAtsFavoritesStats.rushTds.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushTds.wins++;
-                    team.filterAtsUnderdogStats.rushTds.wins++;
-                  } else {
-                    team.filterAtsStats.rushTds.losses++;
-                    team.filterAtsUnderdogStats.rushTds.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart2': {
-        this.rushTdsPanelColor = 'orange';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if ((game.rushingTdsGiven >= this.rushTdsQuartileNcaaf[0]) && (game.rushingTdsGiven <= this.rushTdsQuartileNcaaf[1])) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.rushTds.wins++;
-                } else {
-                  team.filterStats.rushTds.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushTds.wins++;
-                    team.filterAtsFavoritesStats.rushTds.wins++;
-                  } else {
-                    team.filterAtsStats.rushTds.losses++;
-                    team.filterAtsFavoritesStats.rushTds.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushTds.wins++;
-                    team.filterAtsUnderdogStats.rushTds.wins++;
-                  } else {
-                    team.filterAtsStats.rushTds.losses++;
-                    team.filterAtsUnderdogStats.rushTds.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart3': {
-        this.rushTdsPanelColor = 'blueviolet';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.rushingTdsGiven > this.rushTdsQuartileNcaaf[1] && game.rushingTdsGiven <= this.rushTdsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.rushTds.wins++;
-                } else {
-                  team.filterStats.rushTds.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushTds.wins++;
-                    team.filterAtsFavoritesStats.rushTds.wins++;
-                  } else {
-                    team.filterAtsStats.rushTds.losses++;
-                    team.filterAtsFavoritesStats.rushTds.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushTds.wins++;
-                    team.filterAtsUnderdogStats.rushTds.wins++;
-                  } else {
-                    team.filterAtsStats.rushTds.losses++;
-                    team.filterAtsUnderdogStats.rushTds.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart4': {
-        this.rushTdsPanelColor = 'green';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.rushingTdsGiven > this.rushTdsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.rushTds.wins++;
-                } else {
-                  team.filterStats.rushTds.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushTds.wins++;
-                    team.filterAtsFavoritesStats.rushTds.wins++;
-                  } else {
-                    team.filterAtsStats.rushTds.losses++;
-                    team.filterAtsFavoritesStats.rushTds.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.rushTds.wins++;
-                    team.filterAtsUnderdogStats.rushTds.wins++;
-                  } else {
-                    team.filterAtsStats.rushTds.losses++;
-                    team.filterAtsUnderdogStats.rushTds.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-    }
-  }
+
   rushTdsChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -3866,30 +4709,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.rushingTdsGiven < this.rushTdsQuartile[0]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.rushTds.wins++;
-                  } else {
-                    team.filterStats.rushTds.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushTds.wins++;
-                      team.filterAtsFavoritesStats.rushTds.wins++;
-                    } else {
-                      team.filterAtsStats.rushTds.losses++;
-                      team.filterAtsFavoritesStats.rushTds.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.rushingTdsGiven < this.rushTdsQuartile[0]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) - (team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses))) > 0.67) {
+                          team.filterStats.rushTds.winsArr.push(true);
+                        }
+                        if ((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) > 0.79) {
+                          team.filterStats.rushTds.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses) > 0.67) {
+                          team.filterStats.rushTds.winsArr3.push(true);
+                        }
+                        team.filterStats.rushTds.wins++;
+                      } else {
+                        if ((((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) - (team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses))) > 0.67) {
+                          team.filterStats.rushTds.winsArr.push(false);
+                        }
+                        if ((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) > 0.79) {
+                          team.filterStats.rushTds.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses) > 0.67) {
+                          team.filterStats.rushTds.winsArr3.push(false);
+                        }
+                        team.filterStats.rushTds.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) - (team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushTds.wins++;
+                          team.filterAtsFavoritesStats.rushTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) - (team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushTds.losses++;
+                          team.filterAtsFavoritesStats.rushTds.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) - (team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushTds.wins++;
+                          team.filterAtsUnderdogStats.rushTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) - (team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushTds.losses++;
+                          team.filterAtsUnderdogStats.rushTds.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushTds.wins++;
-                      team.filterAtsUnderdogStats.rushTds.wins++;
-                    } else {
-                      team.filterAtsStats.rushTds.losses++;
-                      team.filterAtsUnderdogStats.rushTds.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -3900,30 +4837,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if ((game.rushingTdsGiven >= this.rushTdsQuartile[0]) && (game.rushingTdsGiven <= this.rushTdsQuartile[1])) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.rushTds.wins++;
-                  } else {
-                    team.filterStats.rushTds.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushTds.wins++;
-                      team.filterAtsFavoritesStats.rushTds.wins++;
-                    } else {
-                      team.filterAtsStats.rushTds.losses++;
-                      team.filterAtsFavoritesStats.rushTds.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if ((game.rushingTdsGiven >= this.rushTdsQuartile[0]) && (game.rushingTdsGiven <= this.rushTdsQuartile[1])) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) - (team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses))) > 0.67) {
+                          team.filterStats.rushTds.winsArr.push(true);
+                        }
+                        if ((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) > 0.79) {
+                          team.filterStats.rushTds.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses) > 0.67) {
+                          team.filterStats.rushTds.winsArr3.push(true);
+                        }
+                        team.filterStats.rushTds.wins++;
+                      } else {
+                        if ((((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) - (team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses))) > 0.67) {
+                          team.filterStats.rushTds.winsArr.push(false);
+                        }
+                        if ((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) > 0.79) {
+                          team.filterStats.rushTds.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses) > 0.67) {
+                          team.filterStats.rushTds.winsArr3.push(false);
+                        }
+                        team.filterStats.rushTds.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) - (team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushTds.wins++;
+                          team.filterAtsFavoritesStats.rushTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) - (team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushTds.losses++;
+                          team.filterAtsFavoritesStats.rushTds.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) - (team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushTds.wins++;
+                          team.filterAtsUnderdogStats.rushTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) - (team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushTds.losses++;
+                          team.filterAtsUnderdogStats.rushTds.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushTds.wins++;
-                      team.filterAtsUnderdogStats.rushTds.wins++;
-                    } else {
-                      team.filterAtsStats.rushTds.losses++;
-                      team.filterAtsUnderdogStats.rushTds.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -3934,30 +4965,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.rushingTdsGiven > this.rushTdsQuartile[1] && game.rushingTdsGiven <= this.rushTdsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.rushTds.wins++;
-                  } else {
-                    team.filterStats.rushTds.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushTds.wins++;
-                      team.filterAtsFavoritesStats.rushTds.wins++;
-                    } else {
-                      team.filterAtsStats.rushTds.losses++;
-                      team.filterAtsFavoritesStats.rushTds.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.rushingTdsGiven > this.rushTdsQuartile[1] && game.rushingTdsGiven <= this.rushTdsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) - (team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses))) > 0.67) {
+                          team.filterStats.rushTds.winsArr.push(true);
+                        }
+                        if ((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) > 0.79) {
+                          team.filterStats.rushTds.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses) > 0.67) {
+                          team.filterStats.rushTds.winsArr3.push(true);
+                        }
+                        team.filterStats.rushTds.wins++;
+                      } else {
+                        if ((((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) - (team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses))) > 0.67) {
+                          team.filterStats.rushTds.winsArr.push(false);
+                        }
+                        if ((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) > 0.79) {
+                          team.filterStats.rushTds.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses) > 0.67) {
+                          team.filterStats.rushTds.winsArr3.push(false);
+                        }
+                        team.filterStats.rushTds.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) - (team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushTds.wins++;
+                          team.filterAtsFavoritesStats.rushTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) - (team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushTds.losses++;
+                          team.filterAtsFavoritesStats.rushTds.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) - (team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushTds.wins++;
+                          team.filterAtsUnderdogStats.rushTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) - (team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushTds.losses++;
+                          team.filterAtsUnderdogStats.rushTds.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushTds.wins++;
-                      team.filterAtsUnderdogStats.rushTds.wins++;
-                    } else {
-                      team.filterAtsStats.rushTds.losses++;
-                      team.filterAtsUnderdogStats.rushTds.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -3968,30 +5093,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.rushingTdsGiven > this.rushTdsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.rushTds.wins++;
-                  } else {
-                    team.filterStats.rushTds.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushTds.wins++;
-                      team.filterAtsFavoritesStats.rushTds.wins++;
-                    } else {
-                      team.filterAtsStats.rushTds.losses++;
-                      team.filterAtsFavoritesStats.rushTds.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.rushingTdsGiven > this.rushTdsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) - (team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses))) > 0.67) {
+                          team.filterStats.rushTds.winsArr.push(true);
+                        }
+                        if ((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) > 0.79) {
+                          team.filterStats.rushTds.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses) > 0.67) {
+                          team.filterStats.rushTds.winsArr3.push(true);
+                        }
+                        team.filterStats.rushTds.wins++;
+                      } else {
+                        if ((((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) - (team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses))) > 0.67) {
+                          team.filterStats.rushTds.winsArr.push(false);
+                        }
+                        if ((team.filterStats.rushTds.wins) / (team.filterStats.rushTds.wins + team.filterStats.rushTds.losses) > 0.79) {
+                          team.filterStats.rushTds.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.rushTds.wins) / (team2.filterStats.rushTds.wins + team2.filterStats.rushTds.losses) > 0.67) {
+                          team.filterStats.rushTds.winsArr3.push(false);
+                        }
+                        team.filterStats.rushTds.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) - (team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushTds.wins++;
+                          team.filterAtsFavoritesStats.rushTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) - (team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.rushTds.wins) / (team.filterAtsFavoritesStats.rushTds.wins + team.filterAtsFavoritesStats.rushTds.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.rushTds.wins) / (team2.filterAtsFavoritesStats.rushTds.wins + team2.filterAtsFavoritesStats.rushTds.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.rushTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushTds.losses++;
+                          team.filterAtsFavoritesStats.rushTds.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) - (team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.rushTds.wins++;
+                          team.filterAtsUnderdogStats.rushTds.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) - (team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) - (team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.rushTds.wins) / (team.filterAtsStats.rushTds.wins + team.filterAtsStats.rushTds.losses) > 0.79) {
+                            team.filterAtsStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.rushTds.wins) / (team.filterAtsUnderdogStats.rushTds.wins + team.filterAtsUnderdogStats.rushTds.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.rushTds.wins) / (team2.filterAtsStats.rushTds.wins + team2.filterAtsStats.rushTds.losses) > 0.67) {
+                            team.filterAtsStats.rushTds.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.rushTds.wins) / (team2.filterAtsUnderdogStats.rushTds.wins + team2.filterAtsUnderdogStats.rushTds.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.rushTds.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.rushTds.losses++;
+                          team.filterAtsUnderdogStats.rushTds.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.rushTds.wins++;
-                      team.filterAtsUnderdogStats.rushTds.wins++;
-                    } else {
-                      team.filterAtsStats.rushTds.losses++;
-                      team.filterAtsUnderdogStats.rushTds.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -4602,158 +5821,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
-  thirdDownChangeNcaaf(event: any, teamName: string) {
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      if (team.teamName === teamName) {
-        team.filterStats.thirdDown.wins = 0;
-        team.filterStats.thirdDown.losses = 0;
-        team.filterAtsStats.thirdDown.wins = 0;
-        team.filterAtsStats.thirdDown.losses = 0;
-        team.filterAtsFavoritesStats.thirdDown.wins = 0;
-        team.filterAtsFavoritesStats.thirdDown.losses = 0;
-        team.filterAtsUnderdogStats.thirdDown.wins = 0;
-        team.filterAtsUnderdogStats.thirdDown.losses = 0;
-      }
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.thirdDownPanelColor = 'crimson';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.thirdDownConvPctGiven < this.thirdDownQuartileNcaaf[0]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.thirdDown.wins++;
-                } else {
-                  team.filterStats.thirdDown.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.thirdDown.wins++;
-                    team.filterAtsFavoritesStats.thirdDown.wins++;
-                  } else {
-                    team.filterAtsStats.thirdDown.losses++;
-                    team.filterAtsFavoritesStats.thirdDown.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.thirdDown.wins++;
-                    team.filterAtsUnderdogStats.thirdDown.wins++;
-                  } else {
-                    team.filterAtsStats.thirdDown.losses++;
-                    team.filterAtsUnderdogStats.thirdDown.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart2': {
-        this.thirdDownPanelColor = 'orange';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if ((game.thirdDownConvPctGiven >= this.thirdDownQuartileNcaaf[0]) && (game.thirdDownConvPctGiven <= this.thirdDownQuartileNcaaf[1])) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.thirdDown.wins++;
-                } else {
-                  team.filterStats.thirdDown.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.thirdDown.wins++;
-                    team.filterAtsFavoritesStats.thirdDown.wins++;
-                  } else {
-                    team.filterAtsStats.thirdDown.losses++;
-                    team.filterAtsFavoritesStats.thirdDown.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.thirdDown.wins++;
-                    team.filterAtsUnderdogStats.thirdDown.wins++;
-                  } else {
-                    team.filterAtsStats.thirdDown.losses++;
-                    team.filterAtsUnderdogStats.thirdDown.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart3': {
-        this.thirdDownPanelColor = 'blueviolet';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.thirdDownConvPctGiven > this.thirdDownQuartileNcaaf[1] && game.thirdDownConvPctGiven <= this.thirdDownQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.thirdDown.wins++;
-                } else {
-                  team.filterStats.thirdDown.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.thirdDown.wins++;
-                    team.filterAtsFavoritesStats.thirdDown.wins++;
-                  } else {
-                    team.filterAtsStats.thirdDown.losses++;
-                    team.filterAtsFavoritesStats.thirdDown.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.thirdDown.wins++;
-                    team.filterAtsUnderdogStats.thirdDown.wins++;
-                  } else {
-                    team.filterAtsStats.thirdDown.losses++;
-                    team.filterAtsUnderdogStats.thirdDown.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart4': {
-        this.thirdDownPanelColor = 'green';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.thirdDownConvPctGiven > this.thirdDownQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.thirdDown.wins++;
-                } else {
-                  team.filterStats.thirdDown.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.thirdDown.wins++;
-                    team.filterAtsFavoritesStats.thirdDown.wins++;
-                  } else {
-                    team.filterAtsStats.thirdDown.losses++;
-                    team.filterAtsFavoritesStats.thirdDown.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.thirdDown.wins++;
-                    team.filterAtsUnderdogStats.thirdDown.wins++;
-                  } else {
-                    team.filterAtsStats.thirdDown.losses++;
-                    team.filterAtsUnderdogStats.thirdDown.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-    }
-  }
+
   thirdDownChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -4905,158 +5973,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           })
           break;
         }
-      }
-    }
-  }
-  redzoneChangeNcaaf(event: any, teamName: string) {
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      if (team.teamName === teamName) {
-        team.filterStats.redzone.wins = 0;
-        team.filterStats.redzone.losses = 0;
-        team.filterAtsStats.redzone.wins = 0;
-        team.filterAtsStats.redzone.losses = 0;
-        team.filterAtsFavoritesStats.redzone.wins = 0;
-        team.filterAtsFavoritesStats.redzone.losses = 0;
-        team.filterAtsUnderdogStats.redzone.wins = 0;
-        team.filterAtsUnderdogStats.redzone.losses = 0;
-      }
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.redzonePanelColor = 'crimson';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.redzoneScoringPctGiven < this.redzoneQuartileNcaaf[0]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.redzone.wins++;
-                } else {
-                  team.filterStats.redzone.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.redzone.wins++;
-                    team.filterAtsFavoritesStats.redzone.wins++;
-                  } else {
-                    team.filterAtsStats.redzone.losses++;
-                    team.filterAtsFavoritesStats.redzone.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.redzone.wins++;
-                    team.filterAtsUnderdogStats.redzone.wins++;
-                  } else {
-                    team.filterAtsStats.redzone.losses++;
-                    team.filterAtsUnderdogStats.redzone.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart2': {
-        this.redzonePanelColor = 'orange';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if ((game.redzoneScoringPctGiven >= this.redzoneQuartileNcaaf[0]) && (game.redzoneScoringPctGiven <= this.redzoneQuartileNcaaf[1])) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.redzone.wins++;
-                } else {
-                  team.filterStats.redzone.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.redzone.wins++;
-                    team.filterAtsFavoritesStats.redzone.wins++;
-                  } else {
-                    team.filterAtsStats.redzone.losses++;
-                    team.filterAtsFavoritesStats.redzone.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.redzone.wins++;
-                    team.filterAtsUnderdogStats.redzone.wins++;
-                  } else {
-                    team.filterAtsStats.redzone.losses++;
-                    team.filterAtsUnderdogStats.redzone.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart3': {
-        this.redzonePanelColor = 'blueviolet';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.redzoneScoringPctGiven > this.redzoneQuartileNcaaf[1] && game.redzoneScoringPctGiven <= this.redzoneQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.redzone.wins++;
-                } else {
-                  team.filterStats.redzone.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.redzone.wins++;
-                    team.filterAtsFavoritesStats.redzone.wins++;
-                  } else {
-                    team.filterAtsStats.redzone.losses++;
-                    team.filterAtsFavoritesStats.redzone.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.redzone.wins++;
-                    team.filterAtsUnderdogStats.redzone.wins++;
-                  } else {
-                    team.filterAtsStats.redzone.losses++;
-                    team.filterAtsUnderdogStats.redzone.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart4': {
-        this.redzonePanelColor = 'green';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.redzoneScoringPctGiven > this.redzoneQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.redzone.wins++;
-                } else {
-                  team.filterStats.redzone.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.redzone.wins++;
-                    team.filterAtsFavoritesStats.redzone.wins++;
-                  } else {
-                    team.filterAtsStats.redzone.losses++;
-                    team.filterAtsFavoritesStats.redzone.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.redzone.wins++;
-                    team.filterAtsUnderdogStats.redzone.wins++;
-                  } else {
-                    team.filterAtsStats.redzone.losses++;
-                    team.filterAtsUnderdogStats.redzone.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
       }
     }
   }
@@ -5215,158 +6131,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
-  pointsChangeNcaaf(event: any, teamName: string) {
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      if (team.teamName === teamName) {
-        team.filterStats.points.wins = 0;
-        team.filterStats.points.losses = 0;
-        team.filterAtsStats.points.wins = 0;
-        team.filterAtsStats.points.losses = 0;
-        team.filterAtsFavoritesStats.points.wins = 0;
-        team.filterAtsFavoritesStats.points.losses = 0;
-        team.filterAtsUnderdogStats.points.wins = 0;
-        team.filterAtsUnderdogStats.points.losses = 0;
-      }
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.pointsPanelColor = 'crimson';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.pointsGiven < this.pointsQuartileNcaaf[0]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.points.wins++;
-                } else {
-                  team.filterStats.points.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.points.wins++;
-                    team.filterAtsFavoritesStats.points.wins++;
-                  } else {
-                    team.filterAtsStats.points.losses++;
-                    team.filterAtsFavoritesStats.points.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.points.wins++;
-                    team.filterAtsUnderdogStats.points.wins++;
-                  } else {
-                    team.filterAtsStats.points.losses++;
-                    team.filterAtsUnderdogStats.points.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart2': {
-        this.pointsPanelColor = 'orange';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if ((game.pointsGiven >= this.pointsQuartileNcaaf[0]) && (game.pointsGiven <= this.pointsQuartileNcaaf[1])) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.points.wins++;
-                } else {
-                  team.filterStats.points.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.points.wins++;
-                    team.filterAtsFavoritesStats.points.wins++;
-                  } else {
-                    team.filterAtsStats.points.losses++;
-                    team.filterAtsFavoritesStats.points.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.points.wins++;
-                    team.filterAtsUnderdogStats.points.wins++;
-                  } else {
-                    team.filterAtsStats.points.losses++;
-                    team.filterAtsUnderdogStats.points.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart3': {
-        this.pointsPanelColor = 'blueviolet';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.pointsGiven > this.pointsQuartileNcaaf[1] && game.pointsGiven <= this.pointsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.points.wins++;
-                } else {
-                  team.filterStats.points.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.points.wins++;
-                    team.filterAtsFavoritesStats.points.wins++;
-                  } else {
-                    team.filterAtsStats.points.losses++;
-                    team.filterAtsFavoritesStats.points.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.points.wins++;
-                    team.filterAtsUnderdogStats.points.wins++;
-                  } else {
-                    team.filterAtsStats.points.losses++;
-                    team.filterAtsUnderdogStats.points.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart4': {
-        this.pointsPanelColor = 'green';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.pointsGiven > this.pointsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.points.wins++;
-                } else {
-                  team.filterStats.points.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.points.wins++;
-                    team.filterAtsFavoritesStats.points.wins++;
-                  } else {
-                    team.filterAtsStats.points.losses++;
-                    team.filterAtsFavoritesStats.points.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.points.wins++;
-                    team.filterAtsUnderdogStats.points.wins++;
-                  } else {
-                    team.filterAtsStats.points.losses++;
-                    team.filterAtsUnderdogStats.points.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-    }
-  }
+
   pointsChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -5387,30 +6152,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.pointsGiven < this.pointsQuartile[0]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.points.wins++;
-                  } else {
-                    team.filterStats.points.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.points.wins++;
-                      team.filterAtsFavoritesStats.points.wins++;
-                    } else {
-                      team.filterAtsStats.points.losses++;
-                      team.filterAtsFavoritesStats.points.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.pointsGiven < this.pointsQuartile[0]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) - (team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses))) > 0.67) {
+                          team.filterStats.points.winsArr.push(true);
+                        }
+                        if ((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) > 0.79) {
+                          team.filterStats.points.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses) > 0.67) {
+                          team.filterStats.points.winsArr3.push(true);
+                        }
+                        team.filterStats.points.wins++;
+                      } else {
+                        if ((((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) - (team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses))) > 0.67) {
+                          team.filterStats.points.winsArr.push(false);
+                        }
+                        if ((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) > 0.79) {
+                          team.filterStats.points.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses) > 0.67) {
+                          team.filterStats.points.winsArr3.push(false);
+                        }
+                        team.filterStats.points.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) - (team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.points.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.points.wins++;
+                          team.filterAtsFavoritesStats.points.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) - (team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.points.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.points.losses++;
+                          team.filterAtsFavoritesStats.points.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) - (team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.points.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.points.wins++;
+                          team.filterAtsUnderdogStats.points.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) - (team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.points.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.points.losses++;
+                          team.filterAtsUnderdogStats.points.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.points.wins++;
-                      team.filterAtsUnderdogStats.points.wins++;
-                    } else {
-                      team.filterAtsStats.points.losses++;
-                      team.filterAtsUnderdogStats.points.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -5421,30 +6280,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if ((game.pointsGiven >= this.pointsQuartile[0]) && (game.pointsGiven <= this.pointsQuartile[1])) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.points.wins++;
-                  } else {
-                    team.filterStats.points.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.points.wins++;
-                      team.filterAtsFavoritesStats.points.wins++;
-                    } else {
-                      team.filterAtsStats.points.losses++;
-                      team.filterAtsFavoritesStats.points.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if ((game.pointsGiven >= this.pointsQuartile[0]) && (game.pointsGiven <= this.pointsQuartile[1])) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) - (team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses))) > 0.67) {
+                          team.filterStats.points.winsArr.push(true);
+                        }
+                        if ((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) > 0.79) {
+                          team.filterStats.points.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses) > 0.67) {
+                          team.filterStats.points.winsArr3.push(true);
+                        }
+                        team.filterStats.points.wins++;
+                      } else {
+                        if ((((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) - (team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses))) > 0.67) {
+                          team.filterStats.points.winsArr.push(false);
+                        }
+                        if ((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) > 0.79) {
+                          team.filterStats.points.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses) > 0.67) {
+                          team.filterStats.points.winsArr3.push(false);
+                        }
+                        team.filterStats.points.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) - (team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.points.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.points.wins++;
+                          team.filterAtsFavoritesStats.points.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) - (team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.points.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.points.losses++;
+                          team.filterAtsFavoritesStats.points.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) - (team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.points.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.points.wins++;
+                          team.filterAtsUnderdogStats.points.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) - (team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.points.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.points.losses++;
+                          team.filterAtsUnderdogStats.points.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.points.wins++;
-                      team.filterAtsUnderdogStats.points.wins++;
-                    } else {
-                      team.filterAtsStats.points.losses++;
-                      team.filterAtsUnderdogStats.points.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -5455,30 +6408,125 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.pointsGiven > this.pointsQuartile[1] && game.pointsGiven <= this.pointsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.points.wins++;
-                  } else {
-                    team.filterStats.points.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.points.wins++;
-                      team.filterAtsFavoritesStats.points.wins++;
-                    } else {
-                      team.filterAtsStats.points.losses++;
-                      team.filterAtsFavoritesStats.points.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.pointsGiven > this.pointsQuartile[1] && game.pointsGiven <= this.pointsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) - (team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses))) > 0.67) {
+                          team.filterStats.points.winsArr.push(true);
+                        }
+                        if ((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) > 0.79) {
+                          team.filterStats.points.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses) > 0.67) {
+                          team.filterStats.points.winsArr3.push(true);
+                        }
+                        team.filterStats.points.wins++;
+                      } else {
+                        if ((((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) - (team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses))) > 0.67) {
+                          team.filterStats.points.winsArr.push(false);
+                        }
+                        if ((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) > 0.79) {
+                          team.filterStats.points.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses) > 0.67) {
+                          team.filterStats.points.winsArr3.push(false);
+                        }
+                        team.filterStats.points.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) - (team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.points.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.points.wins++;
+                          team.filterAtsFavoritesStats.points.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) - (team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.points.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.points.losses++;
+                          team.filterAtsFavoritesStats.points.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) - (team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.points.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.points.wins++;
+                          team.filterAtsUnderdogStats.points.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) - (team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.points.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.points.losses++;
+                          team.filterAtsUnderdogStats.points.losses++;
+                          team.filterAtsUnderdogStats.points.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.points.wins++;
-                      team.filterAtsUnderdogStats.points.wins++;
-                    } else {
-                      team.filterAtsStats.points.losses++;
-                      team.filterAtsUnderdogStats.points.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -5489,30 +6537,124 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
           this.httpService.allTeams.forEach(team => {
             if (team.teamName === teamName) {
               team.games.forEach(game => {
-                if (game.pointsGiven > this.pointsQuartile[2]) {
-                  if (game.points > game.pointsGiven) {
-                    team.filterStats.points.wins++;
-                  } else {
-                    team.filterStats.points.losses++;
-                  }
-                  if (game.isFavorite) {
-                    if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.points.wins++;
-                      team.filterAtsFavoritesStats.points.wins++;
-                    } else {
-                      team.filterAtsStats.points.losses++;
-                      team.filterAtsFavoritesStats.points.losses++;
+                this.httpService.allTeams.forEach(team2 => {
+                  if (team2.teamId === game.opponentId) {
+                    if (game.pointsGiven > this.pointsQuartile[2]) {
+                      if (game.points > game.pointsGiven) {
+                        if ((((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) - (team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses))) > 0.67) {
+                          team.filterStats.points.winsArr.push(true);
+                        }
+                        if ((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) > 0.79) {
+                          team.filterStats.points.winsArr2.push(true);
+                        }
+                        if ((team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses) > 0.67) {
+                          team.filterStats.points.winsArr3.push(true);
+                        }
+                        team.filterStats.points.wins++;
+                      } else {
+                        if ((((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) - (team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses))) > 0.67) {
+                          team.filterStats.points.winsArr.push(false);
+                        }
+                        if ((team.filterStats.points.wins) / (team.filterStats.points.wins + team.filterStats.points.losses) > 0.79) {
+                          team.filterStats.points.winsArr2.push(false);
+                        }
+                        if ((team2.filterStats.points.wins) / (team2.filterStats.points.wins + team2.filterStats.points.losses) > 0.67) {
+                          team.filterStats.points.winsArr3.push(false);
+                        }
+                        team.filterStats.points.losses++;
+                      }
+                      if (game.isFavorite) {
+                        if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) - (team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.points.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.points.wins++;
+                          team.filterAtsFavoritesStats.points.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) - (team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses))) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsFavoritesStats.points.wins) / (team.filterAtsFavoritesStats.points.wins + team.filterAtsFavoritesStats.points.losses) > 0.79) {
+                            team.filterAtsFavoritesStats.points.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsFavoritesStats.points.wins) / (team2.filterAtsFavoritesStats.points.wins + team2.filterAtsFavoritesStats.points.losses) > 0.67) {
+                            team.filterAtsFavoritesStats.points.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.points.losses++;
+                          team.filterAtsFavoritesStats.points.losses++;
+                        }
+                      } else {
+                        if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(true);
+                          }
+                          if ((((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) - (team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr.push(true);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(true);
+                          }
+                          if ((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.points.winsArr2.push(true);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(true);
+                          }
+                          if ((team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr3.push(true);
+                          }
+                          team.filterAtsStats.points.wins++;
+                          team.filterAtsUnderdogStats.points.wins++;
+                        } else {
+                          if ((((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) - (team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses))) > 0.67) {
+                            team.filterAtsStats.points.winsArr.push(false);
+                          }
+                          if ((((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) - (team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses))) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr.push(false);
+                          }
+                          if ((team.filterAtsStats.points.wins) / (team.filterAtsStats.points.wins + team.filterAtsStats.points.losses) > 0.79) {
+                            team.filterAtsStats.points.winsArr2.push(false);
+                          }
+                          if ((team.filterAtsUnderdogStats.points.wins) / (team.filterAtsUnderdogStats.points.wins + team.filterAtsUnderdogStats.points.losses) > 0.79) {
+                            team.filterAtsUnderdogStats.points.winsArr2.push(false);
+                          }
+                          if ((team2.filterAtsStats.points.wins) / (team2.filterAtsStats.points.wins + team2.filterAtsStats.points.losses) > 0.67) {
+                            team.filterAtsStats.points.winsArr3.push(false);
+                          }
+                          if ((team2.filterAtsUnderdogStats.points.wins) / (team2.filterAtsUnderdogStats.points.wins + team2.filterAtsUnderdogStats.points.losses) > 0.67) {
+                            team.filterAtsUnderdogStats.points.winsArr3.push(false);
+                          }
+                          team.filterAtsStats.points.losses++;
+                          team.filterAtsUnderdogStats.points.losses++;
+                        }
+                      }
                     }
-                  } else {
-                    if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                      team.filterAtsStats.points.wins++;
-                      team.filterAtsUnderdogStats.points.wins++;
-                    } else {
-                      team.filterAtsStats.points.losses++;
-                      team.filterAtsUnderdogStats.points.losses++;
-                    }
                   }
-                }
+                })
               })
             }
           })
@@ -7600,6 +8742,17 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.runQuartiles();
     setTimeout(() => this.isActiveTab = 1, 2500);
   }
+
+  crunchNumbers2014() {
+    this.httpService.getNextOpponentInfo('2014');
+    this.httpService.crunchTotals();
+    this.httpService.calculateWinLossRecord();
+    this.httpService.setOpponentStats();
+    this.httpService.setupGivenData();
+    this.runQuartiles();
+    setTimeout(() => this.isActiveTab = 1, 2500);
+  }
+
   crunchNumbersNcaaf() {
     this.httpService.getNextOpponentInfoNcaaf();
     this.httpService.crunchTotalsNcaaf();
@@ -7632,14 +8785,325 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.currentDownloadCounter++;
     this.currentDownloadCounterPostMsg = ' ...Currently Downloading...';
     this.dateService.setLastYearWeek(lastYearWeek);
+    this.dateService.setLastYearWeekNext(lastYearWeek + 1);
+    this.dateService.currentLastYearWeekNum = lastYearWeek;
     this.httpService.executeDataHydrationLastYear(lastYearWeek);
+  }
+
+  returnByeBgColor(row: Team) {
+    if (row.currentWeekWinLoss === 'BYE') {
+      return 'bye-bg';
+    }
+  }
+
+  calculateStats() {
+    this.httpService.allTeams = INITIALIZE_TEAMS(this.httpService.allTeams);
+    this.downloadLastYear(18);
+  }
+
+  calculateStats2() {
+    this.crunchNumbers2014();
+  }
+
+  automate() {
+    let tmpVal = 0.3;
+    for (
+      this.localMlDiffVal = 0.3, this.localMlHighVal = 0.7, this.localMlOppLowVal = 0.3, this.localAtsDiffVal = 0.3, this.localAtsHighVal = 0.7, this.localAtsOppLowVal = 0.3, this.localFavDiffVal = 0.3, this.localFavHighVal = 0.7, this.localFavOppLowVal = 0.3, this.localUnderDiffVal = 0.3, this.localUnderHighVal = 0.7, this.localUnderOppLowVal = 0.3;
+      this.localMlDiffVal < 0.9; this.localMlDiffVal = tmpVal
+      ) {
+        console.log(this.localMlDiffVal);
+      this.processStats();
+      tmpVal += 0.1;
+      if (this.localMlHighVal < 1) {
+        this.localMlHighVal += 0.05;
+      }
+      if (this.localMlOppLowVal > 0) {
+        this.localMlOppLowVal -= 0.05;
+      }
+      if (this.localAtsDiffVal < 0.9) {
+        this.localAtsDiffVal += 0.05;
+      }
+      if (this.localAtsHighVal < 1) {
+        this.localAtsHighVal += 0.05;
+      }
+      if (this.localAtsOppLowVal > 0) {
+        this.localAtsOppLowVal -= 0.05;
+      }
+      if (this.localFavDiffVal < 0.9) {
+        this.localFavDiffVal += 0.05;
+      }
+      if (this.localFavHighVal < 1) {
+        this.localFavHighVal += 0.05;
+      }
+      if (this.localFavOppLowVal > 0) {
+        this.localFavOppLowVal -= 0.05;
+      }
+      if (this.localUnderDiffVal < 0.9) {
+        this.localUnderDiffVal += 0.05;
+      }
+      if (this.localUnderHighVal < 1) {
+        this.localUnderHighVal += 0.05;
+      }
+      if (this.localUnderOppLowVal > 0) {
+        this.localMlDiffVal -= 0.05;
+      }
+    }
+    this.localMlDiffVal = this.bestMlDiffVal;
+    this.localMlHighVal = this.bestMlHighVal;
+    this.localMlOppLowVal = this.bestMlOppLowVal;
+    this.localAtsDiffVal = this.bestAtsDiffVal;
+    this.localAtsHighVal = this.bestAtsHighVal;
+    this.localAtsOppLowVal = this.bestAtsOppLowVal;
+    this.localFavDiffVal = this.bestFavDiffVal;
+    this.localFavHighVal = this.bestFavHighVal;
+    this.localFavOppLowVal = this.bestFavOppLowVal;
+    this.localUnderDiffVal = this.bestUnderDiffVal;
+    this.localUnderHighVal = this.bestUnderHighVal;
+    this.localUnderOppLowVal = this.bestUnderOppLowVal;
+    this.processStats();
+  }
+
+  processStats() {
+    this.aggregateStats = {
+      mlDiffWins: 0,
+      mlDiffLosses: 0,
+      mlHighWins: 0,
+      mlHighLosses: 0,
+      mlOppLowWins: 0,
+      mlOppLowLosses: 0,
+      atsDiffWins: 0,
+      atsDiffLosses: 0,
+      atsHighWins: 0,
+      atsHighLosses: 0,
+      atsOppLowWins: 0,
+      atsOppLowLosses: 0,
+      favDiffWins: 0,
+      favDiffLosses: 0,
+      favHighWins: 0,
+      favHighLosses: 0,
+      favOppLowWins: 0,
+      favOppLowLosses: 0,
+      underDiffWins: 0,
+      underDiffLosses: 0,
+      underHighWins: 0,
+      underHighLosses: 0,
+      underOppLowWins: 0,
+      underOppLowLosses: 0,
+    };
+    this.httpService.allTeams.forEach(team => {
+      for (let statCounter = 0; statCounter < team.games.length; statCounter++) {
+        this.httpService.allTeams.forEach(team2 => {
+          if (team2.teamName === team.nextOpponent) {
+            // ML
+            if (((this.calculateTotalWinsPercDiff(team) / (this.calculateTotalWinsPercDiff(team) + this.calculateTotalLossesPercDiff(team))) - ((this.calculateTotalWinsPercDiff(team2)) / (this.calculateTotalWinsPercDiff(team2) + this.calculateTotalLossesPercDiff(team2)))) > this.localMlDiffVal) {
+              if (team.games[statCounter].points - team.games[statCounter].pointsGiven > 0) {
+                this.aggregateStats.mlDiffWins++;
+              } else {
+                this.aggregateStats.mlDiffLosses++;
+              }
+            }
+            if (((this.calculateTotalWinsOver80(team) / (this.calculateTotalWinsOver80(team) + this.calculateTotalLossesOver80(team)))) > this.localMlHighVal) {
+              if (team.games[statCounter].points - team.games[statCounter].pointsGiven > 0) {
+                this.aggregateStats.mlHighWins++;
+              } else {
+                this.aggregateStats.mlHighLosses++;
+              }
+            }
+            if ((this.calculateTotalWinsOppUnder20(team)) / (this.calculateTotalWinsOppUnder20(team) + this.calculateTotalLossesOppUnder20(team)) < this.localMlOppLowVal) {
+              if (team.games[statCounter].points - team.games[statCounter].pointsGiven > 0) {
+                this.aggregateStats.mlOppLowWins++;
+              } else {
+                this.aggregateStats.mlOppLowLosses++;
+              }
+            }
+
+            // ATS
+            if (((this.calculateTotalAtsPercDiff(team) / (this.calculateTotalAtsPercDiff(team) + this.calculateTotalAtsLossesPercDiff(team))) - ((this.calculateTotalAtsPercDiff(team2)) / (this.calculateTotalAtsPercDiff(team2) + this.calculateTotalAtsLossesPercDiff(team2)))) > this.localAtsDiffVal) {
+              if (team.games[statCounter].isFavorite) {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.atsDiffWins++;
+                } else {
+                  this.aggregateStats.atsDiffLosses++;
+                }
+              } else {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.atsDiffWins++;
+                } else {
+                  this.aggregateStats.atsDiffLosses++;
+                }
+              }
+            }
+            if (((this.calculateTotalAtsOver80(team) / (this.calculateTotalAtsOver80(team) + this.calculateTotalAtsLossesOver80(team)))) > this.localAtsHighVal) {
+              if (team.games[statCounter].isFavorite) {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.atsHighWins++;
+                } else {
+                  this.aggregateStats.atsHighLosses++;
+                }
+              } else {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.atsHighWins++;
+                } else {
+                  this.aggregateStats.atsHighLosses++;
+                }
+              }
+            }
+            if ((this.calculateTotalAtsOppUnder20(team)) / (this.calculateTotalAtsOppUnder20(team) + this.calculateTotalAtsLossesOppUnder20(team)) < this.localAtsOppLowVal) {
+              if (team.games[statCounter].isFavorite) {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.atsOppLowWins++;
+                } else {
+                  this.aggregateStats.atsOppLowLosses++;
+                }
+              } else {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.atsOppLowWins++;
+                } else {
+                  this.aggregateStats.atsOppLowLosses++;
+                }
+              }
+            }
+            // Fav
+            if (((this.calculateFavWinsPercDiff(team) / (this.calculateFavWinsPercDiff(team) + this.calculateFavLossesPercDiff(team))) - ((this.calculateFavWinsPercDiff(team2)) / (this.calculateFavWinsPercDiff(team2) + this.calculateFavLossesPercDiff(team2)))) > this.localFavDiffVal) {
+              if (team.games[statCounter].isFavorite) {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.favDiffWins++;
+                } else {
+                  this.aggregateStats.favDiffLosses++;
+                }
+              } else {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.favDiffWins++;
+                } else {
+                  this.aggregateStats.favDiffLosses++;
+                }
+              }
+            }
+            if (((this.calculateFavAtsOver80(team) / (this.calculateFavAtsOver80(team) + this.calculateFavAtsLossesOver80(team)))) > this.localFavHighVal) {
+              if (team.games[statCounter].isFavorite) {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.favHighWins++;
+                } else {
+                  this.aggregateStats.favHighLosses++;
+                }
+              } else {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.favHighWins++;
+                } else {
+                  this.aggregateStats.favHighLosses++;
+                }
+              }
+            }
+            if ((this.calculateFavAtsOppUnder20(team)) / (this.calculateFavAtsOppUnder20(team) + this.calculateFavAtsLossesOppUnder20(team)) < this.localFavOppLowVal) {
+              if (team.games[statCounter].isFavorite) {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.favOppLowWins++;
+                } else {
+                  this.aggregateStats.favOppLowLosses++;
+                }
+              } else {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.favOppLowWins++;
+                } else {
+                  this.aggregateStats.favOppLowLosses++;
+                }
+              }
+            }
+            // Under
+            if (((this.calculateUnderAtsPercDiff(team) / (this.calculateUnderAtsPercDiff(team) + this.calculateUnderAtsLossesPercDiff(team))) - ((this.calculateTotalAtsPercDiff(team2)) / (this.calculateTotalAtsPercDiff(team2) + this.calculateTotalAtsLossesPercDiff(team2)))) > this.localUnderDiffVal) {
+              if (team.games[statCounter].isFavorite) {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.underDiffWins++;
+                } else {
+                  this.aggregateStats.underDiffLosses++;
+                }
+              } else {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.underDiffWins++;
+                } else {
+                  this.aggregateStats.underDiffLosses++;
+                }
+              }
+            }
+            if (((this.calculateUnderAtsOver80(team) / (this.calculateUnderAtsOver80(team) + this.calculateUnderAtsLossesOver80(team)))) > this.localUnderHighVal) {
+              if (team.games[statCounter].isFavorite) {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.underHighWins++;
+                } else {
+                  this.aggregateStats.underHighLosses++;
+                }
+              } else {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.underHighWins++;
+                } else {
+                  this.aggregateStats.underHighLosses++;
+                }
+              }
+            }
+            if ((this.calculateUnderAtsOppUnder20(team)) / (this.calculateUnderAtsOppUnder20(team) + this.calculateUnderAtsLossesOppUnder20(team)) < this.localUnderOppLowVal) {
+              if (team.games[statCounter].isFavorite) {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.underOppLowWins++;
+                } else {
+                  this.aggregateStats.underOppLowLosses++;
+                }
+              } else {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                  this.aggregateStats.underOppLowWins++;
+                } else {
+                  this.aggregateStats.underOppLowLosses++;
+                }
+              }
+            }
+          }
+        })
+      }
+    })
+    if ((this.aggregateStats.mlDiffWins / (this.aggregateStats.mlDiffWins + this.aggregateStats.mlDiffLosses)) > this.bestMlDiffVal) {
+      this.bestMlDiffVal = this.localMlDiffVal;
+    }
+    if ((this.aggregateStats.mlHighWins / (this.aggregateStats.mlHighWins + this.aggregateStats.mlHighLosses)) > this.bestMlHighVal) {
+      this.bestMlHighVal = this.localMlHighVal;
+    }
+    if ((this.aggregateStats.mlOppLowWins / (this.aggregateStats.mlOppLowWins + this.aggregateStats.mlOppLowLosses)) > this.bestMlOppLowVal) {
+      this.bestMlOppLowVal = this.localMlOppLowVal;
+    }
+    if ((this.aggregateStats.atsDiffWins / (this.aggregateStats.atsDiffWins + this.aggregateStats.atsDiffLosses)) > this.bestAtsDiffVal) {
+      this.bestAtsDiffVal = this.localAtsDiffVal;
+    }
+    if ((this.aggregateStats.atsHighWins / (this.aggregateStats.atsHighWins + this.aggregateStats.atsHighLosses)) > this.bestAtsHighVal) {
+      this.bestAtsHighVal = this.localAtsHighVal;
+    }
+    if ((this.aggregateStats.atsOppLowWins / (this.aggregateStats.atsOppLowWins + this.aggregateStats.atsOppLowLosses)) > this.bestAtsOppLowVal) {
+      this.bestAtsOppLowVal = this.localAtsOppLowVal;
+    }
+    if ((this.aggregateStats.favDiffWins / (this.aggregateStats.favDiffWins + this.aggregateStats.favDiffLosses)) > this.bestFavDiffVal) {
+      this.bestFavDiffVal = this.localFavDiffVal;
+    }
+    if ((this.aggregateStats.favHighWins / (this.aggregateStats.favHighWins + this.aggregateStats.favHighLosses)) > this.bestFavHighVal) {
+      this.bestFavHighVal = this.localFavHighVal;
+    }
+    if ((this.aggregateStats.favOppLowWins / (this.aggregateStats.favOppLowWins + this.aggregateStats.favOppLowLosses)) > this.bestFavOppLowVal) {
+      this.bestFavOppLowVal = this.localFavOppLowVal;
+    }
+    if ((this.aggregateStats.underDiffWins / (this.aggregateStats.underDiffWins + this.aggregateStats.underDiffLosses)) > this.bestUnderDiffVal) {
+      this.bestUnderDiffVal = this.localUnderDiffVal;
+    }
+    if ((this.aggregateStats.underHighWins / (this.aggregateStats.underHighWins + this.aggregateStats.underHighLosses)) > this.bestUnderHighVal) {
+      this.bestUnderHighVal = this.localUnderHighVal;
+    }
+    if ((this.aggregateStats.underOppLowWins / (this.aggregateStats.underOppLowWins + this.aggregateStats.underOppLowLosses)) > this.bestUnderOppLowVal) {
+      this.bestUnderOppLowVal = this.localUnderOppLowVal;
+    }
   }
 
   returnWinLossColor(val: string) {
     if (val === 'Win') {
-      return 'win-bg'
+      return 'win-bg';
     } else if (val === 'Loss') {
-      return 'loss-bg'
+      return 'loss-bg';
+    } else {
+      return 'bye-bg';
     }
   }
 
@@ -8268,6 +9732,946 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     return tmpVal;
   }
 
+  calculateFavWinsPercDiff(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsFavoritesStats.passAttempts.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.passYards.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.passTds.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushAttempts.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushYards.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushTds.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.points.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateFavAtsOver80(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsFavoritesStats.passAttempts.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.passYards.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.passTds.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushAttempts.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushYards.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushTds.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.points.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateFavAtsOppUnder20(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsFavoritesStats.passAttempts.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.passYards.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.passTds.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushAttempts.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushYards.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushTds.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.points.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateFavLossesPercDiff(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsFavoritesStats.passAttempts.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.passYards.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.passTds.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushAttempts.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushYards.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushTds.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.points.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateFavAtsLossesOver80(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsFavoritesStats.passAttempts.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.passYards.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.passTds.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushAttempts.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushYards.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushTds.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.points.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateFavAtsLossesOppUnder20(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsFavoritesStats.passAttempts.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.passYards.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.passTds.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushAttempts.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushYards.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.rushTds.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsFavoritesStats.points.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateUnderAtsPercDiff(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsUnderdogStats.passAttempts.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.passYards.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.passTds.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushAttempts.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushYards.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushTds.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.points.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateUnderAtsOver80(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsUnderdogStats.passAttempts.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.passYards.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.passTds.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushAttempts.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushYards.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushTds.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.points.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateUnderAtsOppUnder20(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsUnderdogStats.passAttempts.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.passYards.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.passTds.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushAttempts.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushYards.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushTds.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.points.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateUnderAtsLossesPercDiff(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsUnderdogStats.passAttempts.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.passYards.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.passTds.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushAttempts.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushYards.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushTds.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.points.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateUnderAtsLossesOver80(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsUnderdogStats.passAttempts.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.passYards.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.passTds.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushAttempts.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushYards.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushTds.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.points.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateUnderAtsLossesOppUnder20(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsUnderdogStats.passAttempts.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.passYards.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.passTds.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushAttempts.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushYards.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.rushTds.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsUnderdogStats.points.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+
+  calculateTotalWinsPercDiff(row: Team) {
+    let tmpVal = 0;
+    row.filterStats.passAttempts.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.passYards.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.passTds.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushAttempts.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushYards.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushTds.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.points.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateTotalWinsOver80(row: Team) {
+    let tmpVal = 0;
+    row.filterStats.passAttempts.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.passYards.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.passTds.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushAttempts.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushYards.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushTds.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.points.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateTotalWinsOppUnder20(row: Team) {
+    let tmpVal = 0;
+    row.filterStats.passAttempts.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.passYards.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.passTds.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushAttempts.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushYards.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushTds.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.points.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateTotalAtsPercDiff(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsStats.passAttempts.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.passYards.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.passTds.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushAttempts.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushYards.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushTds.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.points.winsArr.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateTotalAtsOver80(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsStats.passAttempts.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.passYards.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.passTds.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushAttempts.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushYards.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushTds.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.points.winsArr2.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateTotalAtsOppUnder20(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsStats.passAttempts.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.passYards.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.passTds.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushAttempts.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushYards.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushTds.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.points.winsArr3.forEach(item => {
+      if (item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+
+
+  calculateTotalLossesPercDiff(row: Team) {
+    let tmpVal = 0;
+    row.filterStats.passAttempts.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.passYards.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.passTds.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushAttempts.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushYards.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushTds.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.points.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateTotalLossesOver80(row: Team) {
+    let tmpVal = 0;
+    row.filterStats.passAttempts.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.passYards.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.passTds.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushAttempts.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushYards.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushTds.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.points.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateTotalLossesOppUnder20(row: Team) {
+    let tmpVal = 0;
+    row.filterStats.passAttempts.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.passYards.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.passTds.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushAttempts.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushYards.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.rushTds.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterStats.points.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateTotalAtsLossesPercDiff(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsStats.passAttempts.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.passYards.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.passTds.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushAttempts.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushYards.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushTds.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.points.winsArr.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateTotalAtsLossesOver80(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsStats.passAttempts.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.passYards.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.passTds.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushAttempts.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushYards.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushTds.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.points.winsArr2.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+  calculateTotalAtsLossesOppUnder20(row: Team) {
+    let tmpVal = 0;
+    row.filterAtsStats.passAttempts.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.passYards.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.passTds.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushAttempts.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushYards.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.rushTds.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    row.filterAtsStats.points.winsArr3.forEach(item => {
+      if (!item) {
+        tmpVal++;
+      }
+    });
+    return tmpVal;
+  }
+
   calculateOppAverageWins(row: Team) {
     let tmpVal = 0;
     this.httpService.allTeams.forEach(team => {
@@ -8344,7 +10748,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     return tmpVal;
   }
-
+  returnNextOpponent(row: Team): Team {
+    this.httpService.allTeams.forEach(team => {
+      if (team.teamName === row.nextOpponent) {
+        return team;
+      }
+    });
+    return row;
+  }
   calculateAverageAtsLosses(row: Team) {
     let tmpVal = 0;
     tmpVal += row.filterAtsStats.passAttempts.losses;

@@ -1,4 +1,748 @@
 <mat-tab-group class="main-tab-group" [selectedIndex]="isActiveTab">
+
+
+  <mat-tab label="Set Up NFL">
+    <section>
+      <button mat-button (click)="calculateStats()">CALCULATE STATISTICS</button>
+      <button mat-button (click)="calculateStats2()">CALCULATE STATISTICS part 2</button>
+      <button mat-button (click)="processStats()">Process Stats</button>
+      <button mat-button (click)="automate()">Automate</button>
+      <br>
+      <br>
+      <div class="margin-left-5rem-top-1rem">
+        <b class="crimson">1. Click Button #1 and wait for the number of games to stop increasing.</b>
+      </div>
+      <div class="margin-left-5rem-top-1rem">
+        <b class="crimson">2. Once you have downloaded all the games, click Button #2.</b>
+      </div>
+      <div class="margin-left-5rem-top-1rem">
+        <b class="crimson">3. You can now access the other sections at the top of the page.</b>
+      </div>
+      <div class="lastYearWeek-wrapper">
+        <h4>Select 2014 Week</h4>
+        <mat-form-field appearance="fill">
+          <mat-label>Week #</mat-label>
+          <mat-select [formControl]="lastYearWeekControl" name="food">
+            <mat-option>None</mat-option>
+            <mat-option *ngFor="let lastYearWeek of lastYearWeeks" [value]="lastYearWeek">
+              {{lastYearWeek}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear(lastYearWeekControl.value)">1.0
+        Download as far as 2014: Week- {{lastYearWeekControl.value}}</button>
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear2()" [disabled]="true">1.5 Download
+        2025</button>
+      <div class="animate-wrapper">
+        <h3 class="animate-charcter">Number of Games Downloaded: {{currentDownloadCounter}}
+          <span><i>{{currentDownloadCounterPostMsg}}</i></span>
+        </h3>
+      </div>
+      <ng-container *ngIf="currentDownloadCounter < 90 && currentDownloadCounter !== 0">
+        <div class="cell" class="margin-left-5rem-top-1rem">
+          <div class="wrapper">
+            <div class="spinner spinner4"></div>
+          </div>
+        </div>
+      </ng-container>
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers2014()">2.5
+        Crunch(process) Data for 2014</button>
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers()" [disabled]="true">2.0
+        Crunch(process) Data</button>
+    </section>
+    <div>
+      <h1>Moneyline</h1>
+      <div>Teams that have a win/loss %differential of {{localMlDiffVal| number :
+        '0.2'}}% or more (best value: {{bestMlDiffVal}})</div>
+      <div>{{aggregateStats.mlDiffWins}} - {{aggregateStats.mlDiffLosses}} |
+        {{(aggregateStats.mlDiffWins/(aggregateStats.mlDiffWins + aggregateStats.mlDiffLosses))| number :
+        '0.2'}}
+      </div>
+      <div>Teams that have a win% of {{localMlHighVal| number :
+        '0.2'}}% or more (best value: {{bestMlHighVal}})</div>
+      <div>{{aggregateStats.mlHighWins}} - {{aggregateStats.mlHighLosses}} |
+        {{(aggregateStats.mlHighWins/(aggregateStats.mlHighWins + aggregateStats.mlHighLosses))| number :
+        '0.2'}}
+      </div>
+      <div>Teams whose opponents have a win% of {{localMlOppLowVal| number :
+        '0.2'}}% or less (best value: {{bestMlOppLowVal}}</div>
+      <div>{{aggregateStats.mlOppLowWins}} - {{aggregateStats.mlOppLowLosses}} |
+        {{(aggregateStats.mlOppLowWins/(aggregateStats.mlOppLowWins + aggregateStats.mlOppLowLosses))| number :
+        '0.2'}}</div>
+      <h1>ATS</h1>
+      <div>Teams that have a win/loss %differential of {{localAtsDiffVal| number :
+        '0.2'}}% or more (best value: {{bestAtsDiffVal}})</div>
+      <div>{{aggregateStats.atsDiffWins}} - {{aggregateStats.atsDiffLosses}} |
+        {{(aggregateStats.atsDiffWins/(aggregateStats.atsDiffWins + aggregateStats.atsDiffLosses))| number :
+        '0.2'}}
+      </div>
+      <div>Teams that have a win% of {{localAtsHighVal| number :
+        '0.2'}}% or more (best value: {{bestAtsHighVal}})</div>
+      <div>{{aggregateStats.atsHighWins}} - {{aggregateStats.atsHighLosses}} |
+        {{(aggregateStats.atsHighWins/(aggregateStats.atsHighWins + aggregateStats.atsHighLosses))| number :
+        '0.2'}}
+      </div>
+      <div>Teams whose opponents have a win% of {{localAtsOppLowVal| number :
+        '0.2'}}% or less (best value: {{bestAtsOppLowVal}})</div>
+      <div>{{aggregateStats.atsOppLowWins}} - {{aggregateStats.atsOppLowLosses}} |
+        {{(aggregateStats.atsOppLowWins/(aggregateStats.atsOppLowWins + aggregateStats.atsOppLowLosses))| number :
+        '0.2'}}</div>
+      <h1>Favorite</h1>
+      <div>Teams that have a win/loss %differential of {{localFavDiffVal| number :
+        '0.2'}}% or more (best value: {{bestFavDiffVal}})</div>
+      <div>{{aggregateStats.favDiffWins}} - {{aggregateStats.favDiffLosses}} |
+        {{(aggregateStats.favDiffWins/(aggregateStats.favDiffWins + aggregateStats.favDiffLosses))| number :
+        '0.2'}}
+      </div>
+      <div>Teams that have a win% of {{localFavHighVal| number :
+        '0.2'}}% or more (best value: {{bestFavHighVal}})</div>
+      <div>{{aggregateStats.favHighWins}} - {{aggregateStats.favHighLosses}} |
+        {{(aggregateStats.favHighWins/(aggregateStats.favHighWins + aggregateStats.favHighLosses))| number :
+        '0.2'}}
+      </div>
+      <div>Teams whose opponents have a win% of {{localFavOppLowVal| number :
+        '0.2'}}% or less (best value: {{bestFavOppLowVal}})</div>
+      <div>{{aggregateStats.favOppLowWins}} - {{aggregateStats.favOppLowLosses}} |
+        {{(aggregateStats.favOppLowWins/(aggregateStats.favOppLowWins + aggregateStats.favOppLowLosses))| number :
+        '0.2'}}</div>
+      <h1>Underdog</h1>
+      <div>Teams that have a win/loss %differential of {{localUnderDiffVal| number :
+        '0.2'}}% or more (best value: {{bestUnderDiffVal}})</div>
+      <div>{{aggregateStats.underDiffWins}} - {{aggregateStats.underDiffLosses}} |
+        {{(aggregateStats.underDiffWins/(aggregateStats.underDiffWins + aggregateStats.underDiffLosses))| number :
+        '0.2'}}
+      </div>
+      <div>Teams that have a win% of {{localUnderHighVal| number :
+        '0.2'}}% or more (best value: {{bestUnderHighVal}})</div>
+      <div>{{aggregateStats.underHighWins}} - {{aggregateStats.underHighLosses}} |
+        {{(aggregateStats.underHighWins/(aggregateStats.underHighWins + aggregateStats.underHighLosses))| number :
+        '0.2'}}
+      </div>
+      <div>Teams whose opponents have a win% of {{localUnderOppLowVal| number :
+        '0.2'}}% or less (best value: {{bestUnderOppLowVal}})</div>
+      <div>{{aggregateStats.underOppLowWins}} - {{aggregateStats.underOppLowLosses}} |
+        {{(aggregateStats.underOppLowWins/(aggregateStats.underOppLowWins + aggregateStats.underOppLowLosses))| number :
+        '0.2'}}</div>
+    </div>
+  </mat-tab>
+  <mat-tab label="Filter Tables">
+    <div class="top-wrapper">
+      <span>
+        <button mat-raised-button (click)="openKeyDialog('1000ms', '750ms')">View Color Key</button>
+      </span>
+    </div>
+    <div>
+      Current Date{{lastYearWeekControl.value}}
+    </div>
+    <form [formGroup]="basicStatsForm">
+      <span>
+        <mat-form-field appearance="outline" class="search-form-field">
+          <mat-label>Search Filter</mat-label>
+          <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="Ex. Arizona Cardinals...">
+          <mat-icon matSuffix>search</mat-icon>
+          <mat-hint>Search for team</mat-hint>
+        </mat-form-field>
+      </span>
+    </form>
+    <button mat-raised-button (click)="defaultFormControls()">See Magic</button>
+    <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortColumn3($event)" matSortDisableClear>
+      <ng-container matColumnDef="teamName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
+        <mat-cell *matCellDef="let row" [ngClass]="returnByeBgColor(row)">
+          <div>Game Date: {{row.nextGameDate| date: 'MM/dd/yyyy'}}</div>
+          <div>Net Spread: {{row.netSpread}}</div>
+          <span [ngClass]="returnCellColor(row.wins, 'score')">{{row.teamName}}</span>
+          <div [ngClass]="returnCellColor(row.wins, 'score')">Score: {{row.wins}}-{{row.losses}}
+          </div>
+          <div>Spread: {{returnGameSpread(row)}}</div>
+          <div [ngClass]="{'bold-font': row.isNextGameFavorite, 'italic-font': !row.isNextGameFavorite}">
+            {{returnIfFavorite(row.isNextGameFavorite)}}</div>
+          <div>Points For: {{row.currentWeekPoints}}</div>
+          <div>Points Against: {{row.currentWeekPointsAgainst}}</div>
+          <div [ngClass]="returnWinLossColor(row.currentWeekWinLoss)">Win or Loss:
+            {{row.currentWeekWinLoss}}</div>
+          <div [ngClass]="returnWinLossColor(row.currentWeekAts)">Against Spread:
+            {{row.currentWeekAts}}</div>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="sumValues">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <div>Overall Records</div>
+          <div> | {{returnSortStatusStr(currentSortState)}}</div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" [ngClass]="returnByeBgColor(row)">
+          <div [ngClass]="processSumColor(calculateAverageWins(row), calculateAverageLosses(row))">
+            Score: {{calculateAverageWins(row)}}-{{calculateAverageLosses(row)}} | %
+            {{(calculateAverageWins(row)/(calculateAverageWins(row) +
+            calculateAverageLosses(row)))| percent: '0.2'}}
+          </div>
+          <div [ngClass]="processSumColor(calculateAverageAtsWins(row), calculateAverageAtsLosses(row))">
+            ATS: {{calculateAverageAtsWins(row)}}-{{calculateAverageAtsLosses(row)}} | %
+            {{(calculateAverageAtsWins(row)/(calculateAverageAtsWins(row) +
+            calculateAverageAtsLosses(row)))| percent:
+            '0.2'}}</div>
+          <hr>
+          <div>Opponent</div>
+          <hr>
+          <div [ngClass]="processSumColor(calculateOppAverageWins(row), calculateOppAverageLosses(row))">
+            Score: {{calculateOppAverageWins(row)}}-{{calculateOppAverageLosses(row)}} | %
+            {{(calculateOppAverageWins(row)/(calculateOppAverageWins(row) +
+            calculateOppAverageLosses(row)))| percent:
+            '0.2'}}
+          </div>
+          <div [ngClass]="processSumColor(calculateOppAverageAtsWins(row), calculateOppAverageAtsLosses(row))">
+            ATS: {{calculateOppAverageAtsWins(row)}}-{{calculateOppAverageAtsLosses(row)}} | %
+            {{(calculateOppAverageAtsWins(row)/(calculateOppAverageAtsWins(row) +
+            calculateOppAverageAtsLosses(row)))|
+            percent:
+            '0.2'}}
+          </div>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="passAttempts">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <div>Pass Attempts</div>
+          <div class="header-row2">
+            <span class="crimson">0</span>
+            <span class="">&rlarr;</span>
+            <span class="orange">{{passAttemptsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="blueviolet">{{passAttemptsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="green">{{passAttemptsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" [ngClass]="returnByeBgColor(row)">
+          <div>
+            <div
+              [ngClass]="processMatCellColor(row.filterStats.passAttempts.wins, row.filterStats.passAttempts.losses)">
+              Score:
+              {{row.filterStats.passAttempts.wins}}-{{row.filterStats.passAttempts.losses}}
+            </div>
+            <div
+              [ngClass]="processMatCellColor(row.filterAtsStats.passAttempts.wins, row.filterAtsStats.passAttempts.losses)">
+              ATS:
+              {{row.filterAtsStats.passAttempts.wins}}-{{row.filterAtsStats.passAttempts.losses}}
+            </div>
+            <div *ngIf="row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.passAttempts.wins, row.filterAtsFavoritesStats.passAttempts.losses)">
+              FavATS:
+              {{row.filterAtsFavoritesStats.passAttempts.wins}}-{{row.filterAtsFavoritesStats.passAttempts.losses}}
+            </div>
+            <div *ngIf="!row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.passAttempts.wins, row.filterAtsUnderdogStats.passAttempts.losses)">
+              UnderATS:
+              {{row.filterAtsUnderdogStats.passAttempts.wins}}-{{row.filterAtsUnderdogStats.passAttempts.losses}}
+            </div>
+            <hr>
+            <div [ngClass]="checkPassAttempts(row.nextOpponent)">{{row.nextOpponent}}:
+              {{returnOpponentAvgPassAttempts(row.nextOpponent)| number
+              : '1.1-1'}}</div>
+            <div
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterStats.passAttempts.wins, returnNextOpponent(row).filterStats.passAttempts.losses)">
+              Score:
+              {{returnNextOpponent(row).filterStats.passAttempts.wins}}-{{returnNextOpponent(row).filterStats.passAttempts.losses}}
+            </div>
+            <div
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsStats.passAttempts.wins, returnNextOpponent(row).filterAtsStats.passAttempts.losses)">
+              ATS:
+              {{returnNextOpponent(row).filterAtsStats.passAttempts.wins}}-{{returnNextOpponent(row).filterAtsStats.passAttempts.losses}}
+            </div>
+            <div *ngIf="returnNextOpponent(row).isNextGameFavorite"
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsFavoritesStats.passAttempts.wins, returnNextOpponent(row).filterAtsFavoritesStats.passAttempts.losses)">
+              FavATS:
+              {{returnNextOpponent(row).filterAtsFavoritesStats.passAttempts.wins}}-{{returnNextOpponent(row).filterAtsFavoritesStats.passAttempts.losses}}
+            </div>
+            <div *ngIf="!returnNextOpponent(row).isNextGameFavorite"
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsUnderdogStats.passAttempts.wins, returnNextOpponent(row).filterAtsUnderdogStats.passAttempts.losses)">
+              UnderATS:
+              {{returnNextOpponent(row).filterAtsUnderdogStats.passAttempts.wins}}-{{returnNextOpponent(row).filterAtsUnderdogStats.passAttempts.losses}}
+            </div>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="passYards">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <div>Pass Yards</div>
+          <div class="header-row2">
+            <span class="crimson">0</span>
+            <span class="">&rlarr;</span>
+            <span class="orange">{{passYardsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="blueviolet">{{passYardsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="green">{{passYardsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" [ngClass]="returnByeBgColor(row)">
+          <div>
+            <div [ngClass]="processMatCellColor(row.filterStats.passYards.wins, row.filterStats.passYards.losses)">
+              Score: {{row.filterStats.passYards.wins}}-{{row.filterStats.passYards.losses}}
+            </div>
+            <div
+              [ngClass]="processMatCellColor(row.filterAtsStats.passYards.wins, row.filterAtsStats.passYards.losses)">
+              ATS: {{row.filterAtsStats.passYards.wins}}-{{row.filterAtsStats.passYards.losses}}
+            </div>
+
+            <div *ngIf="row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.passYards.wins, row.filterAtsFavoritesStats.passYards.losses)">
+              FavATS:
+              {{row.filterAtsFavoritesStats.passYards.wins}}-{{row.filterAtsFavoritesStats.passYards.losses}}
+            </div>
+            <div *ngIf="!row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.passYards.wins, row.filterAtsUnderdogStats.passYards.losses)">
+              UnderATS:
+              {{row.filterAtsUnderdogStats.passYards.wins}}-{{row.filterAtsUnderdogStats.passYards.losses}}
+            </div>
+            <hr>
+            <div [ngClass]="checkPassYards(row.nextOpponent)">{{row.nextOpponent}}:
+              {{returnOpponentAvgPassYards(row.nextOpponent)| number
+              : '1.1-1'}}</div>
+            <div
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterStats.passYards.wins, returnNextOpponent(row).filterStats.passYards.losses)">
+              Score:
+              {{returnNextOpponent(row).filterStats.passYards.wins}}-{{returnNextOpponent(row).filterStats.passYards.losses}}
+            </div>
+            <div
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsStats.passYards.wins, returnNextOpponent(row).filterAtsStats.passYards.losses)">
+              ATS:
+              {{returnNextOpponent(row).filterAtsStats.passYards.wins}}-{{returnNextOpponent(row).filterAtsStats.passYards.losses}}
+            </div>
+            <div *ngIf="returnNextOpponent(row).isNextGameFavorite"
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsFavoritesStats.passYards.wins, returnNextOpponent(row).filterAtsFavoritesStats.passYards.losses)">
+              FavATS:
+              {{returnNextOpponent(row).filterAtsFavoritesStats.passYards.wins}}-{{returnNextOpponent(row).filterAtsFavoritesStats.passYards.losses}}
+            </div>
+            <div *ngIf="!returnNextOpponent(row).isNextGameFavorite"
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsUnderdogStats.passYards.wins, returnNextOpponent(row).filterAtsUnderdogStats.passYards.losses)">
+              UnderATS:
+              {{returnNextOpponent(row).filterAtsUnderdogStats.passYards.wins}}-{{returnNextOpponent(row).filterAtsUnderdogStats.passYards.losses}}
+            </div>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="passTds">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <div>Pass Tds</div>
+          <div class="header-row2">
+            <span class="crimson">0</span>
+            <span class="">&rlarr;</span>
+            <span class="orange">{{passTdsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="blueviolet">{{passTdsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="green">{{passTdsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" [ngClass]="returnByeBgColor(row)">
+          <div>
+            <div [ngClass]="processMatCellColor(row.filterStats.passTds.wins, row.filterStats.passTds.losses)">
+              Score: {{row.filterStats.passTds.wins}}-{{row.filterStats.passTds.losses}}</div>
+
+            <div [ngClass]="processMatCellColor(row.filterAtsStats.passTds.wins, row.filterAtsStats.passTds.losses)">
+              ATS: {{row.filterAtsStats.passTds.wins}}-{{row.filterAtsStats.passTds.losses}}
+            </div>
+
+            <div *ngIf="row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.passTds.wins, row.filterAtsFavoritesStats.passTds.losses)">
+              FavATS:
+              {{row.filterAtsFavoritesStats.passTds.wins}}-{{row.filterAtsFavoritesStats.passTds.losses}}
+            </div>
+            <div *ngIf="!row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.passTds.wins, row.filterStats.passTds.losses)">
+              UnderATS:
+              {{row.filterAtsUnderdogStats.passTds.wins}}-{{row.filterAtsUnderdogStats.passTds.losses}}
+            </div>
+            <hr>
+            <div [ngClass]="checkPassTds(row.nextOpponent)">{{row.nextOpponent}}:
+              {{returnOpponentAvgPassTds(row.nextOpponent)| number :
+              '1.1-1'}}</div>
+          </div>
+          <div
+            [ngClass]="processMatCellColor(returnNextOpponent(row).filterStats.passTds.wins, returnNextOpponent(row).filterStats.passTds.losses)">
+            Score:
+            {{returnNextOpponent(row).filterStats.passTds.wins}}-{{returnNextOpponent(row).filterStats.passTds.losses}}
+          </div>
+          <div
+            [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsStats.passTds.wins, returnNextOpponent(row).filterAtsStats.passTds.losses)">
+            ATS:
+            {{returnNextOpponent(row).filterAtsStats.passTds.wins}}-{{returnNextOpponent(row).filterAtsStats.passTds.losses}}
+          </div>
+          <div *ngIf="returnNextOpponent(row).isNextGameFavorite"
+            [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsFavoritesStats.passTds.wins, returnNextOpponent(row).filterAtsFavoritesStats.passTds.losses)">
+            FavATS:
+            {{returnNextOpponent(row).filterAtsFavoritesStats.passTds.wins}}-{{returnNextOpponent(row).filterAtsFavoritesStats.passTds.losses}}
+          </div>
+          <div *ngIf="!returnNextOpponent(row).isNextGameFavorite"
+            [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsUnderdogStats.passTds.wins, returnNextOpponent(row).filterStats.passTds.losses)">
+            UnderATS:
+            {{returnNextOpponent(row).filterAtsUnderdogStats.passTds.wins}}-{{returnNextOpponent(row).filterAtsUnderdogStats.passTds.losses}}
+          </div>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="rushAttempts">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <div>Rush Attempts</div>
+          <div class="header-row2">
+            <span class="crimson">0</span>
+            <span class="">&rlarr;</span>
+            <span class="orange">{{rushAttemptsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="blueviolet">{{rushAttemptsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="green">{{rushAttemptsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" [ngClass]="returnByeBgColor(row)">
+          <div>
+            <div
+              [ngClass]="processMatCellColor(row.filterStats.rushAttempts.wins, row.filterStats.rushAttempts.losses)">
+              Score:
+              {{row.filterStats.rushAttempts.wins}}-{{row.filterStats.rushAttempts.losses}}
+            </div>
+            <div
+              [ngClass]="processMatCellColor(row.filterAtsStats.rushAttempts.wins, row.filterAtsStats.rushAttempts.losses)">
+              ATS:
+              {{row.filterAtsStats.rushAttempts.wins}}-{{row.filterAtsStats.rushAttempts.losses}}
+            </div>
+
+            <div *ngIf="row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.rushAttempts.wins, row.filterAtsFavoritesStats.rushAttempts.losses)">
+              FavATS:
+              {{row.filterAtsFavoritesStats.rushAttempts.wins}}-{{row.filterAtsFavoritesStats.rushAttempts.losses}}
+            </div>
+            <div *ngIf="!row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.rushAttempts.wins, row.filterAtsUnderdogStats.rushAttempts.losses)">
+              UnderATS:
+              {{row.filterAtsUnderdogStats.rushAttempts.wins}}-{{row.filterAtsUnderdogStats.rushAttempts.losses}}
+            </div>
+            <hr>
+            <div [ngClass]="checkRushAttempts(row.nextOpponent)">{{row.nextOpponent}}:
+              {{returnOpponentAvgRushAttempts(row.nextOpponent)|
+              number : '1.1-1'}}</div>
+            <div
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterStats.rushAttempts.wins, returnNextOpponent(row).filterStats.rushAttempts.losses)">
+              Score:
+              {{returnNextOpponent(row).filterStats.rushAttempts.wins}}-{{returnNextOpponent(row).filterStats.rushAttempts.losses}}
+            </div>
+            <div
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsStats.rushAttempts.wins, returnNextOpponent(row).filterAtsStats.rushAttempts.losses)">
+              ATS:
+              {{returnNextOpponent(row).filterAtsStats.rushAttempts.wins}}-{{returnNextOpponent(row).filterAtsStats.rushAttempts.losses}}
+            </div>
+
+            <div *ngIf="returnNextOpponent(row).isNextGameFavorite"
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsFavoritesStats.rushAttempts.wins, returnNextOpponent(row).filterAtsFavoritesStats.rushAttempts.losses)">
+              FavATS:
+              {{returnNextOpponent(row).filterAtsFavoritesStats.rushAttempts.wins}}-{{returnNextOpponent(row).filterAtsFavoritesStats.rushAttempts.losses}}
+            </div>
+            <div *ngIf="!returnNextOpponent(row).isNextGameFavorite"
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsUnderdogStats.rushAttempts.wins, returnNextOpponent(row).filterAtsUnderdogStats.rushAttempts.losses)">
+              UnderATS:
+              {{returnNextOpponent(row).filterAtsUnderdogStats.rushAttempts.wins}}-{{returnNextOpponent(row).filterAtsUnderdogStats.rushAttempts.losses}}
+            </div>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="rushYards">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <div>Rush Yards</div>
+          <div class="header-row2">
+            <span class="crimson">0</span>
+            <span class="">&rlarr;</span>
+            <span class="orange">{{rushYardsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="blueviolet">{{rushYardsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="green">{{rushYardsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" [ngClass]="returnByeBgColor(row)">
+          <div>
+            <div [ngClass]="processMatCellColor(row.filterStats.rushYards.wins, row.filterStats.rushYards.losses)">
+              Score: {{row.filterStats.rushYards.wins}}-{{row.filterStats.rushYards.losses}}
+            </div>
+            <div
+              [ngClass]="processMatCellColor(row.filterAtsStats.rushYards.wins, row.filterAtsStats.rushYards.losses)">
+              ATS: {{row.filterAtsStats.rushYards.wins}}-{{row.filterAtsStats.rushYards.losses}}
+            </div>
+            <div *ngIf="row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.rushYards.wins, row.filterAtsFavoritesStats.rushYards.losses)">
+              FavATS:
+              {{row.filterAtsFavoritesStats.rushYards.wins}}-{{row.filterAtsFavoritesStats.rushYards.losses}}
+            </div>
+            <div *ngIf="!row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.rushYards.wins, row.filterAtsUnderdogStats.rushYards.losses)">
+              UnderATS:
+              {{row.filterAtsUnderdogStats.rushYards.wins}}-{{row.filterAtsUnderdogStats.rushYards.losses}}
+            </div>
+            <hr>
+            <div [ngClass]="checkRushYards(row.nextOpponent)">{{row.nextOpponent}}:
+              {{returnOpponentAvgRushYards(row.nextOpponent)| number
+              : '1.1-1'}}</div>
+            <div
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterStats.rushYards.wins, returnNextOpponent(row).filterStats.rushYards.losses)">
+              Score:
+              {{returnNextOpponent(row).filterStats.rushYards.wins}}-{{returnNextOpponent(row).filterStats.rushYards.losses}}
+            </div>
+            <div
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsStats.rushYards.wins, returnNextOpponent(row).filterAtsStats.rushYards.losses)">
+              ATS:
+              {{returnNextOpponent(row).filterAtsStats.rushYards.wins}}-{{returnNextOpponent(row).filterAtsStats.rushYards.losses}}
+            </div>
+            <div *ngIf="returnNextOpponent(row).isNextGameFavorite"
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsFavoritesStats.rushYards.wins, returnNextOpponent(row).filterAtsFavoritesStats.rushYards.losses)">
+              FavATS:
+              {{returnNextOpponent(row).filterAtsFavoritesStats.rushYards.wins}}-{{returnNextOpponent(row).filterAtsFavoritesStats.rushYards.losses}}
+            </div>
+            <div *ngIf="!returnNextOpponent(row).isNextGameFavorite"
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsUnderdogStats.rushYards.wins, returnNextOpponent(row).filterAtsUnderdogStats.rushYards.losses)">
+              UnderATS:
+              {{returnNextOpponent(row).filterAtsUnderdogStats.rushYards.wins}}-{{returnNextOpponent(row).filterAtsUnderdogStats.rushYards.losses}}
+            </div>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="rushTds">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <div>Rush Tds</div>
+          <div class="header-row2">
+            <span class="crimson">0</span>
+            <span class="">&rlarr;</span>
+            <span class="orange">{{rushTdsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="blueviolet">{{rushTdsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="green">{{rushTdsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" [ngClass]="returnByeBgColor(row)">
+          <div>
+            <div [ngClass]="processMatCellColor(row.filterStats.rushTds.wins, row.filterStats.rushTds.losses)">
+              Score: {{row.filterStats.rushTds.wins}}-{{row.filterStats.rushTds.losses}}</div>
+            <div [ngClass]="processMatCellColor(row.filterAtsStats.rushTds.wins, row.filterAtsStats.rushTds.losses)">
+              ATS: {{row.filterAtsStats.rushTds.wins}}-{{row.filterAtsStats.rushTds.losses}}
+            </div>
+            <div *ngIf="row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.rushTds.wins, row.filterAtsFavoritesStats.rushTds.losses)">
+              FavATS:
+              {{row.filterAtsFavoritesStats.rushTds.wins}}-{{row.filterAtsFavoritesStats.rushTds.losses}}
+            </div>
+            <div *ngIf="!row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.rushTds.wins, row.filterAtsUnderdogStats.rushTds.losses)">
+              UnderATS:
+              {{row.filterAtsUnderdogStats.rushTds.wins}}-{{row.filterAtsUnderdogStats.rushTds.losses}}
+            </div>
+            <hr>
+            <div [ngClass]="checkRushTds(row.nextOpponent)">{{row.nextOpponent}}:
+              {{returnOpponentAvgRushTds(row.nextOpponent)| number :
+              '1.1-1'}}</div>
+            <div
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterStats.rushTds.wins, returnNextOpponent(row).filterStats.rushTds.losses)">
+              Score:
+              {{returnNextOpponent(row).filterStats.rushTds.wins}}-{{returnNextOpponent(row).filterStats.rushTds.losses}}
+            </div>
+            <div
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsStats.rushTds.wins, returnNextOpponent(row).filterAtsStats.rushTds.losses)">
+              ATS:
+              {{returnNextOpponent(row).filterAtsStats.rushTds.wins}}-{{returnNextOpponent(row).filterAtsStats.rushTds.losses}}
+            </div>
+            <div *ngIf="returnNextOpponent(row).isNextGameFavorite"
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsFavoritesStats.rushTds.wins, returnNextOpponent(row).filterAtsFavoritesStats.rushTds.losses)">
+              FavATS:
+              {{returnNextOpponent(row).filterAtsFavoritesStats.rushTds.wins}}-{{returnNextOpponent(row).filterAtsFavoritesStats.rushTds.losses}}
+            </div>
+            <div *ngIf="!returnNextOpponent(row).isNextGameFavorite"
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsUnderdogStats.rushTds.wins, returnNextOpponent(row).filterAtsUnderdogStats.rushTds.losses)">
+              UnderATS:
+              {{returnNextOpponent(row).filterAtsUnderdogStats.rushTds.wins}}-{{returnNextOpponent(row).filterAtsUnderdogStats.rushTds.losses}}
+            </div>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="points">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <div>Points</div>
+          <div class="header-row2">
+            <span class="crimson">0</span>
+            <span class="crimson">&rlarr;</span>
+            <span class="orange">{{pointsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="orange">&rlarr;</span>
+            <span class="blueviolet">{{pointsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="blueviolet">&rlarr;</span>
+            <span class="green">{{pointsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" [ngClass]="returnByeBgColor(row)">
+          <div>
+            <div [ngClass]="processMatCellColor(row.filterStats.points.wins, row.filterStats.points.losses)">
+              Score: {{row.filterStats.points.wins}}-{{row.filterStats.points.losses}}</div>
+            <div [ngClass]="processMatCellColor(row.filterAtsStats.points.wins, row.filterAtsStats.points.losses)">
+              ATS: {{row.filterAtsStats.points.wins}}-{{row.filterAtsStats.points.losses}}</div>
+            <div *ngIf="row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.points.wins, row.filterAtsFavoritesStats.points.losses)">
+              FavATS:
+              {{row.filterAtsFavoritesStats.points.wins}}-{{row.filterAtsFavoritesStats.points.losses}}
+            </div>
+            <div *ngIf="!row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.points.wins, row.filterAtsUnderdogStats.points.losses)">
+              UnderATS:
+              {{row.filterAtsUnderdogStats.points.wins}}-{{row.filterAtsUnderdogStats.points.losses}}
+            </div>
+            <hr>
+            <div [ngClass]="checkPoints(row.nextOpponent)">{{row.nextOpponent}}:
+              {{returnOpponentAvgPoints(row.nextOpponent)| number :
+              '1.1-1'}}</div>
+            <div
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterStats.points.wins, returnNextOpponent(row).filterStats.points.losses)">
+              Score:
+              {{returnNextOpponent(row).filterStats.points.wins}}-{{returnNextOpponent(row).filterStats.points.losses}}
+            </div>
+            <div
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsStats.points.wins, returnNextOpponent(row).filterAtsStats.points.losses)">
+              ATS:
+              {{returnNextOpponent(row).filterAtsStats.points.wins}}-{{returnNextOpponent(row).filterAtsStats.points.losses}}
+            </div>
+            <div *ngIf="returnNextOpponent(row).isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.points.wins, returnNextOpponent(row).filterAtsFavoritesStats.points.losses)">
+              FavATS:
+              {{returnNextOpponent(row).filterAtsFavoritesStats.points.wins}}-{{returnNextOpponent(row).filterAtsFavoritesStats.points.losses}}
+            </div>
+            <div *ngIf="!returnNextOpponent(row).isNextGameFavorite"
+              [ngClass]="processMatCellColor(returnNextOpponent(row).filterAtsUnderdogStats.points.wins, returnNextOpponent(row).filterAtsUnderdogStats.points.losses)">
+              UnderATS:
+              {{returnNextOpponent(row).filterAtsUnderdogStats.points.wins}}-{{returnNextOpponent(row).filterAtsUnderdogStats.points.losses}}
+            </div>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns2"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns2;"
+        [ngClass]="{'green-bg': row.teamName === selectedTeam }">
+      </mat-row>
+    </mat-table>
+  </mat-tab>
+
+  <!-- <ng-container matColumnDef="firstDowns">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <div>First Downs</div>
+          <div class="header-row2">
+            <span class="crimson">0</span>
+            <span class="">&rlarr;</span>
+            <span class="orange">{{firstDownsQuartile[0]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="blueviolet">{{firstDownsQuartile[1]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="green">{{firstDownsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <div>
+            <div [ngClass]="processMatCellColor(row.filterStats.firstDowns.wins, row.filterStats.firstDowns.losses)">
+              Score: {{row.filterStats.firstDowns.wins}}-{{row.filterStats.firstDowns.losses}}</div>
+
+            <div
+              [ngClass]="processMatCellColor(row.filterAtsStats.firstDowns.wins, row.filterAtsStats.firstDowns.losses)">
+              ATS: {{row.filterAtsStats.firstDowns.wins}}-{{row.filterAtsStats.firstDowns.losses}}</div>
+
+            <div *ngIf="row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.firstDowns.wins, row.filterAtsFavoritesStats.firstDowns.losses)">
+              FavATS:
+              {{row.filterAtsFavoritesStats.firstDowns.wins}}-{{row.filterAtsFavoritesStats.firstDowns.losses}}
+            </div>
+            <div *ngIf="!row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.firstDowns.wins, row.filterAtsUnderdogStats.firstDowns.losses)">
+              UnderATS:
+              {{row.filterAtsUnderdogStats.firstDowns.wins}}-{{row.filterAtsUnderdogStats.firstDowns.losses}}
+            </div>
+
+            <div [ngClass]="checkFirstDowns(row.nextOpponent)">{{row.nextOpponent}}:
+              {{returnOpponentAvgFirstDowns(row.nextOpponent)|
+              number : '1.1-1'}}</div>
+            <div>STD: {{row.firstDownsStd| number :
+              '1.1-1'}}</div>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="thirdDown">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <div>Third Down %</div>
+          <div class="header-row2">
+            <span class="crimson">0</span>
+            <span class="">&rlarr;</span>
+            <span class="orange">{{thirdDownQuartile[0]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="blueviolet">{{thirdDownQuartile[1]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="green">{{thirdDownQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <div>
+            <div [ngClass]="processMatCellColor(row.filterStats.thirdDown.wins, row.filterStats.thirdDown.losses)">
+              Score: {{row.filterStats.thirdDown.wins}}-{{row.filterStats.thirdDown.losses}}</div>
+
+            <div
+              [ngClass]="processMatCellColor(row.filterAtsStats.thirdDown.wins, row.filterAtsStats.thirdDown.losses)">
+              ATS: {{row.filterAtsStats.thirdDown.wins}}-{{row.filterAtsStats.thirdDown.losses}}</div>
+
+            <div *ngIf="row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.thirdDown.wins, row.filterAtsFavoritesStats.thirdDown.losses)">
+              FavATS:
+              {{row.filterAtsFavoritesStats.thirdDown.wins}}-{{row.filterAtsFavoritesStats.thirdDown.losses}}
+            </div>
+            <div *ngIf="!row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.thirdDown.wins, row.filterAtsUnderdogStats.thirdDown.losses)">
+              UnderATS:
+              {{row.filterAtsUnderdogStats.thirdDown.wins}}-{{row.filterAtsUnderdogStats.thirdDown.losses}}</div>
+
+            <div [ngClass]="checkThirdDown(row.nextOpponent)">{{row.nextOpponent}}:
+              {{returnOpponentAvgThirdDowns(row.nextOpponent)|
+              number : '1.1-1'}}</div>
+            <div>STD: {{row.thirdDownStd| number :
+              '1.1-1'}}</div>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="redzone">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <div>Redzone Scoring %</div>
+          <div class="header-row2">
+            <span class="crimson">0</span>
+            <span class="">&rlarr;</span>
+            <span class="orange">{{redzoneQuartile[0]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="blueviolet">{{redzoneQuartile[1]| number : '1.1-1'}}</span>
+            <span class="">&rlarr;</span>
+            <span class="green">{{redzoneQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
+          </div>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <div>
+            <div [ngClass]="processMatCellColor(row.filterStats.redzone.wins, row.filterStats.redzone.losses)">
+              Score: {{row.filterStats.redzone.wins}}-{{row.filterStats.redzone.losses}}</div>
+
+            <div [ngClass]="processMatCellColor(row.filterAtsStats.redzone.wins, row.filterAtsStats.redzone.losses)">
+              ATS: {{row.filterAtsStats.redzone.wins}}-{{row.filterAtsStats.redzone.losses}}</div>
+
+            <div *ngIf="row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.redzone.wins, row.filterAtsFavoritesStats.redzone.losses)">
+              FavATS: {{row.filterAtsFavoritesStats.redzone.wins}}-{{row.filterAtsFavoritesStats.redzone.losses}}
+            </div>
+            <div *ngIf="!row.isNextGameFavorite"
+              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.redzone.wins, row.filterAtsUnderdogStats.redzone.losses)">
+              UnderATS: {{row.filterAtsUnderdogStats.redzone.wins}}-{{row.filterAtsUnderdogStats.redzone.losses}}
+            </div>
+
+            <div [ngClass]="checkRedzone(row.nextOpponent)">{{row.nextOpponent}}:
+              {{returnOpponentAvgRedzone(row.nextOpponent)| number :
+              '1.1-1'}}</div>
+            <div>STD: {{row.redzoneStd| number :
+              '1.1-1'}}</div>
+          </div>
+        </mat-cell>
+      </ng-container> -->
   <!-- <mat-tab label="Set Up NHL">
     <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadNhlLastYear()">1.0 Download as far as Last
       Year</button>
@@ -564,83 +1308,7 @@
       </mat-row>
     </mat-table>
   </mat-tab> -->
-
-  <mat-tab label="Set Up NFL">
-    <section>
-      <!-- <mat-form-field>
-        <mat-label>Select Week</mat-label>
-        <mat-select formControlName="weekCtrl" required (openedChange)="setWeek()">
-          <mat-option>--</mat-option>
-          <mat-option *ngFor="let week of weeks" [value]="week.value">
-            {{week.value}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field> -->
-      <div class="margin-left-5rem-top-1rem">
-        <b class="crimson">1. Click Button #1 and wait for the number of games to stop increasing.</b>
-      </div>
-      <div class="margin-left-5rem-top-1rem">
-        <b class="crimson">2. Once you have downloaded all the games, click Button #2.</b>
-      </div>
-      <div class="margin-left-5rem-top-1rem">
-        <b class="crimson">3. You can now access the other sections at the top of the page.</b>
-      </div>
-      <div class="lastYearWeek-wrapper">
-        <h4>Select 2014 Week</h4>
-        <mat-form-field appearance="fill">
-          <mat-label>Favorite Food</mat-label>
-          <mat-select [formControl]="lastYearWeekControl" name="food">
-            <mat-option>None</mat-option>
-            <mat-option *ngFor="let lastYearWeek of lastYearWeeks" [value]="lastYearWeek">
-              {{lastYearWeek}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear(lastYearWeekControl.value)">1.0 Download as far as 2014: Week- {{lastYearWeekControl.value}}</button>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear2()">1.5 Download 2025</button>
-      <div class="animate-wrapper">
-        <h3 class="animate-charcter">Number of Games Downloaded: {{currentDownloadCounter}}
-          <span><i>{{currentDownloadCounterPostMsg}}</i></span>
-        </h3>
-      </div>
-      <ng-container *ngIf="currentDownloadCounter < 90 && currentDownloadCounter !== 0">
-        <div class="cell" class="margin-left-5rem-top-1rem">
-          <div class="wrapper">
-            <div class="spinner spinner4"></div>
-          </div>
-        </div>
-      </ng-container>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers()">2.
-        Crunch(process) Data</button>
-    </section>
-  </mat-tab>
-  <mat-tab label="Filter Tables">
-    <div class="top-wrapper">
-      <span>
-        <button mat-raised-button (click)="openKeyDialog('1000ms', '750ms')">View Color Key</button>
-      </span>
-      <!-- <span class="animate-wrapper" *ngIf="selectedTeam === ''">
-            <h3 class="animate-charcter">Click SET Button to view Stats</h3>
-          </span>
-          <span class="animate-wrapper" *ngIf="selectedTeam !== ''">
-            <h3 class="animate-charcter">{{selectedTeam}} (Selected)</h3>
-          </span> -->
-    </div>
-    <div>
-      Current Date{{lastYearWeekControl.value}}
-    </div>
-    <form [formGroup]="basicStatsForm">
-      <span>
-        <mat-form-field appearance="outline" class="search-form-field">
-          <mat-label>Search Filter</mat-label>
-          <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="Ex. Arizona Cardinals...">
-          <mat-icon matSuffix>search</mat-icon>
-          <mat-hint>Search for team</mat-hint>
-        </mat-form-field>
-      </span>
-    </form>
-    <!--
+  <!--
           <mat-form-field [ngClass]="returnFilterColorPassAttempts()">
             <mat-label>Pass Attempts</mat-label>
             <mat-select formControlName="passAttemptsCtrl" name="Pass Attempts"
@@ -714,7 +1382,7 @@
               <mat-option value="quart4">75%+</mat-option>
             </mat-select>
           </mat-form-field> -->
-    <!-- <mat-form-field>
+  <!-- <mat-form-field>
             <mat-label>Sacks</mat-label>
             <mat-select formControlName="sacksCtrl" name="Sacks" (selectionChange)="sacksChange($event)">
               <mat-option value="">None</mat-option>
@@ -735,7 +1403,7 @@
               <mat-option value="quart4">75%+</mat-option>
             </mat-select>
           </mat-form-field> -->
-    <!-- <mat-form-field [ngClass]="returnFilterColorThirdDown()">
+  <!-- <mat-form-field [ngClass]="returnFilterColorThirdDown()">
             <mat-label>Third Down%</mat-label>
             <mat-select formControlName="thirdDownPctCtrl" name="Third Down%"
               (selectionChange)="thirdDownChange($event)" panelClass="select-panel-{{thirdDownPanelColor}}">
@@ -768,889 +1436,3 @@
             </mat-select>
           </mat-form-field>
         </form> -->
-    <button mat-raised-button (click)="defaultFormControls()">See Magic</button>
-    <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortColumn3($event)" matSortDisableClear>
-      <ng-container matColumnDef="teamName">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>Net Spread: {{row.netSpread}}</div>
-          <span [ngClass]="returnCellColor(row.wins, 'score')">{{row.teamName}}</span>
-          <div [ngClass]="returnCellColor(row.wins, 'score')">Score: {{row.wins}}-{{row.losses}}</div>
-          <div>Spread: {{returnGameSpread(row)}}</div>
-          <div [ngClass]="{'bold-font': row.isNextGameFavorite, 'italic-font': !row.isNextGameFavorite}">
-            {{returnIfFavorite(row.isNextGameFavorite)}}</div>
-            <div>Points For: {{row.currentWeekPoints}}</div>
-            <div>Points Against: {{row.currentWeekPointsAgainst}}</div>
-            <div [ngClass]="returnWinLossColor(row.currentWeekWinLoss)">Win or Loss: {{row.currentWeekWinLoss}}</div>
-            <div [ngClass]="returnWinLossColor(row.currentWeekAts)">Against Spread: {{row.currentWeekAts}}</div>
-          <!-- <div><button mat-raised-button (click)="defaultFormControls(row)">Set</button></div> -->
-        </mat-cell>
-      </ng-container>
-      <!-- <ng-container matColumnDef="nextOpponent">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Next Opponent </mat-header-cell>
-            <mat-cell *matCellDef="let row"> <span [ngClass]="returnCellColor(row.nextOpponentWins, 'nextOpponent')">
-                <div>{{row.nextOpponent}}</div>
-                <div>Score: {{row.nextOpponentWins}}-{{row.nextOpponentLosses}}</div>
-                <div style="color: black"><b>Spread: +-{{row.nextGameSpread}}</b></div>
-              </span></mat-cell>
-          </ng-container> -->
-      <ng-container matColumnDef="sumValues">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Overall Records</div>
-          <div> | {{returnSortStatusStr(currentSortState)}}</div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div [ngClass]="processSumColor(calculateAverageWins(row), calculateAverageLosses(row))">
-            Score: {{calculateAverageWins(row)}}-{{calculateAverageLosses(row)}} | %
-            {{(calculateAverageWins(row)/(calculateAverageWins(row) + calculateAverageLosses(row)))| percent: '0.2'}}
-          </div>
-          <div [ngClass]="processSumColor(calculateAverageAtsWins(row), calculateAverageAtsLosses(row))">
-            ATS: {{calculateAverageAtsWins(row)}}-{{calculateAverageAtsLosses(row)}} | %
-            {{(calculateAverageAtsWins(row)/(calculateAverageAtsWins(row) + calculateAverageAtsLosses(row)))| percent:
-            '0.2'}}</div>
-          <span>Opponent</span>
-          <div [ngClass]="processSumColor(calculateOppAverageWins(row), calculateOppAverageLosses(row))">
-            Score: {{calculateOppAverageWins(row)}}-{{calculateOppAverageLosses(row)}} | %
-            {{(calculateOppAverageWins(row)/(calculateOppAverageWins(row) + calculateOppAverageLosses(row)))| percent:
-            '0.2'}}
-          </div>
-          <div [ngClass]="processSumColor(calculateOppAverageAtsWins(row), calculateOppAverageAtsLosses(row))">
-            ATS: {{calculateOppAverageAtsWins(row)}}-{{calculateOppAverageAtsLosses(row)}} | %
-            {{(calculateOppAverageAtsWins(row)/(calculateOppAverageAtsWins(row) + calculateOppAverageAtsLosses(row)))|
-            percent:
-            '0.2'}}
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="passAttempts">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Pass Attempts</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{passAttemptsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{passAttemptsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{passAttemptsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div
-              [ngClass]="processMatCellColor(row.filterStats.passAttempts.wins, row.filterStats.passAttempts.losses)">
-              Score: {{row.filterStats.passAttempts.wins}}-{{row.filterStats.passAttempts.losses}}</div>
-
-            <div
-              [ngClass]="processMatCellColor(row.filterAtsStats.passAttempts.wins, row.filterAtsStats.passAttempts.losses)">
-              ATS: {{row.filterAtsStats.passAttempts.wins}}-{{row.filterAtsStats.passAttempts.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.passAttempts.wins, row.filterAtsFavoritesStats.passAttempts.losses)">
-              FavATS:
-              {{row.filterAtsFavoritesStats.passAttempts.wins}}-{{row.filterAtsFavoritesStats.passAttempts.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.passAttempts.wins, row.filterAtsUnderdogStats.passAttempts.losses)">
-              UnderATS:
-              {{row.filterAtsUnderdogStats.passAttempts.wins}}-{{row.filterAtsUnderdogStats.passAttempts.losses}}
-            </div>
-
-            <div [ngClass]="checkPassAttempts(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgPassAttempts(row.nextOpponent)| number
-              : '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="passYards">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Pass Yards</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{passYardsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{passYardsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{passYardsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.passYards.wins, row.filterStats.passYards.losses)">
-              Score: {{row.filterStats.passYards.wins}}-{{row.filterStats.passYards.losses}}</div>
-
-            <div
-              [ngClass]="processMatCellColor(row.filterAtsStats.passYards.wins, row.filterAtsStats.passYards.losses)">
-              ATS: {{row.filterAtsStats.passYards.wins}}-{{row.filterAtsStats.passYards.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.passYards.wins, row.filterAtsFavoritesStats.passYards.losses)">
-              FavATS:
-              {{row.filterAtsFavoritesStats.passYards.wins}}-{{row.filterAtsFavoritesStats.passYards.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.passYards.wins, row.filterAtsUnderdogStats.passYards.losses)">
-              UnderATS:
-              {{row.filterAtsUnderdogStats.passYards.wins}}-{{row.filterAtsUnderdogStats.passYards.losses}}</div>
-
-            <div [ngClass]="checkPassYards(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgPassYards(row.nextOpponent)| number
-              : '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="passTds">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Pass Tds</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{passTdsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{passTdsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{passTdsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.passTds.wins, row.filterStats.passTds.losses)">
-              Score: {{row.filterStats.passTds.wins}}-{{row.filterStats.passTds.losses}}</div>
-
-            <div [ngClass]="processMatCellColor(row.filterAtsStats.passTds.wins, row.filterAtsStats.passTds.losses)">
-              ATS: {{row.filterAtsStats.passTds.wins}}-{{row.filterAtsStats.passTds.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.passTds.wins, row.filterAtsFavoritesStats.passTds.losses)">
-              FavATS: {{row.filterAtsFavoritesStats.passTds.wins}}-{{row.filterAtsFavoritesStats.passTds.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.passTds.wins, row.filterStats.passTds.losses)">
-              UnderATS: {{row.filterAtsUnderdogStats.passTds.wins}}-{{row.filterAtsUnderdogStats.passTds.losses}}
-            </div>
-
-            <div [ngClass]="checkPassTds(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgPassTds(row.nextOpponent)| number :
-              '1.1-1'}}</div>
-          </div>
-
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="rushAttempts">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Rush Attempts</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{rushAttemptsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{rushAttemptsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{rushAttemptsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div
-              [ngClass]="processMatCellColor(row.filterStats.rushAttempts.wins, row.filterStats.rushAttempts.losses)">
-              Score: {{row.filterStats.rushAttempts.wins}}-{{row.filterStats.rushAttempts.losses}}</div>
-
-            <div
-              [ngClass]="processMatCellColor(row.filterAtsStats.rushAttempts.wins, row.filterAtsStats.rushAttempts.losses)">
-              ATS: {{row.filterAtsStats.rushAttempts.wins}}-{{row.filterAtsStats.rushAttempts.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.rushAttempts.wins, row.filterAtsFavoritesStats.rushAttempts.losses)">
-              FavATS:
-              {{row.filterAtsFavoritesStats.rushAttempts.wins}}-{{row.filterAtsFavoritesStats.rushAttempts.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.rushAttempts.wins, row.filterAtsUnderdogStats.rushAttempts.losses)">
-              UnderATS:
-              {{row.filterAtsUnderdogStats.rushAttempts.wins}}-{{row.filterAtsUnderdogStats.rushAttempts.losses}}
-            </div>
-
-            <div [ngClass]="checkRushAttempts(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgRushAttempts(row.nextOpponent)|
-              number : '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="rushYards">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Rush Yards</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{rushYardsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{rushYardsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{rushYardsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.rushYards.wins, row.filterStats.rushYards.losses)">
-              Score: {{row.filterStats.rushYards.wins}}-{{row.filterStats.rushYards.losses}}</div>
-
-            <div
-              [ngClass]="processMatCellColor(row.filterAtsStats.rushYards.wins, row.filterAtsStats.rushYards.losses)">
-              ATS: {{row.filterAtsStats.rushYards.wins}}-{{row.filterAtsStats.rushYards.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.rushYards.wins, row.filterAtsFavoritesStats.rushYards.losses)">
-              FavATS:
-              {{row.filterAtsFavoritesStats.rushYards.wins}}-{{row.filterAtsFavoritesStats.rushYards.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.rushYards.wins, row.filterAtsUnderdogStats.rushYards.losses)">
-              UnderATS:
-              {{row.filterAtsUnderdogStats.rushYards.wins}}-{{row.filterAtsUnderdogStats.rushYards.losses}}</div>
-
-            <div [ngClass]="checkRushYards(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgRushYards(row.nextOpponent)| number
-              : '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="rushTds">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Rush Tds</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{rushTdsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{rushTdsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{rushTdsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.rushTds.wins, row.filterStats.rushTds.losses)">
-              Score: {{row.filterStats.rushTds.wins}}-{{row.filterStats.rushTds.losses}}</div>
-
-            <div [ngClass]="processMatCellColor(row.filterAtsStats.rushTds.wins, row.filterAtsStats.rushTds.losses)">
-              ATS: {{row.filterAtsStats.rushTds.wins}}-{{row.filterAtsStats.rushTds.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.rushTds.wins, row.filterAtsFavoritesStats.rushTds.losses)">
-              FavATS: {{row.filterAtsFavoritesStats.rushTds.wins}}-{{row.filterAtsFavoritesStats.rushTds.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.rushTds.wins, row.filterAtsUnderdogStats.rushTds.losses)">
-              UnderATS: {{row.filterAtsUnderdogStats.rushTds.wins}}-{{row.filterAtsUnderdogStats.rushTds.losses}}
-            </div>
-
-            <div [ngClass]="checkRushTds(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgRushTds(row.nextOpponent)| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <!-- <ng-container matColumnDef="firstDowns">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>First Downs</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{firstDownsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{firstDownsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{firstDownsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.firstDowns.wins, row.filterStats.firstDowns.losses)">
-              Score: {{row.filterStats.firstDowns.wins}}-{{row.filterStats.firstDowns.losses}}</div>
-
-            <div
-              [ngClass]="processMatCellColor(row.filterAtsStats.firstDowns.wins, row.filterAtsStats.firstDowns.losses)">
-              ATS: {{row.filterAtsStats.firstDowns.wins}}-{{row.filterAtsStats.firstDowns.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.firstDowns.wins, row.filterAtsFavoritesStats.firstDowns.losses)">
-              FavATS:
-              {{row.filterAtsFavoritesStats.firstDowns.wins}}-{{row.filterAtsFavoritesStats.firstDowns.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.firstDowns.wins, row.filterAtsUnderdogStats.firstDowns.losses)">
-              UnderATS:
-              {{row.filterAtsUnderdogStats.firstDowns.wins}}-{{row.filterAtsUnderdogStats.firstDowns.losses}}
-            </div>
-
-            <div [ngClass]="checkFirstDowns(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgFirstDowns(row.nextOpponent)|
-              number : '1.1-1'}}</div>
-            <div>STD: {{row.firstDownsStd| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="thirdDown">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Third Down %</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{thirdDownQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{thirdDownQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{thirdDownQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.thirdDown.wins, row.filterStats.thirdDown.losses)">
-              Score: {{row.filterStats.thirdDown.wins}}-{{row.filterStats.thirdDown.losses}}</div>
-
-            <div
-              [ngClass]="processMatCellColor(row.filterAtsStats.thirdDown.wins, row.filterAtsStats.thirdDown.losses)">
-              ATS: {{row.filterAtsStats.thirdDown.wins}}-{{row.filterAtsStats.thirdDown.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.thirdDown.wins, row.filterAtsFavoritesStats.thirdDown.losses)">
-              FavATS:
-              {{row.filterAtsFavoritesStats.thirdDown.wins}}-{{row.filterAtsFavoritesStats.thirdDown.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.thirdDown.wins, row.filterAtsUnderdogStats.thirdDown.losses)">
-              UnderATS:
-              {{row.filterAtsUnderdogStats.thirdDown.wins}}-{{row.filterAtsUnderdogStats.thirdDown.losses}}</div>
-
-            <div [ngClass]="checkThirdDown(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgThirdDowns(row.nextOpponent)|
-              number : '1.1-1'}}</div>
-            <div>STD: {{row.thirdDownStd| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="redzone">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Redzone Scoring %</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{redzoneQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{redzoneQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{redzoneQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.redzone.wins, row.filterStats.redzone.losses)">
-              Score: {{row.filterStats.redzone.wins}}-{{row.filterStats.redzone.losses}}</div>
-
-            <div [ngClass]="processMatCellColor(row.filterAtsStats.redzone.wins, row.filterAtsStats.redzone.losses)">
-              ATS: {{row.filterAtsStats.redzone.wins}}-{{row.filterAtsStats.redzone.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.redzone.wins, row.filterAtsFavoritesStats.redzone.losses)">
-              FavATS: {{row.filterAtsFavoritesStats.redzone.wins}}-{{row.filterAtsFavoritesStats.redzone.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.redzone.wins, row.filterAtsUnderdogStats.redzone.losses)">
-              UnderATS: {{row.filterAtsUnderdogStats.redzone.wins}}-{{row.filterAtsUnderdogStats.redzone.losses}}
-            </div>
-
-            <div [ngClass]="checkRedzone(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgRedzone(row.nextOpponent)| number :
-              '1.1-1'}}</div>
-            <div>STD: {{row.redzoneStd| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container> -->
-      <ng-container matColumnDef="points">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Points</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="crimson">&rlarr;</span>
-            <span class="orange">{{pointsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="orange">&rlarr;</span>
-            <span class="blueviolet">{{pointsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="blueviolet">&rlarr;</span>
-            <span class="green">{{pointsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.points.wins, row.filterStats.points.losses)">
-              Score: {{row.filterStats.points.wins}}-{{row.filterStats.points.losses}}</div>
-
-            <div [ngClass]="processMatCellColor(row.filterAtsStats.points.wins, row.filterAtsStats.points.losses)">
-              ATS: {{row.filterAtsStats.points.wins}}-{{row.filterAtsStats.points.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.points.wins, row.filterAtsFavoritesStats.points.losses)">
-              FavATS: {{row.filterAtsFavoritesStats.points.wins}}-{{row.filterAtsFavoritesStats.points.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.points.wins, row.filterAtsUnderdogStats.points.losses)">
-              UnderATS: {{row.filterAtsUnderdogStats.points.wins}}-{{row.filterAtsUnderdogStats.points.losses}}
-            </div>
-
-            <div [ngClass]="checkPoints(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgPoints(row.nextOpponent)| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns2"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns2;"
-        [ngClass]="{'green-bg': row.teamName === selectedTeam }">
-      </mat-row>
-    </mat-table>
-  </mat-tab>
-  <!-- <mat-tab label="Set Up NCAAF">
-    <section>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadThisYearNCAAF()">1.5 Download
-        2024</button>
-      <div class="animate-wrapper">
-        <h3 class="animate-charcter">Number of Games Downloaded: {{currentDownloadCounter}}
-          <span><i>{{currentDownloadCounterPostMsg}}</i></span>
-        </h3>
-      </div>
-      <ng-container *ngIf="currentDownloadCounter < 90 && currentDownloadCounter !== 0">
-        <div class="cell" class="margin-left-5rem-top-1rem">
-          <div class="wrapper">
-            <div class="spinner spinner4"></div>
-          </div>
-        </div>
-      </ng-container>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbersNcaaf()">2.
-        Crunch(process) Data</button>
-    </section>
-  </mat-tab>
-  <mat-tab label="Filter Tables">
-    <button mat-raised-button (click)="defaultFormControlsNcaaf()">See Magic</button>
-    <mat-table [dataSource]="dataSourceNcaaf" matSort (matSortChange)="sortColumn3($event)" matSortDisableClear>
-      <ng-container matColumnDef="teamName">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>Net Spread: {{row.netSpread}}</div>
-          <span [ngClass]="returnCellColor(row.wins, 'score')">{{row.teamName}}</span>
-
-          <div [ngClass]="returnCellColor(row.wins, 'score')">Score: {{row.wins}}-{{row.losses}}</div>
-
-          <div>Spread: {{row.nextGameSpread}}</div>
-          <div [ngClass]="{'bold-font': row.isNextGameFavorite, 'italic-font': !row.isNextGameFavorite}">
-            {{returnIfFavorite(row.isNextGameFavorite)}}</div> -->
-  <!-- <div><button mat-raised-button (click)="defaultFormControls(row)">Set</button></div> -->
-  <!-- </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="passAttempts">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Pass Attempts</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{passAttemptsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{passAttemptsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{passAttemptsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div
-              [ngClass]="processMatCellColor(row.filterStats.passAttempts.wins, row.filterStats.passAttempts.losses)">
-              Score: {{row.filterStats.passAttempts.wins}}-{{row.filterStats.passAttempts.losses}}</div>
-
-            <div
-              [ngClass]="processMatCellColor(row.filterAtsStats.passAttempts.wins, row.filterAtsStats.passAttempts.losses)">
-              ATS: {{row.filterAtsStats.passAttempts.wins}}-{{row.filterAtsStats.passAttempts.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.passAttempts.wins, row.filterAtsFavoritesStats.passAttempts.losses)">
-              FavATS:
-              {{row.filterAtsFavoritesStats.passAttempts.wins}}-{{row.filterAtsFavoritesStats.passAttempts.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.passAttempts.wins, row.filterAtsUnderdogStats.passAttempts.losses)">
-              UnderATS:
-              {{row.filterAtsUnderdogStats.passAttempts.wins}}-{{row.filterAtsUnderdogStats.passAttempts.losses}}
-            </div>
-
-            <div [ngClass]="checkPassAttempts(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgPassAttempts(row.nextOpponent)| number
-              : '1.1-1'}}</div>
-            <div>STD: {{row.passAttemptsStd| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="passYards">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Pass Yards</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{passYardsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{passYardsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{passYardsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.passYards.wins, row.filterStats.passYards.losses)">
-              Score: {{row.filterStats.passYards.wins}}-{{row.filterStats.passYards.losses}}</div>
-
-            <div
-              [ngClass]="processMatCellColor(row.filterAtsStats.passYards.wins, row.filterAtsStats.passYards.losses)">
-              ATS: {{row.filterAtsStats.passYards.wins}}-{{row.filterAtsStats.passYards.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.passYards.wins, row.filterAtsFavoritesStats.passYards.losses)">
-              FavATS:
-              {{row.filterAtsFavoritesStats.passYards.wins}}-{{row.filterAtsFavoritesStats.passYards.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.passYards.wins, row.filterAtsUnderdogStats.passYards.losses)">
-              UnderATS:
-              {{row.filterAtsUnderdogStats.passYards.wins}}-{{row.filterAtsUnderdogStats.passYards.losses}}</div>
-
-            <div [ngClass]="checkPassYards(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgPassYards(row.nextOpponent)| number
-              : '1.1-1'}}</div>
-            <div>STD: {{row.passYardsStd| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="passTds">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Pass Tds</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{passTdsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{passTdsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{passTdsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.passTds.wins, row.filterStats.passTds.losses)">
-              Score: {{row.filterStats.passTds.wins}}-{{row.filterStats.passTds.losses}}</div>
-
-            <div [ngClass]="processMatCellColor(row.filterAtsStats.passTds.wins, row.filterAtsStats.passTds.losses)">
-              ATS: {{row.filterAtsStats.passTds.wins}}-{{row.filterAtsStats.passTds.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.passTds.wins, row.filterAtsFavoritesStats.passTds.losses)">
-              FavATS: {{row.filterAtsFavoritesStats.passTds.wins}}-{{row.filterAtsFavoritesStats.passTds.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.passTds.wins, row.filterStats.passTds.losses)">
-              UnderATS: {{row.filterAtsUnderdogStats.passTds.wins}}-{{row.filterAtsUnderdogStats.passTds.losses}}
-            </div>
-
-            <div [ngClass]="checkPassTds(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgPassTds(row.nextOpponent)| number :
-              '1.1-1'}}</div>
-            <div>STD: {{row.passTdsStd| number :
-              '1.1-1'}}</div>
-          </div>
-
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="rushAttempts">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Rush Attempts</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{rushAttemptsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{rushAttemptsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{rushAttemptsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div
-              [ngClass]="processMatCellColor(row.filterStats.rushAttempts.wins, row.filterStats.rushAttempts.losses)">
-              Score: {{row.filterStats.rushAttempts.wins}}-{{row.filterStats.rushAttempts.losses}}</div>
-
-            <div
-              [ngClass]="processMatCellColor(row.filterAtsStats.rushAttempts.wins, row.filterAtsStats.rushAttempts.losses)">
-              ATS: {{row.filterAtsStats.rushAttempts.wins}}-{{row.filterAtsStats.rushAttempts.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.rushAttempts.wins, row.filterAtsFavoritesStats.rushAttempts.losses)">
-              FavATS:
-              {{row.filterAtsFavoritesStats.rushAttempts.wins}}-{{row.filterAtsFavoritesStats.rushAttempts.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.rushAttempts.wins, row.filterAtsUnderdogStats.rushAttempts.losses)">
-              UnderATS:
-              {{row.filterAtsUnderdogStats.rushAttempts.wins}}-{{row.filterAtsUnderdogStats.rushAttempts.losses}}
-            </div>
-
-            <div [ngClass]="checkRushAttempts(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgRushAttempts(row.nextOpponent)|
-              number : '1.1-1'}}</div>
-            <div>STD: {{row.rushAttemptsStd| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="rushYards">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Rush Yards</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{rushYardsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{rushYardsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{rushYardsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.rushYards.wins, row.filterStats.rushYards.losses)">
-              Score: {{row.filterStats.rushYards.wins}}-{{row.filterStats.rushYards.losses}}</div>
-
-            <div
-              [ngClass]="processMatCellColor(row.filterAtsStats.rushYards.wins, row.filterAtsStats.rushYards.losses)">
-              ATS: {{row.filterAtsStats.rushYards.wins}}-{{row.filterAtsStats.rushYards.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.rushYards.wins, row.filterAtsFavoritesStats.rushYards.losses)">
-              FavATS:
-              {{row.filterAtsFavoritesStats.rushYards.wins}}-{{row.filterAtsFavoritesStats.rushYards.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.rushYards.wins, row.filterAtsUnderdogStats.rushYards.losses)">
-              UnderATS:
-              {{row.filterAtsUnderdogStats.rushYards.wins}}-{{row.filterAtsUnderdogStats.rushYards.losses}}</div>
-
-            <div [ngClass]="checkRushYards(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgRushYards(row.nextOpponent)| number
-              : '1.1-1'}}</div>
-            <div>STD: {{row.rushYardsStd| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="rushTds">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Rush Tds</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{rushTdsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{rushTdsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{rushTdsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.rushTds.wins, row.filterStats.rushTds.losses)">
-              Score: {{row.filterStats.rushTds.wins}}-{{row.filterStats.rushTds.losses}}</div>
-
-            <div [ngClass]="processMatCellColor(row.filterAtsStats.rushTds.wins, row.filterAtsStats.rushTds.losses)">
-              ATS: {{row.filterAtsStats.rushTds.wins}}-{{row.filterAtsStats.rushTds.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.rushTds.wins, row.filterAtsFavoritesStats.rushTds.losses)">
-              FavATS: {{row.filterAtsFavoritesStats.rushTds.wins}}-{{row.filterAtsFavoritesStats.rushTds.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.rushTds.wins, row.filterAtsUnderdogStats.rushTds.losses)">
-              UnderATS: {{row.filterAtsUnderdogStats.rushTds.wins}}-{{row.filterAtsUnderdogStats.rushTds.losses}}
-            </div>
-
-            <div [ngClass]="checkRushTds(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgRushTds(row.nextOpponent)| number :
-              '1.1-1'}}</div>
-            <div>STD: {{row.rushTdsStd| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="firstDowns">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>First Downs</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{firstDownsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{firstDownsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{firstDownsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.firstDowns.wins, row.filterStats.firstDowns.losses)">
-              Score: {{row.filterStats.firstDowns.wins}}-{{row.filterStats.firstDowns.losses}}</div>
-
-            <div
-              [ngClass]="processMatCellColor(row.filterAtsStats.firstDowns.wins, row.filterAtsStats.firstDowns.losses)">
-              ATS: {{row.filterAtsStats.firstDowns.wins}}-{{row.filterAtsStats.firstDowns.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.firstDowns.wins, row.filterAtsFavoritesStats.firstDowns.losses)">
-              FavATS:
-              {{row.filterAtsFavoritesStats.firstDowns.wins}}-{{row.filterAtsFavoritesStats.firstDowns.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.firstDowns.wins, row.filterAtsUnderdogStats.firstDowns.losses)">
-              UnderATS:
-              {{row.filterAtsUnderdogStats.firstDowns.wins}}-{{row.filterAtsUnderdogStats.firstDowns.losses}}
-            </div>
-
-            <div [ngClass]="checkFirstDowns(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgFirstDowns(row.nextOpponent)|
-              number : '1.1-1'}}</div>
-            <div>STD: {{row.firstDownsStd| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="thirdDown">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Third Down %</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{thirdDownQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{thirdDownQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{thirdDownQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.thirdDown.wins, row.filterStats.thirdDown.losses)">
-              Score: {{row.filterStats.thirdDown.wins}}-{{row.filterStats.thirdDown.losses}}</div>
-
-            <div
-              [ngClass]="processMatCellColor(row.filterAtsStats.thirdDown.wins, row.filterAtsStats.thirdDown.losses)">
-              ATS: {{row.filterAtsStats.thirdDown.wins}}-{{row.filterAtsStats.thirdDown.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.thirdDown.wins, row.filterAtsFavoritesStats.thirdDown.losses)">
-              FavATS:
-              {{row.filterAtsFavoritesStats.thirdDown.wins}}-{{row.filterAtsFavoritesStats.thirdDown.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.thirdDown.wins, row.filterAtsUnderdogStats.thirdDown.losses)">
-              UnderATS:
-              {{row.filterAtsUnderdogStats.thirdDown.wins}}-{{row.filterAtsUnderdogStats.thirdDown.losses}}</div>
-
-            <div [ngClass]="checkThirdDown(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgThirdDowns(row.nextOpponent)|
-              number : '1.1-1'}}</div>
-            <div>STD: {{row.thirdDownStd| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="redzone">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Redzone Scoring %</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="">&rlarr;</span>
-            <span class="orange">{{redzoneQuartile[0]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="blueviolet">{{redzoneQuartile[1]| number : '1.1-1'}}</span>
-            <span class="">&rlarr;</span>
-            <span class="green">{{redzoneQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.redzone.wins, row.filterStats.redzone.losses)">
-              Score: {{row.filterStats.redzone.wins}}-{{row.filterStats.redzone.losses}}</div>
-
-            <div [ngClass]="processMatCellColor(row.filterAtsStats.redzone.wins, row.filterAtsStats.redzone.losses)">
-              ATS: {{row.filterAtsStats.redzone.wins}}-{{row.filterAtsStats.redzone.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.redzone.wins, row.filterAtsFavoritesStats.redzone.losses)">
-              FavATS: {{row.filterAtsFavoritesStats.redzone.wins}}-{{row.filterAtsFavoritesStats.redzone.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.redzone.wins, row.filterAtsUnderdogStats.redzone.losses)">
-              UnderATS: {{row.filterAtsUnderdogStats.redzone.wins}}-{{row.filterAtsUnderdogStats.redzone.losses}}
-            </div>
-
-            <div [ngClass]="checkRedzone(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgRedzone(row.nextOpponent)| number :
-              '1.1-1'}}</div>
-            <div>STD: {{row.redzoneStd| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="points">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <div>Points</div>
-          <div class="header-row2">
-            <span class="crimson">0</span>
-            <span class="crimson">&rlarr;</span>
-            <span class="orange">{{pointsQuartile[0]| number : '1.1-1'}}</span>
-            <span class="orange">&rlarr;</span>
-            <span class="blueviolet">{{pointsQuartile[1]| number : '1.1-1'}}</span>
-            <span class="blueviolet">&rlarr;</span>
-            <span class="green">{{pointsQuartile[2]| number : '1.1-1'}}</span><span class="green">&plus;</span>
-          </div>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <div>
-            <div [ngClass]="processMatCellColor(row.filterStats.points.wins, row.filterStats.points.losses)">
-              Score: {{row.filterStats.points.wins}}-{{row.filterStats.points.losses}}</div>
-
-            <div [ngClass]="processMatCellColor(row.filterAtsStats.points.wins, row.filterAtsStats.points.losses)">
-              ATS: {{row.filterAtsStats.points.wins}}-{{row.filterAtsStats.points.losses}}</div>
-
-            <div *ngIf="row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsFavoritesStats.points.wins, row.filterAtsFavoritesStats.points.losses)">
-              FavATS: {{row.filterAtsFavoritesStats.points.wins}}-{{row.filterAtsFavoritesStats.points.losses}}
-            </div>
-            <div *ngIf="!row.isNextGameFavorite"
-              [ngClass]="processMatCellColor(row.filterAtsUnderdogStats.points.wins, row.filterAtsUnderdogStats.points.losses)">
-              UnderATS: {{row.filterAtsUnderdogStats.points.wins}}-{{row.filterAtsUnderdogStats.points.losses}}
-            </div>
-
-            <div [ngClass]="checkPoints(row.nextOpponent)">{{row.nextOpponent}}:
-              {{returnOpponentAvgPoints(row.nextOpponent)| number :
-              '1.1-1'}}</div>
-            <div>STD: {{row.pointsStd| number :
-              '1.1-1'}}</div>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns2"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns2;"
-        [ngClass]="{'green-bg': row.teamName === selectedTeam }">
-      </mat-row>
-    </mat-table>
-  </mat-tab> -->
-</mat-tab-group>

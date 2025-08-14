@@ -33,7 +33,39 @@ export interface FilterStats {
 
 export interface WinLoss {
   wins: number;
+  winsArr: boolean[];
+  winsArr2: boolean[];
+  winsArr3: boolean[];
+  winsArr4: boolean[];
+  winsArr5: boolean[];
   losses: number;
+}
+
+export interface AggregateStats {
+  mlDiffWins: number;
+  mlDiffLosses: number;
+  mlHighWins: number;
+  mlHighLosses: number;
+  mlOppLowWins: number;
+  mlOppLowLosses: number;
+  atsDiffWins: number;
+  atsDiffLosses: number;
+  atsHighWins: number;
+  atsHighLosses: number;
+  atsOppLowWins: number;
+  atsOppLowLosses: number;
+  favDiffWins: number,
+  favDiffLosses: number,
+  favHighWins: number,
+  favHighLosses: number,
+  favOppLowWins: number,
+  favOppLowLosses: number,
+  underDiffWins: number,
+  underDiffLosses: number,
+  underHighWins: number,
+  underHighLosses: number,
+  underOppLowWins: number,
+  underOppLowLosses: number,
 }
 
 
