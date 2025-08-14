@@ -8815,37 +8815,37 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       this.processStats();
       tmpVal += 0.1;
       if (this.localMlHighVal < 1) {
-        this.localMlHighVal += 0.05;
+        this.localMlHighVal += 0.1;
       }
-      if (this.localMlOppLowVal > 0) {
-        this.localMlOppLowVal -= 0.05;
+      if (this.localMlOppLowVal > 0.1) {
+        this.localMlOppLowVal -= 0.1;
       }
       if (this.localAtsDiffVal < 0.9) {
-        this.localAtsDiffVal += 0.05;
+        this.localAtsDiffVal += 0.1;
       }
       if (this.localAtsHighVal < 1) {
-        this.localAtsHighVal += 0.05;
+        this.localAtsHighVal += 0.1;
       }
-      if (this.localAtsOppLowVal > 0) {
-        this.localAtsOppLowVal -= 0.05;
+      if (this.localAtsOppLowVal > 0.1) {
+        this.localAtsOppLowVal -= 0.1;
       }
       if (this.localFavDiffVal < 0.9) {
-        this.localFavDiffVal += 0.05;
+        this.localFavDiffVal += 0.1;
       }
       if (this.localFavHighVal < 1) {
-        this.localFavHighVal += 0.05;
+        this.localFavHighVal += 0.1;
       }
-      if (this.localFavOppLowVal > 0) {
-        this.localFavOppLowVal -= 0.05;
+      if (this.localFavOppLowVal > 0.1) {
+        this.localFavOppLowVal -= 0.1;
       }
       if (this.localUnderDiffVal < 0.9) {
-        this.localUnderDiffVal += 0.05;
+        this.localUnderDiffVal += 0.1;
       }
       if (this.localUnderHighVal < 1) {
-        this.localUnderHighVal += 0.05;
+        this.localUnderHighVal += 0.1;
       }
-      if (this.localUnderOppLowVal > 0) {
-        this.localMlDiffVal -= 0.05;
+      if (this.localUnderOppLowVal > 0.1) {
+        this.localMlDiffVal -= 0.1;
       }
     }
     this.localMlDiffVal = this.bestMlDiffVal;
