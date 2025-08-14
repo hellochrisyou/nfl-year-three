@@ -3,12 +3,31 @@
 
   <mat-tab label="Set Up NFL">
     <section>
+      <div class="margin-left-5rem-top-1rem">
+        <b class="crimson">1. Click Calculate Statistics and wait for the number of games to stop increasing. (1076)</b>
+      </div>
+      <div class="margin-left-5rem-top-1rem">
+        <b class="crimson">2. Once you have downloaded all the games, click Calculate Statistics Part 2</b>
+      </div>
+      <div class="margin-left-5rem-top-1rem">
+        <b class="crimson">3. Click Filter Tables Tab in upper right</b>
+      </div>
+      <div class="margin-left-5rem-top-1rem">
+        <b class="crimson">4. Click See Magic Button</b>
+      </div>
+      <div class="margin-left-5rem-top-1rem">
+        <b class="crimson">5. Click "Set Up NFL" tab in upper left</b>
+      </div>
+      <div class="margin-left-5rem-top-1rem">
+        <b class="crimson">6. Click "Automate" button</b>
+      </div>
       <button mat-button (click)="calculateStats()">CALCULATE STATISTICS</button>
-      <button mat-button (click)="calculateStats2()">CALCULATE STATISTICS part 2</button>
+      <button mat-button (click)="calculateStats2()">CALCULATE STATISTICS Part 2</button>
       <button mat-button (click)="processStats()">Process Stats</button>
       <button mat-button (click)="automate()">Automate</button>
       <br>
       <br>
+      <hr>
       <div class="margin-left-5rem-top-1rem">
         <b class="crimson">1. Click Button #1 and wait for the number of games to stop increasing.</b>
       </div>
@@ -54,73 +73,73 @@
     <div>
       <h1>Moneyline</h1>
       <div>Teams that have a win/loss %differential of {{localMlDiffVal| number :
-        '0.2'}}% or more (best value: {{bestMlDiffVal}})</div>
+        '0.2'}}% or more (best value: {{bestMlDiffVal | number : '0.2'}})</div>
       <div>{{aggregateStats.mlDiffWins}} - {{aggregateStats.mlDiffLosses}} |
         {{(aggregateStats.mlDiffWins/(aggregateStats.mlDiffWins + aggregateStats.mlDiffLosses))| number :
         '0.2'}}
       </div>
       <div>Teams that have a win% of {{localMlHighVal| number :
-        '0.2'}}% or more (best value: {{bestMlHighVal}})</div>
+        '0.2'}}% or more (best value: {{bestMlHighVal | number : '0.2'}})</div>
       <div>{{aggregateStats.mlHighWins}} - {{aggregateStats.mlHighLosses}} |
         {{(aggregateStats.mlHighWins/(aggregateStats.mlHighWins + aggregateStats.mlHighLosses))| number :
         '0.2'}}
       </div>
       <div>Teams whose opponents have a win% of {{localMlOppLowVal| number :
-        '0.2'}}% or less (best value: {{bestMlOppLowVal}}</div>
+        '0.2'}}% or less (best value: {{bestMlOppLowVal | number : '0.2'}}</div>
       <div>{{aggregateStats.mlOppLowWins}} - {{aggregateStats.mlOppLowLosses}} |
         {{(aggregateStats.mlOppLowWins/(aggregateStats.mlOppLowWins + aggregateStats.mlOppLowLosses))| number :
         '0.2'}}</div>
       <h1>ATS</h1>
       <div>Teams that have a win/loss %differential of {{localAtsDiffVal| number :
-        '0.2'}}% or more (best value: {{bestAtsDiffVal}})</div>
+        '0.2'}}% or more (best value: {{bestAtsDiffVal | number : '0.2'}})</div>
       <div>{{aggregateStats.atsDiffWins}} - {{aggregateStats.atsDiffLosses}} |
         {{(aggregateStats.atsDiffWins/(aggregateStats.atsDiffWins + aggregateStats.atsDiffLosses))| number :
         '0.2'}}
       </div>
       <div>Teams that have a win% of {{localAtsHighVal| number :
-        '0.2'}}% or more (best value: {{bestAtsHighVal}})</div>
+        '0.2'}}% or more (best value: {{bestAtsHighVal | number : '0.2'}})</div>
       <div>{{aggregateStats.atsHighWins}} - {{aggregateStats.atsHighLosses}} |
         {{(aggregateStats.atsHighWins/(aggregateStats.atsHighWins + aggregateStats.atsHighLosses))| number :
         '0.2'}}
       </div>
       <div>Teams whose opponents have a win% of {{localAtsOppLowVal| number :
-        '0.2'}}% or less (best value: {{bestAtsOppLowVal}})</div>
+        '0.2'}}% or less (best value: {{bestAtsOppLowVal | number : '0.2'}})</div>
       <div>{{aggregateStats.atsOppLowWins}} - {{aggregateStats.atsOppLowLosses}} |
         {{(aggregateStats.atsOppLowWins/(aggregateStats.atsOppLowWins + aggregateStats.atsOppLowLosses))| number :
         '0.2'}}</div>
       <h1>Favorite</h1>
       <div>Teams that have a win/loss %differential of {{localFavDiffVal| number :
-        '0.2'}}% or more (best value: {{bestFavDiffVal}})</div>
+        '0.2'}}% or more (best value: {{bestFavDiffVal | number : '0.2'}})</div>
       <div>{{aggregateStats.favDiffWins}} - {{aggregateStats.favDiffLosses}} |
         {{(aggregateStats.favDiffWins/(aggregateStats.favDiffWins + aggregateStats.favDiffLosses))| number :
         '0.2'}}
       </div>
       <div>Teams that have a win% of {{localFavHighVal| number :
-        '0.2'}}% or more (best value: {{bestFavHighVal}})</div>
+        '0.2'}}% or more (best value: {{bestFavHighVal | number : '0.2'}})</div>
       <div>{{aggregateStats.favHighWins}} - {{aggregateStats.favHighLosses}} |
         {{(aggregateStats.favHighWins/(aggregateStats.favHighWins + aggregateStats.favHighLosses))| number :
         '0.2'}}
       </div>
       <div>Teams whose opponents have a win% of {{localFavOppLowVal| number :
-        '0.2'}}% or less (best value: {{bestFavOppLowVal}})</div>
+        '0.2'}}% or less (best value: {{bestFavOppLowVal | number : '0.2'}})</div>
       <div>{{aggregateStats.favOppLowWins}} - {{aggregateStats.favOppLowLosses}} |
         {{(aggregateStats.favOppLowWins/(aggregateStats.favOppLowWins + aggregateStats.favOppLowLosses))| number :
         '0.2'}}</div>
       <h1>Underdog</h1>
       <div>Teams that have a win/loss %differential of {{localUnderDiffVal| number :
-        '0.2'}}% or more (best value: {{bestUnderDiffVal}})</div>
+        '0.2'}}% or more (best value: {{bestUnderDiffVal | number : '0.2'}})</div>
       <div>{{aggregateStats.underDiffWins}} - {{aggregateStats.underDiffLosses}} |
         {{(aggregateStats.underDiffWins/(aggregateStats.underDiffWins + aggregateStats.underDiffLosses))| number :
         '0.2'}}
       </div>
       <div>Teams that have a win% of {{localUnderHighVal| number :
-        '0.2'}}% or more (best value: {{bestUnderHighVal}})</div>
+        '0.2'}}% or more (best value: {{bestUnderHighVal | number : '0.2'}})</div>
       <div>{{aggregateStats.underHighWins}} - {{aggregateStats.underHighLosses}} |
         {{(aggregateStats.underHighWins/(aggregateStats.underHighWins + aggregateStats.underHighLosses))| number :
         '0.2'}}
       </div>
       <div>Teams whose opponents have a win% of {{localUnderOppLowVal| number :
-        '0.2'}}% or less (best value: {{bestUnderOppLowVal}})</div>
+        '0.2'}}% or less (best value: {{bestUnderOppLowVal | number : '0.2'}})</div>
       <div>{{aggregateStats.underOppLowWins}} - {{aggregateStats.underOppLowLosses}} |
         {{(aggregateStats.underOppLowWins/(aggregateStats.underOppLowWins + aggregateStats.underOppLowLosses))| number :
         '0.2'}}</div>
