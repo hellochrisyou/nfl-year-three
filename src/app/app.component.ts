@@ -37,6 +37,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     { value: '16' },
     { value: '17' },
   ];
+  localCombineDiffVal = 0.4;
+  localCombineHighVal = 0.8;
+  localCombineAtsDiffVal = 0.4;
+  localCombineAtsHighVal = 0.8;
+  localCombineFavDiffVal = 0.4;
+  localCombineFavHighVal = 0.8;
+  localCombineUnderDiffVal = 0.4;
+  localCombineUnderHighVal = 0.8;
   localMlDiffVal = 0.8;
   localMlHighVal = 0.9;
   localMlOppLowVal = 0.21;
@@ -49,6 +57,18 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   localUnderDiffVal = 0.5;
   localUnderHighVal = 0.85;
   localUnderOppLowVal = 0.21;
+  bestCombineVal = 0;
+  bestCombineDiffValue = 0;
+  bestCombineHighValue = 0;
+  bestCombineAtsVal = 0;
+  bestCombineAtsDiffValue = 0;
+  bestCombineAtsHighValue = 0;
+  bestCombineFavVal = 0;
+  bestCombineFavDiffValue = 0;
+  bestCombineFavHighValue = 0;
+  bestCombineUnderVal = 0;
+  bestCombineUnderDiffValue = 0;
+  bestCombineUnderHighValue = 0;
   bestMlDiffVal = 0;
   bestMlHighVal = 0;
   bestMlOppLowVal = 0;
@@ -130,7 +150,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   nbaDataSource: MatTableDataSource<NbaTeam>;
   nhlDataSource: MatTableDataSource<NhlTeam>;
   dataSource: MatTableDataSource<Team>;
-  dataSourceNcaaf: MatTableDataSource<Team>;
   firstDownsQuartile: number[] = [];
   interceptionsQuartile: number[] = [];
   blocksQuartile: number[] = [];
@@ -151,18 +170,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   rushYardsQuartile: number[] = [];
   sacksQuartile: number[] = [];
   pointsQuartile: number[] = [];
-  passAttemptsQuartileNcaaf: number[] = [];
-  passTdsQuartileNcaaf: number[] = [];
-  passYardsQuartileNcaaf: number[] = [];
-  redzoneQuartileNcaaf: number[] = [];
-  rushAttemptsQuartileNcaaf: number[] = [];
-  rushTdsQuartileNcaaf: number[] = [];
-  rushYardsQuartileNcaaf: number[] = [];
-  interceptionsQuartileNcaaf: number[] = [];
-  sacksQuartileNcaaf: number[] = [];
-  thirdDownQuartileNcaaf: number[] = [];
-  firstDownsQuartileNcaaf: number[] = [];
-  pointsQuartileNcaaf: number[] = [];
   goalsQuartile: number[] = [];
   nhlAssistsQuartile: number[] = [];
   shootingPctQuartile: number[] = [];
@@ -173,6 +180,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly dialog = inject(MatDialog);
   currentSortState = 0;
   aggregateStats: AggregateStats = {
+    combineFavDiffHighLosses: 0,
+    combineFavDiffHighWins: 0,
+    combineUnderDiffHighLosses: 0,
+    combineUnderDiffHighWins: 0,
+    combineAtsDiffHighWins: 0,
+    combineAtsDiffHighLosses: 0,
+    combineDiffHighWins: 0,
+    combineDiffHighLosses: 0,
     mlDiffWins: 0,
     mlDiffLosses: 0,
     mlHighWins: 0,
@@ -5515,158 +5530,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
-  firstDownsChangeNcaaf(event: any, teamName: string) {
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      if (team.teamName === teamName) {
-        team.filterStats.firstDowns.wins = 0;
-        team.filterStats.firstDowns.losses = 0;
-        team.filterAtsStats.firstDowns.wins = 0;
-        team.filterAtsStats.firstDowns.losses = 0;
-        team.filterAtsFavoritesStats.firstDowns.wins = 0;
-        team.filterAtsFavoritesStats.firstDowns.losses = 0;
-        team.filterAtsUnderdogStats.firstDowns.wins = 0;
-        team.filterAtsUnderdogStats.firstDowns.losses = 0;
-      }
-    });
-    switch (event.value) {
-      case 'quart1': {
-        this.firstDownsPanelColor = 'crimson';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.firstDownsGiven < this.firstDownsQuartileNcaaf[0]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.firstDowns.wins++;
-                } else {
-                  team.filterStats.firstDowns.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.firstDowns.wins++;
-                    team.filterAtsFavoritesStats.firstDowns.wins++;
-                  } else {
-                    team.filterAtsStats.firstDowns.losses++;
-                    team.filterAtsFavoritesStats.firstDowns.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.firstDowns.wins++;
-                    team.filterAtsUnderdogStats.firstDowns.wins++;
-                  } else {
-                    team.filterAtsStats.firstDowns.losses++;
-                    team.filterAtsUnderdogStats.firstDowns.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart2': {
-        this.firstDownsPanelColor = 'orange';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if ((game.firstDownsGiven >= this.firstDownsQuartileNcaaf[0]) && (game.firstDownsGiven <= this.firstDownsQuartileNcaaf[1])) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.firstDowns.wins++;
-                } else {
-                  team.filterStats.firstDowns.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.firstDowns.wins++;
-                    team.filterAtsFavoritesStats.firstDowns.wins++;
-                  } else {
-                    team.filterAtsStats.firstDowns.losses++;
-                    team.filterAtsFavoritesStats.firstDowns.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.firstDowns.wins++;
-                    team.filterAtsUnderdogStats.firstDowns.wins++;
-                  } else {
-                    team.filterAtsStats.firstDowns.losses++;
-                    team.filterAtsUnderdogStats.firstDowns.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart3': {
-        this.firstDownsPanelColor = 'blueviolet';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.firstDownsGiven > this.firstDownsQuartileNcaaf[1] && game.firstDownsGiven <= this.firstDownsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.firstDowns.wins++;
-                } else {
-                  team.filterStats.firstDowns.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.firstDowns.wins++;
-                    team.filterAtsFavoritesStats.firstDowns.wins++;
-                  } else {
-                    team.filterAtsStats.firstDowns.losses++;
-                    team.filterAtsFavoritesStats.firstDowns.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.firstDowns.wins++;
-                    team.filterAtsUnderdogStats.firstDowns.wins++;
-                  } else {
-                    team.filterAtsStats.firstDowns.losses++;
-                    team.filterAtsUnderdogStats.firstDowns.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-      case 'quart4': {
-        this.firstDownsPanelColor = 'green';
-        this.httpService.allTeamsNcaaf.forEach(team => {
-          if (team.teamName === teamName) {
-            team.games.forEach(game => {
-              if (game.firstDownsGiven > this.firstDownsQuartileNcaaf[2]) {
-                if (game.points > game.pointsGiven) {
-                  team.filterStats.firstDowns.wins++;
-                } else {
-                  team.filterStats.firstDowns.losses++;
-                }
-                if (game.isFavorite) {
-                  if ((game.points - game.pointsGiven - Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.firstDowns.wins++;
-                    team.filterAtsFavoritesStats.firstDowns.wins++;
-                  } else {
-                    team.filterAtsStats.firstDowns.losses++;
-                    team.filterAtsFavoritesStats.firstDowns.losses++;
-                  }
-                } else {
-                  if ((game.points - game.pointsGiven + Math.abs(game.spread) > 0)) {
-                    team.filterAtsStats.firstDowns.wins++;
-                    team.filterAtsUnderdogStats.firstDowns.wins++;
-                  } else {
-                    team.filterAtsStats.firstDowns.losses++;
-                    team.filterAtsUnderdogStats.firstDowns.losses++;
-                  }
-                }
-              }
-            })
-          }
-        })
-        break;
-      }
-    }
-  }
+
   firstDownsChange(event: any, teamName: string) {
     if (this.toggleInterUnionMsg !== 'Intersection Logic') {
       this.httpService.allTeams.forEach(team => {
@@ -8753,14 +8617,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => this.isActiveTab = 1, 2500);
   }
 
-  crunchNumbersNcaaf() {
-    this.httpService.getNextOpponentInfoNcaaf();
-    this.httpService.crunchTotalsNcaaf();
-    this.httpService.calculateWinLossRecordNcaaf();
-    this.httpService.setOpponentStatsNcaaf();
-    this.httpService.setupGivenDataNcaaf();
-    this.runQuartilesNcaaf();
-  }
   crunchNbaNumbers() {
     this.httpService.getNbaNextOpponentInfo();
     this.httpService.crunchNbaTotals();
@@ -8806,14 +8662,34 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   automate() {
-    let tmpVal = 0.3;
+    let tmpVal = 0.3, tmpVal2 = 0.7;
+
     for (
+      this.localCombineAtsDiffVal = 0.4, this.localCombineAtsHighVal = 0.7, this.localCombineAtsDiffVal = 0.4, this.localCombineAtsHighVal = 0.7,
       this.localMlDiffVal = 0.3, this.localMlHighVal = 0.7, this.localMlOppLowVal = 0.3, this.localAtsDiffVal = 0.3, this.localAtsHighVal = 0.7, this.localAtsOppLowVal = 0.3, this.localFavDiffVal = 0.3, this.localFavHighVal = 0.7, this.localFavOppLowVal = 0.3, this.localUnderDiffVal = 0.3, this.localUnderHighVal = 0.7, this.localUnderOppLowVal = 0.3;
       this.localMlDiffVal < 0.9; this.localMlDiffVal = tmpVal
-      ) {
-        console.log(this.localMlDiffVal);
+    ) {
+      console.log(this.localMlDiffVal);
       this.processStats();
       tmpVal += 0.1;
+      if (this.localCombineAtsDiffVal < 1) {
+        this.localCombineAtsDiffVal += 0.1;
+      }
+      if (this.localCombineAtsDiffVal === 1) {
+        this.localCombineAtsDiffVal = 0.4;
+        if (this.localCombineAtsHighVal < 1) {
+          this.localCombineAtsHighVal += 0.1;
+        }
+      }
+      if (this.localCombineDiffVal < 1) {
+        this.localCombineDiffVal += 0.1;
+      }
+      if (this.localCombineDiffVal === 1) {
+        this.localCombineDiffVal = 0.4;
+        if (this.localCombineHighVal < 1) {
+          this.localCombineHighVal += 0.1;
+        }
+      }
       if (this.localMlHighVal < 1) {
         this.localMlHighVal += 0.1;
       }
@@ -8860,11 +8736,21 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.localUnderDiffVal = this.bestUnderDiffVal;
     this.localUnderHighVal = this.bestUnderHighVal;
     this.localUnderOppLowVal = this.bestUnderOppLowVal;
+    this.localCombineAtsDiffVal = this.bestCombineAtsVal;
+    this.localCombineDiffVal = this.bestCombineAtsVal;
     this.processStats();
   }
 
   processStats() {
     this.aggregateStats = {
+      combineFavDiffHighLosses: 0,
+      combineFavDiffHighWins: 0,
+      combineUnderDiffHighLosses: 0,
+      combineUnderDiffHighWins: 0,
+      combineAtsDiffHighLosses: 0,
+      combineAtsDiffHighWins: 0,
+      combineDiffHighLosses: 0,
+      combineDiffHighWins: 0,
       mlDiffWins: 0,
       mlDiffLosses: 0,
       mlHighWins: 0,
@@ -8894,6 +8780,23 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       for (let statCounter = 0; statCounter < team.games.length; statCounter++) {
         this.httpService.allTeams.forEach(team2 => {
           if (team2.teamName === team.nextOpponent) {
+            if ((this.calculateTotalWinsPercDiff(team2) + this.calculateTotalLossesPercDiff(team2)) === 0) {
+              if ((((this.calculateTotalWinsPercDiff(team) / (this.calculateTotalWinsPercDiff(team) + this.calculateTotalLossesPercDiff(team)))) > this.localCombineDiffVal) && ((this.calculateTotalWinsOver80(team) / (this.calculateTotalWinsOver80(team) + this.calculateTotalLossesOver80(team)))) > this.localCombineHighVal) {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven > 0) {
+                  this.aggregateStats.combineDiffHighWins++;
+                } else {
+                  this.aggregateStats.combineDiffHighLosses++;
+                }
+              }
+            } else {
+              if ((((this.calculateTotalWinsPercDiff(team) / (this.calculateTotalWinsPercDiff(team) + this.calculateTotalLossesPercDiff(team))) - ((this.calculateTotalWinsPercDiff(team2)) / (this.calculateTotalWinsPercDiff(team2) + this.calculateTotalLossesPercDiff(team2)))) > this.localCombineDiffVal) && ((this.calculateTotalWinsOver80(team) / (this.calculateTotalWinsOver80(team) + this.calculateTotalLossesOver80(team)))) > this.localCombineHighVal) {
+                if (team.games[statCounter].points - team.games[statCounter].pointsGiven > 0) {
+                  this.aggregateStats.combineDiffHighWins++;
+                } else {
+                  this.aggregateStats.combineDiffHighLosses++;
+                }
+              }
+            }
             // ML
             if (((this.calculateTotalWinsPercDiff(team) / (this.calculateTotalWinsPercDiff(team) + this.calculateTotalLossesPercDiff(team))) - ((this.calculateTotalWinsPercDiff(team2)) / (this.calculateTotalWinsPercDiff(team2) + this.calculateTotalLossesPercDiff(team2)))) > this.localMlDiffVal) {
               if (team.games[statCounter].points - team.games[statCounter].pointsGiven > 0) {
@@ -8918,6 +8821,39 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
             }
 
             // ATS
+            if ((this.calculateTotalAtsPercDiff(team2) + this.calculateTotalAtsLossesPercDiff(team2)) === 0) {
+              if ((((this.calculateTotalAtsPercDiff(team) / (this.calculateTotalAtsPercDiff(team) + this.calculateTotalAtsLossesPercDiff(team)))) > this.localCombineAtsDiffVal) && ((this.calculateTotalAtsOver80(team) / (this.calculateTotalAtsLossesOver80(team) + this.calculateTotalLossesOver80(team)))) > this.localCombineAtsHighVal) {
+                if (team.games[statCounter].isFavorite) {
+                  if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                    this.aggregateStats.combineAtsDiffHighWins++;
+                  } else {
+                    this.aggregateStats.combineAtsDiffHighLosses++;
+                  }
+                } else {
+                  if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                    this.aggregateStats.combineAtsDiffHighWins++;
+                  } else {
+                    this.aggregateStats.combineAtsDiffHighLosses++;
+                  }
+                }
+              }
+            } else {
+              if ((((this.calculateTotalAtsPercDiff(team) / (this.calculateTotalAtsPercDiff(team) + this.calculateTotalAtsLossesPercDiff(team))) - ((this.calculateTotalAtsPercDiff(team2)) / (this.calculateTotalAtsPercDiff(team2) + this.calculateTotalAtsLossesPercDiff(team2)))) > this.localCombineAtsDiffVal) && ((this.calculateTotalAtsOver80(team) / (this.calculateTotalAtsOver80(team) + this.calculateTotalAtsLossesOver80(team)))) > this.localCombineAtsHighVal) {
+                if (team.games[statCounter].isFavorite) {
+                  if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                    this.aggregateStats.combineAtsDiffHighWins++;
+                  } else {
+                    this.aggregateStats.combineAtsDiffHighLosses++;
+                  }
+                } else {
+                  if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                    this.aggregateStats.combineAtsDiffHighWins++;
+                  } else {
+                    this.aggregateStats.combineAtsDiffHighLosses++;
+                  }
+                }
+              }
+            }
             if (((this.calculateTotalAtsPercDiff(team) / (this.calculateTotalAtsPercDiff(team) + this.calculateTotalAtsLossesPercDiff(team))) - ((this.calculateTotalAtsPercDiff(team2)) / (this.calculateTotalAtsPercDiff(team2) + this.calculateTotalAtsLossesPercDiff(team2)))) > this.localAtsDiffVal) {
               if (team.games[statCounter].isFavorite) {
                 if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
@@ -8964,15 +8900,36 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             }
             // Fav
+            if ((this.calculateFavWinsPercDiff(team2) + this.calculateFavLossesPercDiff(team2)) === 0) {
+              if ((((this.calculateFavWinsPercDiff(team) / (this.calculateFavWinsPercDiff(team) + this.calculateFavLossesPercDiff(team)))) > this.localCombineFavDiffVal) && ((this.calculateFavAtsOver80(team) / (this.calculateFavAtsLossesOver80(team) + this.calculateTotalLossesOver80(team)))) > this.localCombineFavHighVal) {
+                if (team.games[statCounter].isFavorite) {
+                  if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                    this.aggregateStats.combineFavDiffHighWins++;
+                  } else {
+                    this.aggregateStats.combineFavDiffHighLosses++;
+                  }
+                }
+              }
+            } else {
+              if ((((this.calculateTotalAtsPercDiff(team) / (this.calculateTotalAtsPercDiff(team) + this.calculateTotalAtsLossesPercDiff(team))) - ((this.calculateTotalAtsPercDiff(team2)) / (this.calculateTotalAtsPercDiff(team2) + this.calculateTotalAtsLossesPercDiff(team2)))) > this.localCombineAtsDiffVal) && ((this.calculateTotalAtsOver80(team) / (this.calculateTotalAtsOver80(team) + this.calculateTotalAtsLossesOver80(team)))) > this.localCombineAtsHighVal) {
+                if (team.games[statCounter].isFavorite) {
+                  if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                    this.aggregateStats.combineFavDiffHighWins++;
+                  } else {
+                    this.aggregateStats.combineFavDiffHighLosses++;
+                  }
+                } else {
+                  if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                    this.aggregateStats.combineFavDiffHighWins++;
+                  } else {
+                    this.aggregateStats.combineFavDiffHighLosses++;
+                  }
+                }
+              }
+            }
             if (((this.calculateFavWinsPercDiff(team) / (this.calculateFavWinsPercDiff(team) + this.calculateFavLossesPercDiff(team))) - ((this.calculateFavWinsPercDiff(team2)) / (this.calculateFavWinsPercDiff(team2) + this.calculateFavLossesPercDiff(team2)))) > this.localFavDiffVal) {
               if (team.games[statCounter].isFavorite) {
                 if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
-                  this.aggregateStats.favDiffWins++;
-                } else {
-                  this.aggregateStats.favDiffLosses++;
-                }
-              } else {
-                if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
                   this.aggregateStats.favDiffWins++;
                 } else {
                   this.aggregateStats.favDiffLosses++;
@@ -8986,12 +8943,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                 } else {
                   this.aggregateStats.favHighLosses++;
                 }
-              } else {
-                if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
-                  this.aggregateStats.favHighWins++;
-                } else {
-                  this.aggregateStats.favHighLosses++;
-                }
               }
             }
             if ((this.calculateFavAtsOppUnder20(team)) / (this.calculateFavAtsOppUnder20(team) + this.calculateFavAtsLossesOppUnder20(team)) < this.localFavOppLowVal) {
@@ -9001,23 +8952,32 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                 } else {
                   this.aggregateStats.favOppLowLosses++;
                 }
-              } else {
-                if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
-                  this.aggregateStats.favOppLowWins++;
-                } else {
-                  this.aggregateStats.favOppLowLosses++;
-                }
               }
             }
             // Under
-            if (((this.calculateUnderAtsPercDiff(team) / (this.calculateUnderAtsPercDiff(team) + this.calculateUnderAtsLossesPercDiff(team))) - ((this.calculateTotalAtsPercDiff(team2)) / (this.calculateTotalAtsPercDiff(team2) + this.calculateTotalAtsLossesPercDiff(team2)))) > this.localUnderDiffVal) {
-              if (team.games[statCounter].isFavorite) {
-                if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
-                  this.aggregateStats.underDiffWins++;
-                } else {
-                  this.aggregateStats.underDiffLosses++;
+            if ((this.calculateUnderAtsPercDiff(team2) + this.calculateUnderAtsLossesPercDiff(team2)) === 0) {
+              if ((((this.calculateUnderAtsPercDiff(team) / (this.calculateUnderAtsPercDiff(team) + this.calculateUnderAtsLossesPercDiff(team)))) > this.localCombineUnderDiffVal) && ((this.calculateUnderAtsOver80(team) / (this.calculateUnderAtsLossesOver80(team) + this.calculateTotalLossesOver80(team)))) > this.localCombineUnderHighVal) {
+                if (!team.games[statCounter].isFavorite) {
+                  if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
+                    this.aggregateStats.combineUnderDiffHighWins++;
+                  } else {
+                    this.aggregateStats.combineUnderDiffHighLosses++;
+                  }
                 }
-              } else {
+              }
+            } else {
+              if ((((this.calculateUnderAtsPercDiff(team) / (this.calculateUnderAtsPercDiff(team) + this.calculateUnderAtsLossesPercDiff(team))) - ((this.calculateUnderAtsPercDiff(team2)) / (this.calculateUnderAtsPercDiff(team2) + this.calculateUnderAtsLossesPercDiff(team2)))) > this.localCombineUnderDiffVal) && ((this.calculateUnderAtsOver80(team) / (this.calculateUnderAtsOver80(team) + this.calculateUnderAtsLossesOver80(team)))) > this.localCombineUnderHighVal) {
+                if (!team.games[statCounter].isFavorite) {
+                  if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
+                    this.aggregateStats.combineUnderDiffHighWins++;
+                  } else {
+                    this.aggregateStats.combineUnderDiffHighLosses++;
+                  }
+                }
+              }
+            }
+            if (((this.calculateUnderAtsPercDiff(team) / (this.calculateUnderAtsPercDiff(team) + this.calculateUnderAtsLossesPercDiff(team))) - ((this.calculateUnderAtsPercDiff(team2)) / (this.calculateUnderAtsPercDiff(team2) + this.calculateUnderAtsLossesPercDiff(team2)))) > this.localUnderDiffVal) {
+              if (!team.games[statCounter].isFavorite) {
                 if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
                   this.aggregateStats.underDiffWins++;
                 } else {
@@ -9026,13 +8986,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             }
             if (((this.calculateUnderAtsOver80(team) / (this.calculateUnderAtsOver80(team) + this.calculateUnderAtsLossesOver80(team)))) > this.localUnderHighVal) {
-              if (team.games[statCounter].isFavorite) {
-                if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
-                  this.aggregateStats.underHighWins++;
-                } else {
-                  this.aggregateStats.underHighLosses++;
-                }
-              } else {
+              if (!team.games[statCounter].isFavorite) {
                 if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
                   this.aggregateStats.underHighWins++;
                 } else {
@@ -9041,13 +8995,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             }
             if ((this.calculateUnderAtsOppUnder20(team)) / (this.calculateUnderAtsOppUnder20(team) + this.calculateUnderAtsLossesOppUnder20(team)) < this.localUnderOppLowVal) {
-              if (team.games[statCounter].isFavorite) {
-                if (team.games[statCounter].points - team.games[statCounter].pointsGiven - Math.abs(team.games[statCounter].spread) > 0) {
-                  this.aggregateStats.underOppLowWins++;
-                } else {
-                  this.aggregateStats.underOppLowLosses++;
-                }
-              } else {
+              if (!team.games[statCounter].isFavorite) {
                 if (team.games[statCounter].points - team.games[statCounter].pointsGiven + Math.abs(team.games[statCounter].spread) > 0) {
                   this.aggregateStats.underOppLowWins++;
                 } else {
@@ -9095,6 +9043,26 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     if ((this.aggregateStats.underOppLowWins / (this.aggregateStats.underOppLowWins + this.aggregateStats.underOppLowLosses)) > this.bestUnderOppLowVal) {
       this.bestUnderOppLowVal = this.localUnderOppLowVal;
     }
+    if ((this.aggregateStats.combineDiffHighWins / (this.aggregateStats.combineDiffHighWins + this.aggregateStats.combineDiffHighLosses)) > this.bestCombineVal) {
+      this.bestCombineDiffValue = this.localCombineDiffVal;
+      this.bestCombineHighValue = this.localCombineHighVal;
+      this.bestCombineVal = (this.aggregateStats.combineDiffHighWins / (this.aggregateStats.combineDiffHighWins + this.aggregateStats.combineDiffHighLosses));
+    }
+    if ((this.aggregateStats.combineAtsDiffHighWins / (this.aggregateStats.combineAtsDiffHighWins + this.aggregateStats.combineAtsDiffHighLosses)) > this.bestCombineAtsVal) {
+      this.bestCombineAtsDiffValue = this.localCombineAtsDiffVal;
+      this.bestCombineAtsHighValue = this.localCombineAtsHighVal;
+      this.bestCombineAtsVal = (this.aggregateStats.combineAtsDiffHighWins / (this.aggregateStats.combineAtsDiffHighWins + this.aggregateStats.combineAtsDiffHighLosses));
+    }
+    if ((this.aggregateStats.combineFavDiffHighWins / (this.aggregateStats.combineFavDiffHighWins + this.aggregateStats.combineFavDiffHighLosses)) > this.bestCombineFavVal) {
+      this.bestCombineFavDiffValue = this.localCombineFavDiffVal;
+      this.bestCombineFavHighValue = this.localCombineFavHighVal;
+      this.bestCombineFavVal = (this.aggregateStats.combineFavDiffHighWins / (this.aggregateStats.combineFavDiffHighWins + this.aggregateStats.combineFavDiffHighLosses));
+    }
+    if ((this.aggregateStats.combineUnderDiffHighWins / (this.aggregateStats.combineUnderDiffHighWins + this.aggregateStats.combineUnderDiffHighLosses)) > this.bestCombineUnderVal) {
+      this.bestCombineUnderDiffValue = this.localCombineUnderDiffVal;
+      this.bestCombineUnderHighValue = this.localCombineUnderHighVal;
+      this.bestCombineUnderVal = (this.aggregateStats.combineUnderDiffHighWins / (this.aggregateStats.combineUnderDiffHighWins + this.aggregateStats.combineUnderDiffHighLosses));
+    }
   }
 
   returnWinLossColor(val: string) {
@@ -9114,12 +9082,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       return val;
     }
-  }
-
-  downloadThisYearNCAAF() {
-    this.currentDownloadCounter++;
-    this.currentDownloadCounterPostMsg = ' ...Currently Downloading...';
-    this.httpService.executeDataHydrationLastYearNcaaf();
   }
 
   downloadLastYear2() {
@@ -9197,68 +9159,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.threePointsQuartile = this.calculateQuartiles(tmpTotalArr);
   }
 
-  runQuartilesNcaaf() {
-    let tmpTotalArr: number[] = [];
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      tmpTotalArr.push(team.pointsTotal / team.games.length);
-    })
-    this.pointsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      tmpTotalArr.push(team.passingAttemptsTotal / team.games.length);
-    })
-    this.passAttemptsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      tmpTotalArr.push(team.passingYardsTotal / team.games.length);
-    })
-    this.passYardsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      tmpTotalArr.push(team.passingTdsTotal / team.games.length);
-    })
-    this.passTdsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      tmpTotalArr.push(team.rushingAttemptsTotal / team.games.length);
-    })
-    this.rushAttemptsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      tmpTotalArr.push(team.rushingYardsTotal / team.games.length);
-    })
-    this.rushYardsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      tmpTotalArr.push(team.rushingTdsTotal / team.games.length);
-    })
-    this.rushTdsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      tmpTotalArr.push(team.interceptionsTotal / team.games.length);
-    })
-    this.interceptionsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      tmpTotalArr.push(team.sacksTotal / team.games.length);
-    })
-    this.sacksQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      tmpTotalArr.push(team.firstDownsTotal / team.games.length);
-    })
-    this.firstDownsQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      tmpTotalArr.push(team.thirdDownPctAvg);
-    })
-    this.thirdDownQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
-    tmpTotalArr = [];
-    this.httpService.allTeamsNcaaf.forEach(team => {
-      tmpTotalArr.push(team.redzoneScoringPctAvg);
-    })
-    this.redzoneQuartileNcaaf = this.calculateQuartiles(tmpTotalArr);
-  }
   runQuartiles() {
     let tmpTotalArr: number[] = [];
     this.httpService.allTeams.forEach(team => {

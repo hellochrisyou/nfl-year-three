@@ -51,7 +51,7 @@
       </div>
       <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear(lastYearWeekControl.value)">1.0
         Download as far as 2014: Week- {{lastYearWeekControl.value}}</button>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear2()" [disabled]="true">1.5 Download
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear2()">1.5 Download
         2025</button>
       <div class="animate-wrapper">
         <h3 class="animate-charcter">Number of Games Downloaded: {{currentDownloadCounter}}
@@ -65,13 +65,21 @@
           </div>
         </div>
       </ng-container>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers2014()">2.5
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers2014()">2.0
         Crunch(process) Data for 2014</button>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers()" [disabled]="true">2.0
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers()">2.5
         Crunch(process) Data</button>
     </section>
     <div>
+      <!-- ML -->
       <h1>Moneyline</h1>
+      <div>Teams that have a win/loss %differential of {{localCombineDiffVal| number :
+        '0.2'}}% or more AND Teams have a win% of {{localCombineHighVal| number :
+        '0.2'}}</div>
+      <div>{{aggregateStats.combineDiffHighWins}} - {{aggregateStats.combineDiffHighLosses}} |
+        {{(aggregateStats.combineDiffHighWins/(aggregateStats.combineDiffHighWins + aggregateStats.combineDiffHighLosses))| number :
+        '0.2'}}
+      </div>
       <div>Teams that have a win/loss %differential of {{localMlDiffVal| number :
         '0.2'}}% or more (best value: {{bestMlDiffVal | number : '0.2'}})</div>
       <div>{{aggregateStats.mlDiffWins}} - {{aggregateStats.mlDiffLosses}} |
@@ -89,7 +97,15 @@
       <div>{{aggregateStats.mlOppLowWins}} - {{aggregateStats.mlOppLowLosses}} |
         {{(aggregateStats.mlOppLowWins/(aggregateStats.mlOppLowWins + aggregateStats.mlOppLowLosses))| number :
         '0.2'}}</div>
+        <!-- ATS -->
       <h1>ATS</h1>
+      <div>Teams that have a win/loss %differential of {{localCombineAtsDiffVal| number :
+        '0.2'}}% or more AND Teams have a win% of {{localCombineAtsHighVal| number :
+        '0.2'}}</div>
+      <div>{{aggregateStats.combineAtsDiffHighWins}} - {{aggregateStats.combineAtsDiffHighLosses}} |
+        {{(aggregateStats.combineAtsDiffHighWins/(aggregateStats.combineAtsDiffHighWins + aggregateStats.combineAtsDiffHighLosses))| number :
+        '0.2'}}
+      </div>
       <div>Teams that have a win/loss %differential of {{localAtsDiffVal| number :
         '0.2'}}% or more (best value: {{bestAtsDiffVal | number : '0.2'}})</div>
       <div>{{aggregateStats.atsDiffWins}} - {{aggregateStats.atsDiffLosses}} |
@@ -108,6 +124,13 @@
         {{(aggregateStats.atsOppLowWins/(aggregateStats.atsOppLowWins + aggregateStats.atsOppLowLosses))| number :
         '0.2'}}</div>
       <h1>Favorite</h1>
+       <div>Teams that have a win/loss %differential of {{localCombineFavDiffVal| number :
+        '0.2'}}% or more AND Teams have a win% of {{localCombineFavHighVal| number :
+        '0.2'}}</div>
+      <div>{{aggregateStats.combineFavDiffHighWins}} - {{aggregateStats.combineFavDiffHighLosses}} |
+        {{(aggregateStats.combineFavDiffHighWins/(aggregateStats.combineFavDiffHighWins + aggregateStats.combineFavDiffHighLosses))| number :
+        '0.2'}}
+      </div>
       <div>Teams that have a win/loss %differential of {{localFavDiffVal| number :
         '0.2'}}% or more (best value: {{bestFavDiffVal | number : '0.2'}})</div>
       <div>{{aggregateStats.favDiffWins}} - {{aggregateStats.favDiffLosses}} |
@@ -126,6 +149,13 @@
         {{(aggregateStats.favOppLowWins/(aggregateStats.favOppLowWins + aggregateStats.favOppLowLosses))| number :
         '0.2'}}</div>
       <h1>Underdog</h1>
+       <div>Teams that have a win/loss %differential of {{localCombineUnderDiffVal| number :
+        '0.2'}}% or more AND Teams have a win% of {{localCombineUnderHighVal| number :
+        '0.2'}}</div>
+      <div>{{aggregateStats.combineUnderDiffHighWins}} - {{aggregateStats.combineUnderDiffHighLosses}} |
+        {{(aggregateStats.combineUnderDiffHighWins/(aggregateStats.combineUnderDiffHighWins + aggregateStats.combineUnderDiffHighLosses))| number :
+        '0.2'}}
+      </div>
       <div>Teams that have a win/loss %differential of {{localUnderDiffVal| number :
         '0.2'}}% or more (best value: {{bestUnderDiffVal | number : '0.2'}})</div>
       <div>{{aggregateStats.underDiffWins}} - {{aggregateStats.underDiffLosses}} |

@@ -42,12 +42,20 @@ export interface WinLoss {
 }
 
 export interface AggregateStats {
+  combineDiffHighWins: number;
+  combineDiffHighLosses: number;
   mlDiffWins: number;
   mlDiffLosses: number;
   mlHighWins: number;
   mlHighLosses: number;
   mlOppLowWins: number;
   mlOppLowLosses: number;
+  combineAtsDiffHighWins: number;
+  combineAtsDiffHighLosses: number;
+  combineFavDiffHighWins: number;
+  combineFavDiffHighLosses: number;
+  combineUnderDiffHighWins: number;
+  combineUnderDiffHighLosses: number;
   atsDiffWins: number;
   atsDiffLosses: number;
   atsHighWins: number;
