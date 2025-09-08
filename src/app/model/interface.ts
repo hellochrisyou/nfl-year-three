@@ -42,6 +42,10 @@ export interface WinLoss {
 }
 
 export interface AggregateStats {
+  turnoverDiffWins: number;
+  turnoverDiffLosses: number;
+  turnoverDiffAtsWins: number;
+  turnoverDiffAtsLosses: number;
   combineDiffHighWins: number;
   combineDiffHighLosses: number;
   mlDiffWins: number;
@@ -81,18 +85,8 @@ export interface Team {
   currentWeekWinLoss: string;
   currentWeekAts: string;
   netSpread: number;
-  passAttemptsStd: number;
-  passYardsStd: number;
-  passTdsStd: number;
-  rushAttemptsStd: number;
-  rushYardsStd: number;
-  rushTdsStd: number;
-  firstDownsStd: number;
   currentWeekPoints: number;
   currentWeekPointsAgainst: number;
-  thirdDownStd: number;
-  redzoneStd: number;
-  pointsStd: number;
   filterStats: FilterStats;
   filterAtsStats: FilterStats;
   filterAtsFavoritesStats: FilterStats;
@@ -118,6 +112,7 @@ export interface Team {
   rushingYardsTotal: number;
   rushingTdsTotal: number;
   sacksTotal: number;
+  turnoverDiffTotal: number;
   interceptionsTotal: number;
   firstDownsTotal: number
   thirdDownPctTotal: number[];
@@ -276,6 +271,7 @@ export interface Game {
   isFavorite?: boolean;
   gameId: number;
   points: number;
+  turnoverDiff: number;
   passingAttempts: number;
   passingYards: number;
   passingTds: number;

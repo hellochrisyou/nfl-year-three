@@ -218,73 +218,70 @@ export class HttpService {
           } else if (year === '2025') {
             tmpDate = new Date('08/25/2025');
           }
-          if (lastYearWeek) {
-
-          }
           var date1: any = new Date(payload2.date);
           var date2: any = new Date(this.dateService.currentLastYearWeek);
           var diffDays: any = Math.floor((date1 - date2) / (1000 * 60 * 60 * 24));
-
-          if (new Date(payload2.date) > this.dateService.currentLastYearWeek && new Date(payload2.date) < this.dateService.currentLastYearWeek2 && diffDays <= 7) {
-            team.nextGameDate = payload2.date;
-            let tmpCompetitorIndex = 0;
-            if (payload2.competitions[0].competitors[0].id === team.teamId) {
-              tmpCompetitorIndex = 0;
-            } else {
-              tmpCompetitorIndex = 1;
-            }
-            const tmpStatsAddy = payload2.competitions[0].competitors[tmpCompetitorIndex].statistics.$ref;
-            const tmpOddsAddy = payload2.competitions[0].odds.$ref;
-            this.apiService.httpGet(tmpOddsAddy).subscribe((payload3: any) => {
-              // Spread
-              payload3.items[0].spread;
-              this.apiService.httpGet(tmpStatsAddy).subscribe((payload4: any) => {
-                if (lastYearWeek === 12 && team.teamName === 'Washington Commanders') {
-                  console.log('hhhh', team.teamName);
-                }
-                let tmpAwayHome = '';
-                let tmpIsFav = false;
-                if (payload2.competitions[0].competitors[tmpCompetitorIndex].homeAway === 'home') {
-                  tmpAwayHome = 'home';
-                } else {
-                  tmpAwayHome = 'away';
-                }
-                if (tmpAwayHome === 'home') {
-                  tmpIsFav = payload3.items[0].homeTeamOdds.favorite;
-                } else {
-                  tmpIsFav = payload3.items[0].awayTeamOdds.favorite;
-                }
-                // Points
-                team.currentWeekPoints = payload4.splits.categories[9].stats[9].value;
-                // Points Given
-                team.currentWeekPointsAgainst = payload4.splits.categories[4].stats[28].value;
-                if ((Math.abs(payload4.splits.categories[9].stats[9].value) - Math.abs(payload4.splits.categories[4].stats[28].value)) > 0) {
-                  team.currentWeekWinLoss = 'Win';
-                } else {
-                  team.currentWeekWinLoss = 'Loss';
-                }
-                if (tmpIsFav) {
-                  if (team.currentWeekWinLoss === 'Loss') {
-                    team.currentWeekAts = 'Loss'
+            if (new Date(payload2.date) > new Date(this.dateService.currentLastYearWeek) && new Date(payload2.date) < this.dateService.currentLastYearWeek2 && diffDays <= 7) {
+              team.nextGameDate = payload2.date;
+              let tmpCompetitorIndex = 0;
+              if (payload2.competitions[0].competitors[0].id === team.teamId) {
+                tmpCompetitorIndex = 0;
+              } else {
+                tmpCompetitorIndex = 1;
+              }
+              const tmpStatsAddy = payload2.competitions[0].competitors[tmpCompetitorIndex].statistics.$ref;
+              const tmpOddsAddy = payload2.competitions[0].odds.$ref;
+              this.apiService.httpGet(tmpOddsAddy).subscribe((payload3: any) => {
+                // Spread
+                payload3.items[0].spread;
+                this.apiService.httpGet(tmpStatsAddy).subscribe((payload4: any) => {
+                  if (lastYearWeek === 12 && team.teamName === 'Washington Commanders') {
+                    console.log('hhhh', team.teamName);
+                  }
+                  let tmpAwayHome = '';
+                  let tmpIsFav = false;
+                  if (payload2.competitions[0].competitors[tmpCompetitorIndex].homeAway === 'home') {
+                    tmpAwayHome = 'home';
                   } else {
-                    if ((Math.abs(payload4.splits.categories[9].stats[9].value) - Math.abs(payload4.splits.categories[4].stats[28].value) - Math.abs(payload3.items[0].spread)) > 0) {
+                    tmpAwayHome = 'away';
+                  }
+                  if (tmpAwayHome === 'home') {
+                    tmpIsFav = payload3.items[0].homeTeamOdds.favorite;
+                  } else {
+                    tmpIsFav = payload3.items[0].awayTeamOdds.favorite;
+                  }
+                  // Points
+                  team.currentWeekPoints = payload4.splits.categories[9].stats[9].value;
+                  // Points Given
+                  team.currentWeekPointsAgainst = payload4.splits.categories[4].stats[28].value;
+                  if ((Math.abs(payload4.splits.categories[9].stats[9].value) - Math.abs(payload4.splits.categories[4].stats[28].value)) > 0) {
+                    team.currentWeekWinLoss = 'Win';
+                  } else {
+                    team.currentWeekWinLoss = 'Loss';
+                  }
+                  if (tmpIsFav) {
+                    if (team.currentWeekWinLoss === 'Loss') {
+                      team.currentWeekAts = 'Loss'
+                    } else {
+                      if ((Math.abs(payload4.splits.categories[9].stats[9].value) - Math.abs(payload4.splits.categories[4].stats[28].value) - Math.abs(payload3.items[0].spread)) > 0) {
+                        team.currentWeekAts = 'Win';
+                      } else {
+                        team.currentWeekAts = 'Loss';
+                      }
+                    }
+                  }
+                  else {
+                    if ((Math.abs(payload4.splits.categories[9].stats[9].value) - Math.abs(payload4.splits.categories[4].stats[28].value) + Math.abs(payload3.items[0].spread)) > 0) {
                       team.currentWeekAts = 'Win';
                     } else {
                       team.currentWeekAts = 'Loss';
                     }
                   }
-                }
-                else {
-                  if ((Math.abs(payload4.splits.categories[9].stats[9].value) - Math.abs(payload4.splits.categories[4].stats[28].value) + Math.abs(payload3.items[0].spread)) > 0) {
-                    team.currentWeekAts = 'Win';
-                  } else {
-                    team.currentWeekAts = 'Loss';
-                  }
-                }
-                this.updateDownloadStatus.emit(this.downloadedGamesNum);
+                  this.updateDownloadStatus.emit(this.downloadedGamesNum);
+                });
               });
-            });
-          } else if (new Date(payload2.date) > tmpDate && new Date(payload2.date) < this.dateService.currentLastYearWeek2) {
+          } else if (new Date(payload2.date) > tmpDate && new Date(payload2.date) < new Date(this.dateService.currentLastYearWeek2)) {
+            console.log('year', year);
             let tmpCompetitorIndex = 0;
             if (payload2.competitions[0].competitors[0].id === team.teamId) {
               tmpGame.opponentId = payload2.competitions[0].competitors[1].id;
@@ -313,6 +310,7 @@ export class HttpService {
                 tmpGame.isFavorite = payload3.items[0].awayTeamOdds.favorite;
               }
               this.apiService.httpGet(tmpStatsAddy).subscribe((payload4: any) => {
+                tmpGame.turnoverDiff = payload4.splits.categories[10].stats[39].value;
                 tmpGame.points = payload4.splits.categories[9].stats[9].value;
                 tmpGame.passingAttempts = payload4.splits.categories[1].stats[12].value;
                 tmpGame.pointsGiven = payload4.splits.categories[4].stats[28].value;
@@ -386,20 +384,21 @@ export class HttpService {
   executeDataHydrationLastYear(lastYearWeek?: number) {
     if (!lastYearWeek) {
       this.getLastYearStats('2024');
-      this.getLastYearStats('2025');
     } else {
       this.getLastYearStats('2024', lastYearWeek);
     }
   }
 
   executeDataHydrationThisYear() {
-    this.getLastYearStats('2024');
-    this.getLastYearStats('2025');
+    this.dateService.setLastYearWeek(this.dateService.currentWeek);
+    this.dateService.setLastYearWeekNext(this.dateService.currentWeek + 1);
+    this.getLastYearStats('2025', this.dateService.currentWeek);
   }
 
   public crunchTotals() {
     this.allTeams.forEach(team => team.games.forEach(game => {
       team.pointsTotal += game.points;
+      team.turnoverDiffTotal += game.turnoverDiff;
       team.passingAttemptsTotal += game.passingAttempts;
       team.passingYardsTotal += game.passingYards;
       team.passingTdsTotal += game.passingTds;
@@ -435,6 +434,7 @@ export class HttpService {
 
   public initializeTmpGame(): Game {
     let tmpGame: Game = {
+      turnoverDiff: 0,
       date: null,
       opponentId: '',
       gameId: 0,
@@ -556,7 +556,7 @@ export class HttpService {
   getNextOpponentInfo(year?: string) {
     let tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/types/2/weeks/' + (this.dateService.currentWeek) + '/events?lang=en&region=us';
     if (year) {
-    tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2024/types/2/weeks/' + (this.dateService.currentLastYearWeekNum) + '/events?lang=en&region=us';
+      tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2024/types/2/weeks/' + (this.dateService.currentLastYearWeekNum) + '/events?lang=en&region=us';
     }
     this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
       // console.log("🚀 ~ element:", element)

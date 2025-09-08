@@ -47,7 +47,7 @@ export class DateService {
   private _currentWeek = 1;
   private _currentLastYearWeek = new Date();
   private _currentLastYearWeek2 = new Date();
-  private _currentLastYearWeekNum = new Date();
+  private _currentLastYearWeekNum:number = 1;
 
   public get currentLastYearWeek2() {
     return this._currentLastYearWeek2;
@@ -157,79 +157,156 @@ export class DateService {
     }
   }
 
-   setLastYearWeekNext(lastYearWeek: number) {
-    switch (lastYearWeek) {
-      case 1: {
-        this.currentLastYearWeek2 = this.lastYearWeek1;
-        return;
+  setLastYearWeekNext(lastYearWeek: number, flag?: boolean) {
+    if (flag) {
+      switch (lastYearWeek) {
+        case 1: {
+          this.currentLastYearWeek2 = this.week1;
+          return;
+        }
+        case 2: {
+          this.currentLastYearWeek2 = this.week2;
+          return;
+        }
+        case 3: {
+          this.currentLastYearWeek2 = this.week3;
+          return;
+        }
+        case 4: {
+          this.currentLastYearWeek2 = this.week4;
+          return;
+        }
+        case 5: {
+          this.currentLastYearWeek2 = this.week5;
+          return;
+        }
+        case 6: {
+          this.currentLastYearWeek2 = this.week6;
+          return;
+        }
+        case 7: {
+          this.currentLastYearWeek2 = this.week7;
+          return;
+        }
+        case 8: {
+          this.currentLastYearWeek2 = this.week8;
+          return;
+        }
+        case 9: {
+          this.currentLastYearWeek2 = this.week9;
+          return;
+        }
+        case 10: {
+          this.currentLastYearWeek2 = this.week10;
+          return;
+        }
+        case 11: {
+          this.currentLastYearWeek2 = this.week11;
+          return;
+        }
+        case 12: {
+          this.currentLastYearWeek2 = this.week12;
+          return;
+        }
+        case 13: {
+          this.currentLastYearWeek2 = this.week13;
+          return;
+        }
+        case 14: {
+          this.currentLastYearWeek2 = this.week14;
+          return;
+        }
+        case 15: {
+          this.currentLastYearWeek2 = this.week15;
+          return;
+        }
+        case 16: {
+          this.currentLastYearWeek2 = this.week16;
+          return;
+        }
+        case 17: {
+          this.currentLastYearWeek2 = this.week17;
+          return;
+        }
+        case 18: {
+          this.currentLastYearWeek2 = this.week18;
+          return;
+        }
       }
-      case 2: {
-        this.currentLastYearWeek2 = this.lastYearWeek2;
-        return;
-      }
-      case 3: {
-        this.currentLastYearWeek2 = this.lastYearWeek3;
-        return;
-      }
-      case 4: {
-        this.currentLastYearWeek2 = this.lastYearWeek4;
-        return;
-      }
-      case 5: {
-        this.currentLastYearWeek2 = this.lastYearWeek5;
-        return;
-      }
-      case 6: {
-        this.currentLastYearWeek2 = this.lastYearWeek6;
-        return;
-      }
-      case 7: {
-        this.currentLastYearWeek2 = this.lastYearWeek7;
-        return;
-      }
-      case 8: {
-        this.currentLastYearWeek2 = this.lastYearWeek8;
-        return;
-      }
-      case 9: {
-        this.currentLastYearWeek2 = this.lastYearWeek9;
-        return;
-      }
-      case 10: {
-        this.currentLastYearWeek2 = this.lastYearWeek10;
-        return;
-      }
-      case 11: {
-        this.currentLastYearWeek2 = this.lastYearWeek11;
-        return;
-      }
-      case 12: {
-        this.currentLastYearWeek2 = this.lastYearWeek12;
-        return;
-      }
-      case 13: {
-        this.currentLastYearWeek2 = this.lastYearWeek13;
-        return;
-      }
-      case 14: {
-        this.currentLastYearWeek2 = this.lastYearWeek14;
-        return;
-      }
-      case 15: {
-        this.currentLastYearWeek2 = this.lastYearWeek15;
-        return;
-      }
-      case 16: {
-        this.currentLastYearWeek2 = this.lastYearWeek16;
-        return;
-      }
-      case 17: {
-        this.currentLastYearWeek2 = this.lastYearWeek17;
-        return;
-      }
-      case 18: {
-        this.currentLastYearWeek2 = this.lastYearWeek18;
-        return;
+    } else {
+      switch (lastYearWeek) {
+        case 1: {
+          this.currentLastYearWeek2 = this.lastYearWeek1;
+          return;
+        }
+        case 2: {
+          this.currentLastYearWeek2 = this.lastYearWeek2;
+          return;
+        }
+        case 3: {
+          this.currentLastYearWeek2 = this.lastYearWeek3;
+          return;
+        }
+        case 4: {
+          this.currentLastYearWeek2 = this.lastYearWeek4;
+          return;
+        }
+        case 5: {
+          this.currentLastYearWeek2 = this.lastYearWeek5;
+          return;
+        }
+        case 6: {
+          this.currentLastYearWeek2 = this.lastYearWeek6;
+          return;
+        }
+        case 7: {
+          this.currentLastYearWeek2 = this.lastYearWeek7;
+          return;
+        }
+        case 8: {
+          this.currentLastYearWeek2 = this.lastYearWeek8;
+          return;
+        }
+        case 9: {
+          this.currentLastYearWeek2 = this.lastYearWeek9;
+          return;
+        }
+        case 10: {
+          this.currentLastYearWeek2 = this.lastYearWeek10;
+          return;
+        }
+        case 11: {
+          this.currentLastYearWeek2 = this.lastYearWeek11;
+          return;
+        }
+        case 12: {
+          this.currentLastYearWeek2 = this.lastYearWeek12;
+          return;
+        }
+        case 13: {
+          this.currentLastYearWeek2 = this.lastYearWeek13;
+          return;
+        }
+        case 14: {
+          this.currentLastYearWeek2 = this.lastYearWeek14;
+          return;
+        }
+        case 15: {
+          this.currentLastYearWeek2 = this.lastYearWeek15;
+          return;
+        }
+        case 16: {
+          this.currentLastYearWeek2 = this.lastYearWeek16;
+          return;
+        }
+        case 17: {
+          this.currentLastYearWeek2 = this.lastYearWeek17;
+          return;
+        }
+        case 18: {
+          this.currentLastYearWeek2 = this.lastYearWeek18;
+          return;
+        }
       }
     }
   }
@@ -241,79 +318,79 @@ export class DateService {
       } else {
         return false;
       }
-    }else if (this.currentWeek === 6) {
+    } else if (this.currentWeek === 6) {
       if (weekInput >= this.week6 && weekInput < this.week7) {
         return true;
       } else {
         return false;
       }
-    }else if (this.currentWeek <= 7) {
+    } else if (this.currentWeek <= 7) {
       if (weekInput >= this.week7 && weekInput < this.week8) {
         return true;
       } else {
         return false;
       }
-    }else if (this.currentWeek <= 8) {
+    } else if (this.currentWeek <= 8) {
       if (weekInput >= this.week8 && weekInput < this.week9) {
         return true;
       } else {
         return false;
       }
-    }else if (this.currentWeek <= 9) {
+    } else if (this.currentWeek <= 9) {
       if (weekInput >= this.week9 && weekInput < this.week10) {
         return true;
       } else {
         return false;
       }
-    }else if (this.currentWeek <= 10) {
+    } else if (this.currentWeek <= 10) {
       if (weekInput > this.week10 && weekInput < this.week11) {
         return true;
       } else {
         return false;
       }
-    }else if (this.currentWeek <= 11) {
+    } else if (this.currentWeek <= 11) {
       if (weekInput > this.week11 && weekInput < this.week12) {
         return true;
       } else {
         return false;
       }
-    }else if (this.currentWeek <= 12) {
+    } else if (this.currentWeek <= 12) {
       if (weekInput >= this.week12 && weekInput < this.week13) {
         return true;
       } else {
         return false;
       }
-    }else if (this.currentWeek <= 13) {
+    } else if (this.currentWeek <= 13) {
       if (weekInput >= this.week13 && weekInput < this.week14) {
         return true;
       } else {
         return false;
       }
-    }else if (this.currentWeek <= 14) {
+    } else if (this.currentWeek <= 14) {
       if (weekInput >= this.week14 && weekInput < this.week15) {
         return true;
       } else {
         return false;
       }
-    }else if (this.currentWeek <= 15) {
+    } else if (this.currentWeek <= 15) {
       if (weekInput >= this.week15 && weekInput < this.week16) {
         return true;
       } else {
         return false;
       }
-    }else if (this.currentWeek <= 16) {
+    } else if (this.currentWeek <= 16) {
       if (weekInput >= this.week16 && weekInput < this.week17) {
         return true;
       } else {
         return false;
       }
-    }else if (this.currentWeek <= 17) {
+    } else if (this.currentWeek <= 17) {
       if (weekInput >= this.week17 && weekInput < this.week18) {
         return true;
       } else {
         return false;
       }
-    }else if (this.currentWeek === 18) {
+    } else if (this.currentWeek === 18) {
       if (weekInput >= this.week18) {
         return true;
       } else {

@@ -3,7 +3,7 @@
 
   <mat-tab label="Set Up NFL">
     <section>
-      <div class="margin-left-5rem-top-1rem">
+      <!-- <div class="margin-left-5rem-top-1rem">
         <b class="crimson">1. Click Calculate Statistics and wait for the number of games to stop increasing. (1076)</b>
       </div>
       <div class="margin-left-5rem-top-1rem">
@@ -27,16 +27,20 @@
       <button mat-button (click)="automate()">Automate</button>
       <br>
       <br>
-      <hr>
+      <hr> -->
       <div class="margin-left-5rem-top-1rem">
-        <b class="crimson">1. Click Button #1 and wait for the number of games to stop increasing.</b>
+        <b class="crimson">1. Click Button #1.25 and wait for the number of games to stop increasing.</b>
       </div>
       <div class="margin-left-5rem-top-1rem">
-        <b class="crimson">2. Once you have downloaded all the games, click Button #2.</b>
+        <b class="crimson">2. Click Button #1.5 and wait for the number of games to stop increasing.</b>
       </div>
       <div class="margin-left-5rem-top-1rem">
-        <b class="crimson">3. You can now access the other sections at the top of the page.</b>
+        <b class="crimson">3. Once you have downloaded all the games, click Button #2.5</b>
       </div>
+      <div class="margin-left-5rem-top-1rem">
+        <b class="crimson">4. Click "See Magic" button</b>
+      </div>
+      <!--
       <div class="lastYearWeek-wrapper">
         <h4>Select 2014 Week</h4>
         <mat-form-field appearance="fill">
@@ -49,8 +53,10 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear(lastYearWeekControl.value)">1.0
-        Download as far as 2014: Week- {{lastYearWeekControl.value}}</button>
+       <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear(lastYearWeekControl.value)">1.0
+        Download as far as 2014: Week- {{lastYearWeekControl.value}}</button> -->
+      <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear(18)">1.25
+        Download 2014</button>
       <button class="margin-left-5rem-top-1rem" mat-button (click)="downloadLastYear2()">1.5 Download
         2025</button>
       <div class="animate-wrapper">
@@ -65,111 +71,129 @@
           </div>
         </div>
       </ng-container>
-      <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers2014()">2.0
-        Crunch(process) Data for 2014</button>
+      <!-- <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers2014()">2.0
+        Crunch(process) Data for 2014</button> -->
       <button class="margin-left-5rem-top-1rem" mat-button (click)="crunchNumbers()">2.5
         Crunch(process) Data</button>
     </section>
     <div>
       <!-- ML -->
       <h1>Moneyline</h1>
+      <div>Teams that have a turnover diff of {{localTurnoverDiffVal| number :
+        '1.2'}} or more</div>
+      <div>{{aggregateStats.turnoverDiffWins}} - {{aggregateStats.turnoverDiffLosses}} |
+        {{(aggregateStats.turnoverDiffWins/(aggregateStats.turnoverDiffWins + aggregateStats.turnoverDiffLosses))|
+        number :
+        '0.2'}}
+      </div>
       <div>Teams that have a win/loss %differential of {{localCombineDiffVal| number :
         '0.2'}}% or more AND Teams have a win% of {{localCombineHighVal| number :
         '0.2'}}</div>
       <div>{{aggregateStats.combineDiffHighWins}} - {{aggregateStats.combineDiffHighLosses}} |
-        {{(aggregateStats.combineDiffHighWins/(aggregateStats.combineDiffHighWins + aggregateStats.combineDiffHighLosses))| number :
+        {{(aggregateStats.combineDiffHighWins/(aggregateStats.combineDiffHighWins +
+        aggregateStats.combineDiffHighLosses))| number :
         '0.2'}}
       </div>
       <div>Teams that have a win/loss %differential of {{localMlDiffVal| number :
-        '0.2'}}% or more (best value: {{bestMlDiffVal | number : '0.2'}})</div>
+        '0.2'}}% or more</div>
       <div>{{aggregateStats.mlDiffWins}} - {{aggregateStats.mlDiffLosses}} |
         {{(aggregateStats.mlDiffWins/(aggregateStats.mlDiffWins + aggregateStats.mlDiffLosses))| number :
         '0.2'}}
       </div>
       <div>Teams that have a win% of {{localMlHighVal| number :
-        '0.2'}}% or more (best value: {{bestMlHighVal | number : '0.2'}})</div>
+        '0.2'}}% or more</div>
       <div>{{aggregateStats.mlHighWins}} - {{aggregateStats.mlHighLosses}} |
         {{(aggregateStats.mlHighWins/(aggregateStats.mlHighWins + aggregateStats.mlHighLosses))| number :
         '0.2'}}
       </div>
       <div>Teams whose opponents have a win% of {{localMlOppLowVal| number :
-        '0.2'}}% or less (best value: {{bestMlOppLowVal | number : '0.2'}}</div>
+        '0.2'}}% or less</div>
       <div>{{aggregateStats.mlOppLowWins}} - {{aggregateStats.mlOppLowLosses}} |
         {{(aggregateStats.mlOppLowWins/(aggregateStats.mlOppLowWins + aggregateStats.mlOppLowLosses))| number :
         '0.2'}}</div>
-        <!-- ATS -->
+      <!-- ATS -->
       <h1>ATS</h1>
+      <div>Teams that have a turnover diff of {{localTurnoverDiffAtsVal| number :
+        '1.2'}} or more</div>
+      <div>{{aggregateStats.turnoverDiffAtsWins}} - {{aggregateStats.turnoverDiffAtsLosses}} |
+        {{(aggregateStats.turnoverDiffAtsWins/(aggregateStats.turnoverDiffAtsWins +
+        aggregateStats.turnoverDiffAtsLosses))| number :
+        '0.2'}}
+      </div>
       <div>Teams that have a win/loss %differential of {{localCombineAtsDiffVal| number :
         '0.2'}}% or more AND Teams have a win% of {{localCombineAtsHighVal| number :
         '0.2'}}</div>
       <div>{{aggregateStats.combineAtsDiffHighWins}} - {{aggregateStats.combineAtsDiffHighLosses}} |
-        {{(aggregateStats.combineAtsDiffHighWins/(aggregateStats.combineAtsDiffHighWins + aggregateStats.combineAtsDiffHighLosses))| number :
+        {{(aggregateStats.combineAtsDiffHighWins/(aggregateStats.combineAtsDiffHighWins +
+        aggregateStats.combineAtsDiffHighLosses))| number :
         '0.2'}}
       </div>
       <div>Teams that have a win/loss %differential of {{localAtsDiffVal| number :
-        '0.2'}}% or more (best value: {{bestAtsDiffVal | number : '0.2'}})</div>
+        '0.2'}}% or more</div>
       <div>{{aggregateStats.atsDiffWins}} - {{aggregateStats.atsDiffLosses}} |
         {{(aggregateStats.atsDiffWins/(aggregateStats.atsDiffWins + aggregateStats.atsDiffLosses))| number :
         '0.2'}}
       </div>
       <div>Teams that have a win% of {{localAtsHighVal| number :
-        '0.2'}}% or more (best value: {{bestAtsHighVal | number : '0.2'}})</div>
+        '0.2'}}% or more</div>
       <div>{{aggregateStats.atsHighWins}} - {{aggregateStats.atsHighLosses}} |
         {{(aggregateStats.atsHighWins/(aggregateStats.atsHighWins + aggregateStats.atsHighLosses))| number :
         '0.2'}}
       </div>
       <div>Teams whose opponents have a win% of {{localAtsOppLowVal| number :
-        '0.2'}}% or less (best value: {{bestAtsOppLowVal | number : '0.2'}})</div>
+        '0.2'}}% or less</div>
       <div>{{aggregateStats.atsOppLowWins}} - {{aggregateStats.atsOppLowLosses}} |
         {{(aggregateStats.atsOppLowWins/(aggregateStats.atsOppLowWins + aggregateStats.atsOppLowLosses))| number :
         '0.2'}}</div>
       <h1>Favorite</h1>
-       <div>Teams that have a win/loss %differential of {{localCombineFavDiffVal| number :
+      <div>Teams that have a win/loss %differential of {{localCombineFavDiffVal| number :
         '0.2'}}% or more AND Teams have a win% of {{localCombineFavHighVal| number :
         '0.2'}}</div>
       <div>{{aggregateStats.combineFavDiffHighWins}} - {{aggregateStats.combineFavDiffHighLosses}} |
-        {{(aggregateStats.combineFavDiffHighWins/(aggregateStats.combineFavDiffHighWins + aggregateStats.combineFavDiffHighLosses))| number :
+        {{(aggregateStats.combineFavDiffHighWins/(aggregateStats.combineFavDiffHighWins +
+        aggregateStats.combineFavDiffHighLosses))| number :
         '0.2'}}
       </div>
       <div>Teams that have a win/loss %differential of {{localFavDiffVal| number :
-        '0.2'}}% or more (best value: {{bestFavDiffVal | number : '0.2'}})</div>
+        '0.2'}}% or more</div>
       <div>{{aggregateStats.favDiffWins}} - {{aggregateStats.favDiffLosses}} |
         {{(aggregateStats.favDiffWins/(aggregateStats.favDiffWins + aggregateStats.favDiffLosses))| number :
         '0.2'}}
       </div>
       <div>Teams that have a win% of {{localFavHighVal| number :
-        '0.2'}}% or more (best value: {{bestFavHighVal | number : '0.2'}})</div>
+        '0.2'}}% or more</div>
       <div>{{aggregateStats.favHighWins}} - {{aggregateStats.favHighLosses}} |
         {{(aggregateStats.favHighWins/(aggregateStats.favHighWins + aggregateStats.favHighLosses))| number :
         '0.2'}}
       </div>
       <div>Teams whose opponents have a win% of {{localFavOppLowVal| number :
-        '0.2'}}% or less (best value: {{bestFavOppLowVal | number : '0.2'}})</div>
+        '0.2'}}% or less</div>
       <div>{{aggregateStats.favOppLowWins}} - {{aggregateStats.favOppLowLosses}} |
         {{(aggregateStats.favOppLowWins/(aggregateStats.favOppLowWins + aggregateStats.favOppLowLosses))| number :
         '0.2'}}</div>
       <h1>Underdog</h1>
-       <div>Teams that have a win/loss %differential of {{localCombineUnderDiffVal| number :
+      <div>Teams that have a win/loss %differential of {{localCombineUnderDiffVal| number :
         '0.2'}}% or more AND Teams have a win% of {{localCombineUnderHighVal| number :
         '0.2'}}</div>
       <div>{{aggregateStats.combineUnderDiffHighWins}} - {{aggregateStats.combineUnderDiffHighLosses}} |
-        {{(aggregateStats.combineUnderDiffHighWins/(aggregateStats.combineUnderDiffHighWins + aggregateStats.combineUnderDiffHighLosses))| number :
+        {{(aggregateStats.combineUnderDiffHighWins/(aggregateStats.combineUnderDiffHighWins +
+        aggregateStats.combineUnderDiffHighLosses))| number :
         '0.2'}}
       </div>
       <div>Teams that have a win/loss %differential of {{localUnderDiffVal| number :
-        '0.2'}}% or more (best value: {{bestUnderDiffVal | number : '0.2'}})</div>
+        '0.2'}}% or more</div>
       <div>{{aggregateStats.underDiffWins}} - {{aggregateStats.underDiffLosses}} |
         {{(aggregateStats.underDiffWins/(aggregateStats.underDiffWins + aggregateStats.underDiffLosses))| number :
         '0.2'}}
       </div>
       <div>Teams that have a win% of {{localUnderHighVal| number :
-        '0.2'}}% or more (best value: {{bestUnderHighVal | number : '0.2'}})</div>
+        '0.2'}}% or more</div>
       <div>{{aggregateStats.underHighWins}} - {{aggregateStats.underHighLosses}} |
         {{(aggregateStats.underHighWins/(aggregateStats.underHighWins + aggregateStats.underHighLosses))| number :
         '0.2'}}
       </div>
       <div>Teams whose opponents have a win% of {{localUnderOppLowVal| number :
-        '0.2'}}% or less (best value: {{bestUnderOppLowVal | number : '0.2'}})</div>
+        '0.2'}}% or less</div>
       <div>{{aggregateStats.underOppLowWins}} - {{aggregateStats.underOppLowLosses}} |
         {{(aggregateStats.underOppLowWins/(aggregateStats.underOppLowWins + aggregateStats.underOppLowLosses))| number :
         '0.2'}}</div>
@@ -201,18 +225,25 @@
         <mat-cell *matCellDef="let row" [ngClass]="returnByeBgColor(row)">
           <div>Game Date: {{row.nextGameDate| date: 'MM/dd/yyyy'}}</div>
           <div>Net Spread: {{row.netSpread}}</div>
+          <div>Average TurnOver Differential: {{row.turnoverDiffTotal}}</div>
+          <div>Opponent Avg TurnOver Diff: {{returnNextOpponent(row).turnoverDiffTotal}}</div>
+          <div>Difference in Turnover Diff: {{row.turnoverDiffTotal - returnNextOpponent(row).turnoverDiffTotal | number
+            :
+            '1.2' }}</div>
           <span [ngClass]="returnCellColor(row.wins, 'score')">{{row.teamName}}</span>
           <div [ngClass]="returnCellColor(row.wins, 'score')">Score: {{row.wins}}-{{row.losses}}
           </div>
           <div>Spread: {{returnGameSpread(row)}}</div>
           <div [ngClass]="{'bold-font': row.isNextGameFavorite, 'italic-font': !row.isNextGameFavorite}">
             {{returnIfFavorite(row.isNextGameFavorite)}}</div>
-          <div>Points For: {{row.currentWeekPoints}}</div>
-          <div>Points Against: {{row.currentWeekPointsAgainst}}</div>
-          <div [ngClass]="returnWinLossColor(row.currentWeekWinLoss)">Win or Loss:
-            {{row.currentWeekWinLoss}}</div>
-          <div [ngClass]="returnWinLossColor(row.currentWeekAts)">Against Spread:
-            {{row.currentWeekAts}}</div>
+          <div *ngIf="localTableFlag">
+            <div>Points For: {{row.currentWeekPoints}}</div>
+            <div>Points Against: {{row.currentWeekPointsAgainst}}</div>
+            <div [ngClass]="returnWinLossColor(row.currentWeekWinLoss)">Win or Loss:
+              {{row.currentWeekWinLoss}}</div>
+            <div [ngClass]="returnWinLossColor(row.currentWeekAts)">Against Spread:
+              {{row.currentWeekAts}}</div>
+          </div>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="sumValues">
@@ -709,8 +740,6 @@
             <div [ngClass]="checkFirstDowns(row.nextOpponent)">{{row.nextOpponent}}:
               {{returnOpponentAvgFirstDowns(row.nextOpponent)|
               number : '1.1-1'}}</div>
-            <div>STD: {{row.firstDownsStd| number :
-              '1.1-1'}}</div>
           </div>
         </mat-cell>
       </ng-container>
@@ -749,8 +778,6 @@
             <div [ngClass]="checkThirdDown(row.nextOpponent)">{{row.nextOpponent}}:
               {{returnOpponentAvgThirdDowns(row.nextOpponent)|
               number : '1.1-1'}}</div>
-            <div>STD: {{row.thirdDownStd| number :
-              '1.1-1'}}</div>
           </div>
         </mat-cell>
       </ng-container>
@@ -786,8 +813,6 @@
 
             <div [ngClass]="checkRedzone(row.nextOpponent)">{{row.nextOpponent}}:
               {{returnOpponentAvgRedzone(row.nextOpponent)| number :
-              '1.1-1'}}</div>
-            <div>STD: {{row.redzoneStd| number :
               '1.1-1'}}</div>
           </div>
         </mat-cell>
