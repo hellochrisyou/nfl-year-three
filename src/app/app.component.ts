@@ -8619,6 +8619,24 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.httpService.executeDataHydrationLastYear(lastYearWeek);
   }
 
+  downloadLastYear2() {
+    this.currentDownloadCounter = 0;
+    this.currentDownloadCounter++;
+    this.currentDownloadCounterPostMsg = ' ...Currently Downloading...';
+    this.localTableFlag = false;
+    this.httpService.executeDataHydrationThisYear();
+  }
+
+  downloadLastYear3() {
+    this.currentDownloadCounter = 0;
+    this.currentDownloadCounter++;
+    this.currentDownloadCounterPostMsg = ' ...Currently Downloading...';
+    this.localTableFlag = false;
+    this.httpService.executeDataHydrationLastYear(0);
+    this.httpService.executeDataHydrationThisYear();
+  }
+
+
   returnByeBgColor(row: Team) {
     if (row.currentWeekWinLoss === 'BYE') {
       return 'bye-bg';
@@ -9122,13 +9140,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  downloadLastYear2() {
-    this.currentDownloadCounter = 0;
-    this.currentDownloadCounter++;
-    this.currentDownloadCounterPostMsg = ' ...Currently Downloading...';
-    this.localTableFlag = false;
-    this.httpService.executeDataHydrationThisYear();
-  }
 
   applyFilter(filterValue: string) {
     this.currentFilter = filterValue;
