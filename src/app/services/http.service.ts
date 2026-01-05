@@ -393,6 +393,7 @@ export class HttpService {
     this.dateService.setLastYearWeek(this.dateService.currentWeek);
     this.dateService.setLastYearWeekNext(this.dateService.currentWeek + 1);
     this.getLastYearStats('2025', this.dateService.currentWeek);
+    console.log("🚀 ~ this.dateService.currentWeek:", this.dateService.currentWeek)
   }
 
   public crunchTotals() {
@@ -555,6 +556,7 @@ export class HttpService {
 
   getNextOpponentInfo(year?: string) {
     let tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/types/2/weeks/' + (this.dateService.currentWeek) + '/events?lang=en&region=us';
+    console.log("🚀 ~ this.dateService.currentWeek:", this.dateService.currentWeek)
     if (year) {
       tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2024/types/2/weeks/' + (this.dateService.currentLastYearWeekNum) + '/events?lang=en&region=us';
     }

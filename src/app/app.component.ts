@@ -6331,7 +6331,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
-    // sacksChange(event: any, teamName: string) {
+  // sacksChange(event: any, teamName: string) {
   //   this.httpService.allTeams.forEach(team => {
   //     if (team.teamName === teamName) {
   //       team.filterStats.sacks.wins = 0;
@@ -8572,6 +8572,45 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   crunchNumbers() {
     this.httpService.getNextOpponentInfo();
+    //     this.httpService.allTeams.filter(x => {
+    //       console.log('test');
+    //   if (x.teamName === 'Buffalo Bills') {
+    //     x.nextOpponent = 'Jacksonville Jaguars';
+    //   }
+    //   if (x.teamName === 'Jacksonville Jaguars') {
+    //     x.nextOpponent = 'Buffalo Bills';
+    //   }
+    //   if (x.teamName === 'Los Angeles Chargers') {
+    //     x.nextOpponent = 'New England Patriots';
+    //   }
+    //   if (x.teamName === 'New England Patriots') {
+    //     x.nextOpponent = 'Los Angeles Chargers';
+    //   }
+    //   if (x.teamName === 'Houston Texans') {
+    //     x.nextOpponent = 'Pittsburgh Steelers';
+    //   }
+    //   if (x.teamName === 'Pittsburgh Steelers') {
+    //     x.nextOpponent = 'Houston Texans';
+    //   }
+    //   if (x.teamName === 'Los Angeles Rams') {
+    //     x.nextOpponent = 'Carolina Panthers';
+    //   }
+    //   if (x.teamName === 'Carolina Panthers') {
+    //     x.nextOpponent = 'Los Angeles Rams';
+    //   }
+    //   if (x.teamName === 'Greenbay Packers') {
+    //     x.nextOpponent = 'Chicago Bears';
+    //   }
+    //   if (x.teamName === 'Chicago Bears') {
+    //     x.nextOpponent = 'Greenbay Packers';
+    //   }
+    //   if (x.teamName === 'San Francisco 49ers') {
+    //     x.nextOpponent = 'Philadelphia Eagles';
+    //   }
+    //   if (x.teamName === 'Philadelphia Eagles') {
+    //     x.nextOpponent = 'San Francisco 49ers';
+    //   }
+    // })
     this.httpService.crunchTotals();
     this.httpService.calculateWinLossRecord();
     this.httpService.setOpponentStats();
@@ -8631,6 +8670,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.currentDownloadCounter = 0;
     this.currentDownloadCounter++;
     this.currentDownloadCounterPostMsg = ' ...Currently Downloading...';
+    console.log('download last year 3');
     this.localTableFlag = false;
     this.httpService.executeDataHydrationLastYear(0);
     this.httpService.executeDataHydrationThisYear();
