@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 
 import { DateService } from '../const/date';
 import { INITIALIZE_TEAMS } from '../const/global_var';
-import { Game, NbaGame, NbaTeam, NhlGame, NhlTeam, Team } from '../model/interface';
+import { Game, Team } from '../model/interface';
 import { ApiService } from './api.service';
 
 const EXCEL_EXTENSION = '.xlsx';
@@ -13,8 +13,6 @@ const EXCEL_EXTENSION = '.xlsx';
 })
 export class HttpService {
   allTeams: Team[] = [];
-  nbaAllTeams: NbaTeam[] = [];
-  nhlAllTeams: NhlTeam[] = [];
 
   downloadedGamesNum = 0;
   @Output() updateDownloadStatus = new EventEmitter<number>()
@@ -23,182 +21,6 @@ export class HttpService {
 
   constructor(private apiService: ApiService, private dateService: DateService) {
     this.allTeams = INITIALIZE_TEAMS(this.allTeams);
-    // this.nbaAllTeams = INITIALIZE_NBA_TEAMS(this.nbaAllTeams);
-    // this.nhlAllTeams = INITIALIZE_NHL_TEAMS(this.nhlAllTeams);
-  }
-
-  getNhlLastYearStats(year: string) {
-    this.nhlAllTeams.forEach(team => {
-      const tmpHttpAddy = 'https://sports.core.api.espn.com/v2/sports/hockey/leagues/nhl/seasons/' + year + '/teams/' + team.teamId + '/events';
-      this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
-        let tmpGame = this.initializeTmpNhlGame();
-        const tmpEventAddy = element.$ref;
-        this.apiService.httpGet(tmpEventAddy).subscribe((payload2: any) => {
-          tmpGame.gameId = payload2.id;
-          tmpGame.date = payload2.date;
-          let tmpDate: Date = new Date();
-          switch (year) {
-            case '2023': {
-              tmpDate = new Date('10/07/2022');
-              break;
-            }
-            case '2024': {
-              tmpDate = new Date('10/07/2023');
-              break;
-            }
-            case '2025': {
-              tmpDate = new Date('10/07/2024');
-              break;
-            }
-            case '2026': {
-              tmpDate = new Date('10/07/2025');
-              break;
-            }
-          }
-          let tmpCompetitorIndex = 0;
-          let tmpOpponentIndex = 1;
-          if (new Date(payload2.date) > tmpDate) {
-            // if (payload2.competitions[0].competitors[1].id.length <= 2 && payload2.competitions[0].competitors[0].id.length <= 2) {
-            if (payload2.competitions[0].competitors[0].id === team.teamId) {
-              tmpGame.opponentId = payload2.competitions[0].competitors[1].id;
-              if (payload2.competitions[0].competitors[tmpCompetitorIndex].homeAway === 'home') {
-                tmpGame.homeOrAway = 'home';
-              } else {
-                tmpGame.homeOrAway = 'away';
-              }
-            } else {
-              tmpCompetitorIndex = 1;
-              tmpOpponentIndex = 0;
-              tmpGame.opponentId = payload2.competitions[0].competitors[0].id;
-              if (payload2.competitions[0].competitors[tmpCompetitorIndex].homeAway === 'home') {
-                tmpGame.homeOrAway = 'home';
-              } else {
-                tmpGame.homeOrAway = 'away';
-              }
-            }
-            const tmpStatsAddy = payload2.competitions[0].competitors[tmpCompetitorIndex].statistics.$ref;
-            const tmpOddsAddy = payload2.competitions[0].odds.$ref;
-            this.apiService.httpGet(tmpOddsAddy).subscribe((payload3: any) => {
-              tmpGame.spread = payload3.items[0].spread;
-              if (tmpGame.homeOrAway === 'home') {
-                tmpGame.isFavorite = payload3.items[0].homeTeamOdds.favorite;
-              } else {
-                tmpGame.isFavorite = payload3.items[0].awayTeamOdds.favorite;
-              }
-              this.apiService.httpGet(tmpStatsAddy).subscribe((payload4: any) => {
-                tmpGame.goalsGiven = payload4.splits.categories[0].stats[0].value;
-                tmpGame.goals = payload4.splits.categories[2].stats[0].value;
-                tmpGame.assists = payload4.splits.categories[2].stats[2].value;
-                tmpGame.shootingPct = payload4.splits.categories[2].stats[21].value;
-                const tmpScoreAddy = payload2.competitions[0].competitors[tmpOpponentIndex].score.$ref;
-                this.apiService.httpGet(tmpScoreAddy).subscribe((payload5: any) => {
-                  this.nhlAllTeams.forEach(team2 => {
-                    if (team2.teamId === tmpGame.opponentId) {
-                      team2.goalsGivenTotal += tmpGame.goals;
-                      team2.assistsGivenTotal += tmpGame.assists;
-                      team2.shootingPctGivenTotal.push(tmpGame.shootingPct);
-                    }
-                  });
-                  team.games.push(tmpGame);
-                  this.downloadedGamesNum++;
-                  this.updateDownloadStatus.emit(this.downloadedGamesNum);
-                });
-              });
-            });
-          }
-          // }
-        });
-      }));
-    })
-  }
-
-  getNbaLastYearStats(year: string) {
-    this.nbaAllTeams.forEach(team => {
-      const tmpHttpAddy = 'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/' + year + '/teams/' + team.teamId + '/events';
-      this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
-        let tmpGame = this.initializeTmpNbaGame();
-        const tmpEventAddy = element.$ref;
-        this.apiService.httpGet(tmpEventAddy).subscribe((payload2: any) => {
-          tmpGame.gameId = payload2.id;
-          tmpGame.date = payload2.date;
-          let tmpDate: Date = new Date();
-          if (year === '2023') {
-            tmpDate = new Date('08/25/2022');
-          } else if (year === '2024') {
-            tmpDate = new Date('08/25/2023');
-          } else if (year === '2025') {
-            tmpDate = new Date('08/25/2024');
-          } else if (year === '2026') {
-            tmpDate = new Date('08/25/2025');
-          }
-          let tmpCompetitorIndex = 0;
-          let tmpOpponentIndex = 1;
-          if (new Date(payload2.date) > tmpDate) {
-            if (payload2.competitions[0].competitors[1].id.length <= 2 && payload2.competitions[0].competitors[0].id.length <= 2) {
-              if (payload2.competitions[0].competitors[0].id === team.teamId) {
-                tmpGame.opponentId = payload2.competitions[0].competitors[1].id;
-                if (payload2.competitions[0].competitors[tmpCompetitorIndex].homeAway === 'home') {
-                  tmpGame.homeOrAway = 'home';
-                } else {
-                  tmpGame.homeOrAway = 'away';
-                }
-              } else {
-                tmpCompetitorIndex = 1;
-                tmpOpponentIndex = 0;
-                tmpGame.opponentId = payload2.competitions[0].competitors[0].id;
-                if (payload2.competitions[0].competitors[tmpCompetitorIndex].homeAway === 'home') {
-                  tmpGame.homeOrAway = 'home';
-                } else {
-                  tmpGame.homeOrAway = 'away';
-                }
-              }
-              const tmpStatsAddy = payload2.competitions[0].competitors[tmpCompetitorIndex].statistics.$ref;
-              const tmpOddsAddy = payload2.competitions[0].odds.$ref;
-              const tmpScoreAddy = payload2.competitions[0].competitors[tmpOpponentIndex].score.$ref;
-              this.apiService.httpGet(tmpScoreAddy).subscribe((payload5: any) => {
-                tmpGame.pointsGiven = payload5.value;
-              });
-              this.apiService.httpGet(tmpOddsAddy).subscribe((payload3: any) => {
-                tmpGame.spread = payload3.items[0].spread;
-                if (tmpGame.homeOrAway === 'home') {
-                  tmpGame.isFavorite = payload3.items[0].homeTeamOdds.favorite;
-                } else {
-                  tmpGame.isFavorite = payload3.items[0].awayTeamOdds.favorite;
-                }
-                this.apiService.httpGet(tmpStatsAddy).subscribe((payload4: any) => {
-                  tmpGame.blocks = payload4.splits.categories[0].stats[0].value;
-                  tmpGame.defensiveRebounds = payload4.splits.categories[0].stats[1].value;
-                  tmpGame.steals = payload4.splits.categories[0].stats[2].value;
-                  tmpGame.assists = payload4.splits.categories[2].stats[0].value;
-                  tmpGame.fieldGoals = payload4.splits.categories[2].stats[1].value;
-                  tmpGame.offensiveRebounds = payload4.splits.categories[2].stats[9].value;
-                  tmpGame.points = payload4.splits.categories[2].stats[10].value;
-                  tmpGame.turnovers = payload4.splits.categories[2].stats[11].value;
-                  tmpGame.threePoints = payload4.splits.categories[2].stats[14].value;
-
-                  this.nbaAllTeams.forEach(team2 => {
-                    if (team2.teamId === tmpGame.opponentId) {
-                      team2.blocksGivenTotal += tmpGame.blocks;
-                      team2.defensiveReboundsGivenTotal += tmpGame.defensiveRebounds;
-                      team2.stealsGivenTotal += tmpGame.steals;
-                      team2.assistsGivenTotal += tmpGame.assists;
-                      team2.fieldGoalsGivenTotal += tmpGame.fieldGoals;
-                      team2.offensiveReboundsGivenTotal += tmpGame.offensiveRebounds;
-                      team2.pointsGivenTotal += tmpGame.points;
-                      team2.turnoversGivenTotal += tmpGame.turnovers;
-                      team2.threePointsGivenTotal += tmpGame.threePoints;
-                    }
-                  });
-                  team.games.push(tmpGame);
-                  this.downloadedGamesNum++;
-                  this.updateDownloadStatus.emit(this.downloadedGamesNum);
-                });
-              });
-            }
-          }
-        });
-      }));
-    })
   }
 
   getLastYearStats(year: string, lastYearWeek?: number) {
@@ -217,6 +39,8 @@ export class HttpService {
             tmpDate = new Date('08/25/2024');
           } else if (year === '2025') {
             tmpDate = new Date('08/25/2025');
+          } else if (year === '2026') {
+            tmpDate = new Date('08/25/2026');
           }
           var date1: any = new Date(payload2.date);
           var date2: any = new Date(this.dateService.currentLastYearWeek);
@@ -383,16 +207,16 @@ export class HttpService {
 
   executeDataHydrationLastYear(lastYearWeek?: number) {
     if (!lastYearWeek) {
-      this.getLastYearStats('2024');
+      this.getLastYearStats('2025');
     } else {
-      this.getLastYearStats('2024', lastYearWeek);
+      this.getLastYearStats('2025', lastYearWeek);
     }
   }
 
   executeDataHydrationThisYear() {
     this.dateService.setLastYearWeek(this.dateService.currentWeek);
     this.dateService.setLastYearWeekNext(this.dateService.currentWeek + 1);
-    this.getLastYearStats('2025', this.dateService.currentWeek);
+    this.getLastYearStats('2026', this.dateService.currentWeek);
     console.log("🚀 ~ this.dateService.currentWeek:", this.dateService.currentWeek)
   }
 
@@ -469,52 +293,6 @@ export class HttpService {
     return tmpGame;
   }
 
-  public initializeTmpNhlGame(): NhlGame {
-    let tmpGame: NhlGame = {
-      date: null,
-      opponentId: '',
-      gameId: 0,
-      homeOrAway: '',
-      goals: 0,
-      assists: 0,
-      shootingPct: 0,
-      goalsGiven: 0,
-      assistsGiven: 0,
-      shootingPctGiven: 0,
-      spread: 0
-    };
-    return tmpGame;
-  }
-
-  public initializeTmpNbaGame(): NbaGame {
-    let tmpGame: NbaGame = {
-      date: null,
-      opponentId: '',
-      gameId: 0,
-      homeOrAway: '',
-      points: 0,
-      pointsGiven: 0,
-      blocks: 0,
-      defensiveRebounds: 0,
-      steals: 0,
-      assists: 0,
-      fieldGoals: 0,
-      offensiveRebounds: 0,
-      turnovers: 0,
-      threePoints: 0,
-      blocksGiven: 0,
-      defensiveReboundsGiven: 0,
-      stealsGiven: 0,
-      assistsGiven: 0,
-      fieldGoalsGiven: 0,
-      offensiveReboundsGiven: 0,
-      turnoversGiven: 0,
-      threePointsGiven: 0,
-      spread: 0,
-    };
-    return tmpGame;
-  }
-
   calculateWinLossRecord() {
     this.allTeams.forEach(team => team.games.forEach(game => {
       // console.log("🚀 ~ game.pointsGiven:", game.pointsGiven)
@@ -549,16 +327,12 @@ export class HttpService {
     this.allTeams.forEach(team => team.redzoneScoringPctGivenAvg = this.returnSumAvg(team.redzoneScoringPctGivenTotal));
   }
 
-  setNhlOpponentStats() {
-    this.nhlAllTeams.forEach(team => team.shootingPctAvg = this.returnSumAvg(team.shootingPctTotal));
-    this.nhlAllTeams.forEach(team => team.shootingPctGivenAvg = this.returnSumAvg(team.shootingPctGivenTotal));
-  }
 
   getNextOpponentInfo(year?: string) {
-    let tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/types/2/weeks/' + (this.dateService.currentWeek) + '/events?lang=en&region=us';
+    let tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2026/types/2/weeks/' + (this.dateService.currentWeek) + '/events?lang=en&region=us';
     console.log("🚀 ~ this.dateService.currentWeek:", this.dateService.currentWeek)
     if (year) {
-      tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2024/types/2/weeks/' + (this.dateService.currentLastYearWeekNum) + '/events?lang=en&region=us';
+      tmpHttpAddy = 'http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/types/2/weeks/' + (this.dateService.currentLastYearWeekNum) + '/events?lang=en&region=us';
     }
     this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
       // console.log("🚀 ~ element:", element)
@@ -634,256 +408,5 @@ export class HttpService {
       }
     });
     return tmpStr.trim();
-  }
-  getNbaNextOpponentInfo() {
-    for (let i = 0; i < this.nbaAllTeams.length; i++) {
-      const tmpHttpAddy = 'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/2024/teams/' + this.nbaAllTeams[i].teamId + '/events';
-      this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
-        const tmpHttpAddy2 = element.$ref;
-        this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
-          let tmpGameDate = new Date(payload2.date);
-          let today = new Date();
-          let diff = Math.abs(today.getTime() - tmpGameDate.getTime());
-          let diffDays = Math.ceil(diff / (1000 * 3600 * 24));
-          if (today <= tmpGameDate && diffDays <= 1) {
-            const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
-            this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
-              if (this.nbaAllTeams[i].teamId === payload2.competitions[0].competitors[0].id) {
-                this.nbaAllTeams.forEach(team2 => {
-                  if (team2.teamId === payload2.competitions[0].competitors[1].id) {
-                    this.nbaAllTeams[i].nextGameDate = new Date(tmpGameDate);
-                    this.nbaAllTeams[i].nextGameSpread = payload3.items[0].spread;
-                    this.nbaAllTeams[i].nextOpponent = team2.teamName;
-                    this.nbaAllTeams[i].nextOpponentWins = team2.wins;
-                    this.nbaAllTeams[i].nextOpponentLosses = team2.losses;
-                    this.nbaAllTeams[i].nextOpponentAtsWins = team2.atsWins;
-                    this.nbaAllTeams[i].nextOpponentAtsLosses = team2.atsLosses;
-                    this.nbaAllTeams[i].nextGameDetails = payload3.items[0].details;
-
-                    if (this.nbaAllTeams[i].teamInitials === this.determineFavoriteTeam(this.nbaAllTeams[i].nextGameDetails).trim()) {
-                      this.nbaAllTeams[i].isNextGameFavorite = true;
-                    } else {
-                      this.nbaAllTeams[i].isNextGameFavorite = false;
-                    }
-                  }
-                })
-              }
-              if (this.nbaAllTeams[i].teamId === payload2.competitions[0].competitors[1].id) {
-                this.nbaAllTeams.forEach(team2 => {
-                  if (team2.teamId === payload2.competitions[0].competitors[0].id) {
-                    this.nbaAllTeams[i].nextGameDate = new Date(tmpGameDate);
-                    this.nbaAllTeams[i].nextGameSpread = payload3.items[0].spread;
-                    this.nbaAllTeams[i].nextOpponent = team2.teamName;
-                    this.nbaAllTeams[i].nextOpponentWins = team2.wins;
-                    this.nbaAllTeams[i].nextOpponentLosses = team2.losses;
-                    this.nbaAllTeams[i].nextOpponentAtsWins = team2.atsWins;
-                    this.nbaAllTeams[i].nextOpponentAtsLosses = team2.atsLosses;
-                    this.nbaAllTeams[i].nextGameDetails = payload3.items[0].details;
-                    if (this.nbaAllTeams[i].teamInitials === this.determineFavoriteTeam(this.nbaAllTeams[i].nextGameDetails).trim()) {
-                      this.nbaAllTeams[i].isNextGameFavorite = true;
-                    } else {
-                      this.nbaAllTeams[i].isNextGameFavorite = false;
-                    }
-                  }
-                })
-              }
-            });
-          }
-        });
-      }))
-    }
-  }
-  getNhlNextOpponentInfo() {
-    this.nhlAllTeams.forEach(team0 => {
-      const tmpHttpAddy = 'https://sports.core.api.espn.com/v2/sports/hockey/leagues/nhl/seasons/2025/teams/' + team0.teamId + '/events';
-      this.apiService.httpGet(tmpHttpAddy).subscribe((payload: any) => payload.items.forEach(element => {
-        const tmpHttpAddy2 = element.$ref;
-        this.apiService.httpGet(tmpHttpAddy2).subscribe((payload2: any) => {
-          // console.log("🚀 ~ payload2:", payload2)
-          let tmpGameDate = new Date(payload2.date);
-          // console.log("🚀 ~ tmpGameDate:", tmpGameDate)
-          // console.log("🚀 ~ tmpGameDate:", tmpGameDate)
-          let today = new Date();
-          let diff = Math.abs(today.getTime() - tmpGameDate.getTime());
-          let diffDays = Math.ceil(diff / (1000 * 3600 * 24));
-          // console.log("🚀 ~ diffDays:", diffDays)
-
-          if (today <= tmpGameDate && diffDays <= 1) {
-            const tmpHttpAddy3 = payload2.competitions[0].odds.$ref;
-            this.apiService.httpGet(tmpHttpAddy3).subscribe((payload3: any) => {
-              if (payload3.items.length > 0) {
-                if (team0.teamId === payload2.competitions[0].competitors[0].id) {
-                  this.nhlAllTeams.forEach(team2 => {
-                    if (team2.teamId === payload2.competitions[0].competitors[1].id) {
-                      team0.nextGameDetails = payload3.items[0].details;
-                      team0.nextGameDate = tmpGameDate;
-                      team0.nextOpponent = team2.teamName;
-                      team0.nextOpponentWins = team2.wins;
-                      team0.nextOpponentLosses = team2.losses;
-                      team0.nextOpponentAtsWins = team2.atsWins;
-                      team0.nextOpponentAtsLosses = team2.atsLosses;
-                      if (team0.teamInitials === this.determineFavoriteTeam(team0.nextGameDetails).trim()) {
-                        team0.isNextGameFavorite = true;
-                      } else {
-                        team0.isNextGameFavorite = false;
-                      }
-                    }
-                  })
-                }
-                if (team0.teamId === payload2.competitions[0].competitors[1].id) {
-                  this.nhlAllTeams.forEach(team2 => {
-                    if (team2.teamId === payload2.competitions[0].competitors[0].id) {
-                      team0.nextGameDetails = payload3.items[0].details;
-                      team0.nextGameDate = tmpGameDate;
-                      team0.nextOpponent = team2.teamName;
-                      team0.nextOpponentWins = team2.wins;
-                      team0.nextOpponentLosses = team2.losses;
-                      team0.nextOpponentAtsWins = team2.atsWins;
-                      team0.nextOpponentAtsLosses = team2.atsLosses;
-                      if (team0.teamInitials === this.determineFavoriteTeam(team0.nextGameDetails).trim()) {
-                        team0.isNextGameFavorite = true;
-                      } else {
-                        team0.isNextGameFavorite = false;
-                      }
-                    }
-                  });
-                }
-              }
-            });
-          }
-        });
-      }))
-    });
-  }
-  crunchNbaTotals() {
-    this.nbaAllTeams.forEach(team => team.games.forEach(game => {
-      team.pointsTotal += game.points;
-      team.blocksTotal += game.blocks;
-      team.defensiveReboundsTotal += game.defensiveRebounds;
-      team.stealsTotal += game.steals;
-      team.assistsTotal += game.assists;
-      team.fieldGoalsTotal += game.fieldGoals;
-      team.offensiveReboundsTotal += game.offensiveRebounds;
-      team.pointsTotal += game.points;
-      team.turnoversTotal += game.turnovers;
-      team.threePointsTotal += game.threePoints;
-    }));
-    this.updateTotalData.emit(true);
-    this.updateAggregatingData.emit(true);
-  }
-
-  crunchNhlTotals() {
-    this.nhlAllTeams.forEach(team => team.games.forEach(game => {
-      team.goalsTotal += game.goals;
-      team.assistsTotal += game.assists;
-      team.shootingPctTotal.push(game.shootingPct);
-    }));
-    this.updateTotalData.emit(true);
-    this.updateAggregatingData.emit(true);
-  }
-  calculateNbaWinLossRecord() {
-    this.nbaAllTeams.forEach(team => team.games.forEach(game => {
-      if ((game.points - game.pointsGiven) >= 0) {
-        team.wins++;
-      } else {
-        team.losses++;
-      }
-      if (game.isFavorite) {
-        team.netSpread += (game.points - game.pointsGiven - Math.abs(game.spread));
-        if ((game.points - game.pointsGiven - Math.abs(game.spread) >= 0)) {
-          team.atsWins++;
-        } else {
-          team.atsLosses++;
-        }
-      } else {
-        team.netSpread += (game.points - game.pointsGiven + Math.abs(game.spread));
-        if ((game.points - game.pointsGiven + Math.abs(game.spread) >= 0)) {
-          team.atsWins++;
-        } else {
-          team.atsLosses++;
-        }
-      }
-    }));
-  }
-
-  calculateNhlWinLossRecord() {
-    this.nhlAllTeams.forEach(team => team.games.forEach(game => {
-      if ((game.goals - game.goalsGiven) >= 0) {
-        team.wins++;
-      } else {
-        team.losses++;
-      }
-      if (game.isFavorite) {
-        team.netSpread += (game.goals - game.goalsGiven - Math.abs(game.spread));
-        if (((game.goals - game.goalsGiven - 1.5) >= 0)) {
-          team.atsWins++;
-        } else {
-          team.atsLosses++;
-        }
-      } else {
-        team.netSpread += (game.goals - game.goalsGiven + Math.abs(game.spread));
-        if (((game.goals - game.goalsGiven + 1.5) >= 0)) {
-          team.atsWins++;
-        } else {
-          team.atsLosses++;
-        }
-      }
-    }));
-  }
-
-  setupNbaGivenData() {
-    this.nbaAllTeams.forEach(team => team.games.forEach(game => {
-      this.nbaAllTeams.forEach(team2 => {
-        if (game.opponentId === team2.teamId) {
-          team2.games.forEach(game2 => {
-            if (game.gameId === game2.gameId) {
-              game.blocksGiven = game2.blocks;
-              game.defensiveReboundsGiven = game2.defensiveRebounds;
-              game.stealsGiven = game2.steals;
-              game.assistsGiven = game2.assists;
-              game.fieldGoalsGiven = game2.fieldGoals;
-              game.offensiveReboundsGiven = game2.offensiveRebounds;
-              game.pointsGiven = game2.points;
-              game.turnoversGiven = game2.turnovers;
-              game.threePointsGiven = game2.threePoints;
-            }
-          })
-        }
-      });
-    }));
-  }
-
-  setupNhlGivenData() {
-    this.nhlAllTeams.forEach(team => team.games.forEach(game => {
-      this.nhlAllTeams.forEach(team2 => {
-        if (game.opponentId === team2.teamId) {
-          team2.games.forEach(game2 => {
-            if (game.gameId === game2.gameId) {
-              game.goalsGiven = game2.goals;
-              game.assistsGiven = game2.assists;
-              game.shootingPctGiven = game2.shootingPct;
-            }
-          })
-        }
-      });
-    }));
-  }
-  executeNbaDataHydrationLastYear() {
-    this.getNbaLastYearStats('2023');
-    this.getNbaLastYearStats('2024');
-    this.getNbaLastYearStats('2025');
-  }
-
-  executeNbaDataHydrationThisYear() {
-    this.getNbaLastYearStats('2025');
-  }
-  executeNhlDataHydrationLastYear() {
-    this.getNhlLastYearStats('2023');
-    this.getNhlLastYearStats('2024');
-    this.getNhlLastYearStats('2025');
-  }
-
-  executeNhlDataHydrationThisYear() {
-    this.getNhlLastYearStats('2025');
   }
 }
